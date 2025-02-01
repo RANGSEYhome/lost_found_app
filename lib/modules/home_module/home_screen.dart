@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:lost_found_app/core/constants/app_colors.dart';
+import 'package:lost_found_app/core/constants/app_spacing.dart';
+import 'package:lost_found_app/core/constants/app_text_style.dart';
+import 'package:lost_found_app/core/utils/widget_util.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
@@ -27,111 +31,114 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildBody() {
     return ListView(
-      physics: BouncingScrollPhysics(),
+      // physics: BouncingScrollPhysics(),
       children: [
-        _buildSearch(),
-        _buildCategoryView(),
-        _buildNewBook(
+        _buildSlideShow(
           bookModelList,
           Axis.horizontal,
-        ), // First book list - Horizontal
-        _buildBookaLabel("_lang.book"),
+        ),
+        SizedBox(height: AppSpacing.md),
+        HeadlineLabel("Category by Posts", AppTextSizes.headline2, button: textButtonNavigateTo(context, destination: DemoScreen(), child: Text("See all")) as TextButton),
+        _buildCategoryView(),
         _buildBook(bookModelList),
-        _buildBookaLabel("_lang.audio"),
         _buildBook(bookModelList), // Second book list - Vertical
       ],
     );
   }
 
-  Widget _buildCategoryView() {
-    return SizedBox(
-      height: 90, // Set height based on screen
-      child: GridView.builder(
-        physics: BouncingScrollPhysics(),
-        scrollDirection: Axis.vertical,
-        padding: EdgeInsets.all(10),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisSpacing: 5,
-          crossAxisSpacing: 5,
+  Widget _buildSlideShow(List<BookModel> items, Axis direc) {
+    if (items.isEmpty) {
+      return Center(child: Text("No books available"));
+    }
+
+    return Column(
+      children: [
+        SizedBox(
+          height: 220,
+          child: PageView.builder(
+            controller: _pageController,
+            physics: BouncingScrollPhysics(),
+            scrollDirection: direc,
+            itemCount: items.length,
+            pageSnapping: true,
+            itemBuilder: (context, index) {
+              double scale =
+                  _pageController.hasClients && _pageController.page != null
+                      ? (1 - (_pageController.page! - index).abs() * 0.1)
+                      : 1;
+
+              return Transform.scale(
+                scale: scale,
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    // boxShadow: [
+                    //   BoxShadow(
+                    //     color: AppColors.primaryColor.withOpacity(0.2),
+                    //     blurRadius: 10,
+                    //     spreadRadius: 2,
+                    //   ),
+                    // ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: _buildNewBookItems(items[index]),
+                  ),
+                ),
+              );
+            },
+          ),
         ),
-        itemCount: _getCategory().length,
-        itemBuilder: (context, index) {
-          return _buildCategoryItem(_getCategory()[index]);
-        },
-      ),
+        SizedBox(height: 12),
+        SmoothPageIndicator(
+          controller: _pageController,
+          count: items.length,
+          effect: ExpandingDotsEffect(
+            dotWidth: 12,
+            dotHeight: 12,
+            activeDotColor: AppColors.primaryColor,
+            dotColor: AppColors.black.withOpacity(0.5),
+            expansionFactor: 3,
+          ),
+        ),
+      ],
     );
   }
 
-  List<Map<String, dynamic>> _getCategory() {
+  Widget _buildCategoryView() {
+  final categories = _categoryList();
+  int crossAxisCount = 1; // Number of items per row
+
+  return Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: Column(
+      children: List.generate((categories.length / crossAxisCount).ceil(), (rowIndex) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: List.generate(crossAxisCount, (colIndex) {
+            int itemIndex = rowIndex * crossAxisCount + colIndex;
+            return itemIndex < categories.length
+                ? Expanded(child: _buildCategoryItem(categories[itemIndex]))
+                : SizedBox(); // Empty space if no item
+          }),
+        );
+      }),
+    ),
+  );
+}
+  
+  List<Map<String, dynamic>> _categoryList() {
     return [
-      {"title": "_lang.book", "icon": Icons.headphones, "page": DemoScreen()},
-      {"title": "_lang.audio", "icon": Icons.audio_file, "page": DemoScreen()},
+      {"title": "Lost & Found of People", "icon": Icons.people_alt, "page": DemoScreen()},
+      {"title": "Lost & Found of Animal", "icon": Icons.pets_outlined, "page": DemoScreen()},
+      {"title": "Lost & Found of other Staff", "icon": Icons.all_inclusive_outlined, "page": DemoScreen()},
     ];
   }
 
   Widget _buildCategoryItem(Map<String, dynamic> item) {
     return Column(
-      children: [_buildCard(item["title"], item["icon"], item["page"])],
-    );
-  }
-
-  Widget _buildCard(String title, IconData icon, Widget page) {
-    return Card(
-      child: ListTile(
-        leading: Icon(icon),
-        title: Text(title),
-        onTap: () {
-          Navigator.push(
-            context,
-            CupertinoPageRoute(builder: (context) => page),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildSearch() {
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: TextField(
-        decoration: InputDecoration(
-          hintText: "_lang.search",
-          suffixIcon: Icon(Icons.search),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(50)),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNewBook(List<BookModel> items, Axis direc) {
-    return Column(
-      children: [
-        SizedBox(
-          height: 200, // Provide a fixed height
-          child: PageView.builder(
-            controller: _pageController,
-            physics: BouncingScrollPhysics(),
-            scrollDirection: direc, // Use the `Axis` parameter
-            itemCount: items.length,
-            pageSnapping: true,
-            itemBuilder: (context, index) {
-              return _buildNewBookItems(items[index]);
-            },
-          ),
-        ),
-        SizedBox(height: 10),
-        SmoothPageIndicator(
-          controller: _pageController, // Attach the PageController
-          count: items.length, // Total number of pages
-          effect: WormEffect(
-            dotWidth: 10,
-            dotHeight: 10,
-            activeDotColor: Colors.blue,
-            dotColor: Colors.grey,
-          ),
-        ),
-      ],
+      children: [cardListNavigateTo(context, item["title"], item["icon"], item["page"], padding: AppSpacing.md, iconsSize: 45)],
     );
   }
 
@@ -145,89 +152,74 @@ class _HomeScreenState extends State<HomeScreen> {
               CupertinoPageRoute(builder: (context) => PostDetailScreen(items)),
             );
           },
-          child: Row(
-            crossAxisAlignment:
-                CrossAxisAlignment.start, // Align items at the top
-            children: [
-              Container(
-                height: 150, // Adjust height as needed
-                width: 100, // Adjust width as needed
-                margin: EdgeInsets.all(10), // Add some spacing
-                child: Image.network(
-                  items.img,
-                  fit: BoxFit.cover, // Ensure the image fits properly
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              crossAxisAlignment:
+                  CrossAxisAlignment.start, // Align items at the top
+              children: [
+                Container(
+                  height: 150, // Adjust height as needed
+                  width: 100, // Adjust width as needed
+                  margin: EdgeInsets.all(10), // Add some spacing
+                  child: Image.network(
+                    items.img,
+                    fit: BoxFit.cover, // Ensure the image fits properly
+                  ),
                 ),
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start, // Align text to the left
-                  children: [
-                    Text(
-                      items.title,
-                      overflow: TextOverflow.ellipsis, // Handle long text
-                      maxLines: 2, // Limit text to 2 lines
-                      style: TextStyle(
-                        fontSize: 14, // Adjust font size
-                        fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment:
+                        CrossAxisAlignment.start, // Align text to the left
+                    children: [
+                      Text(
+                        items.title,
+                        overflow: TextOverflow.ellipsis, // Handle long text
+                        maxLines: 2, // Limit text to 2 lines
+                        style: TextStyle(
+                          fontSize: 14, // Adjust font size
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ), // Add some spacing between title and date
-                    Text(
-                      "Price: USD ${items.price}",
-                      style: TextStyle(
-                        fontSize: 14, // Adjust font size
-                        fontWeight: FontWeight.bold,
+                      SizedBox(
+                        height: 5,
+                      ), // Add some spacing between title and date
+                      Text(
+                        "Price: USD ${items.price}",
+                        style: TextStyle(
+                          fontSize: 14, // Adjust font size
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ), // Add some spacing between title and date
-                    Text(
-                      "Date: ${items.date}",
-                      style: TextStyle(
-                        fontSize: 14, // Adjust font size
-                        fontWeight: FontWeight.normal,
+                      SizedBox(
+                        height: 5,
+                      ), // Add some spacing between title and date
+                      Text(
+                        "Date: ${items.date}",
+                        style: TextStyle(
+                          fontSize: 14, // Adjust font size
+                          fontWeight: FontWeight.normal,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 5),
-                    RatingStars(
-                      value: items.rate.toDouble(),
-                      starColor: Colors.orange,
-                      starOffColor: Colors.grey,
-                      valueLabelColor: Colors.orange,
-                      starSize: 15,
-                      valueLabelTextStyle: TextStyle(
-                        fontSize: 15,
-                        color: Colors.white,
+                      SizedBox(height: 5),
+                      RatingStars(
+                        value: items.rate.toDouble(),
+                        starColor: Colors.orange,
+                        starOffColor: Colors.grey,
+                        valueLabelColor: Colors.orange,
+                        starSize: 15,
+                        valueLabelTextStyle: TextStyle(
+                          fontSize: 15,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildBookaLabel(String category) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(category, style: TextStyle(fontSize: 24)),
-          TextButton(
-            onPressed: () {
-              // Add navigation or functionality here
-            },
-            child: Text("_lang.seemore"),
-          ),
-        ],
       ),
     );
   }
