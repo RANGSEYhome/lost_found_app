@@ -79,7 +79,7 @@ class BasicApp extends StatelessWidget {
       theme: ThemeData(
         brightness: Brightness.light,
         primarySwatch: AppColors.primarySwatch,
-        fontFamily: "KantumruyPro",
+        fontFamily: AppTextFonts.primaryFont,
         appBarTheme: AppBarTheme(
           backgroundColor: AppColors.originalLightThemeBg,
           foregroundColor: AppColors.black,
@@ -94,7 +94,7 @@ class BasicApp extends StatelessWidget {
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         primarySwatch: AppColors.primarySwatch,
-        fontFamily: "KantumruyPro",
+        fontFamily: AppTextFonts.primaryFont,
         appBarTheme: AppBarTheme(
           backgroundColor: AppColors.originalDarkThemeBg,
           foregroundColor: AppColors.white,
