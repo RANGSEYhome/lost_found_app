@@ -34,7 +34,7 @@ class Khmer implements Language {
   String get changeToEnglish => "Change To English";
   // screen
   String get home => "ទំព័រដើម";
-  String get ls => "ស្វែងរក";
+  String get ls => "L&F ប៊ុស្ដិ៍";
   String get account => "គណនី";
   String get aboutUs => "អំពីយើង";
   String get contactUs => "ទាក់ទងយើង";
