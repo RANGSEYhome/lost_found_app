@@ -16,9 +16,19 @@ class Language {
   String get aboutUs => "About Us";
   String get contactUs => "Contact Us";
   String get privacyPolicy => "Terms & Privacy";
+  String get postDetail => "Post Detail";
+  // Account
+  String get logout => "Logout";
+  String get login => "Login";
+  String get register => "Register";
+  String get forgotPassword => "Forgot Password";
+  String get resetPassword => "Reset Password";
+  String get email => "Email";
+  String get password => "Password";
+  String get confirmPassword => "Confirm Password";
+  String get submit => "Submit";
   // other
   String get search => "Search";
-  String get logout => "Logout";
 }
 
 class Khmer implements Language {
@@ -39,7 +49,17 @@ class Khmer implements Language {
   String get aboutUs => "អំពីយើង";
   String get contactUs => "ទាក់ទងយើង";
   String get privacyPolicy => "គោលការណ៍និងភាពឯកជន";
+  String get postDetail => "ព័ត៌មានលម្អិត";
+  // Account
+  String get logout => "ចាកចេញ";
+  String get login => "ចូលប្រើ";
+  String get register => "ចុះឈ្មោះ";
+  String get forgotPassword => "ភ្លេចពាក្យសម្ងាត់";
+  String get resetPassword => "កំណត់ពាក្យសម្ងាត់ថ្មី";
+  String get email => "អ៊ីម៉ែល";
+  String get password => "ពាក្យសម្ងាត់";
+  String get confirmPassword => "ផ្ទៀងផ្ទាត់ពាក្យសម្ងាត់";
+  String get submit => "បញ្ជូន";
   // other
   String get search => "ស្វែងរក";
-  String get logout => "ចេញ";
 }

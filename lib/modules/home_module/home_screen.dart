@@ -9,6 +9,7 @@ import 'package:lost_found_app/core/localization/lang_logic.dart';
 // modules
 import 'package:lost_found_app/modules/basic_module/demo_screen.dart';
 import 'package:lost_found_app/modules/home_module/book_data.dart';
+import 'package:lost_found_app/modules/post_detail_module/post_detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -122,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
         SizedBox(height: 10),
         SmoothPageIndicator(
           controller: _pageController, // Attach the PageController
-          count: items.length,         // Total number of pages
+          count: items.length, // Total number of pages
           effect: WormEffect(
             dotWidth: 10,
             dotHeight: 10,
@@ -140,9 +141,9 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Card(
         child: InkWell(
           onTap: () {
-            // Navigator.of(context).push(
-            //   CupertinoPageRoute(builder: (context) => Detail_Screen(items)),
-            // );
+            Navigator.of(context).push(
+              CupertinoPageRoute(builder: (context) => PostDetailScreen(items)),
+            );
           },
           child: Row(
             crossAxisAlignment:
@@ -198,8 +199,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       starOffColor: Colors.grey,
                       valueLabelColor: Colors.orange,
                       starSize: 15,
-                      valueLabelTextStyle:
-                          TextStyle(fontSize: 15, color: Colors.white),
+                      valueLabelTextStyle: TextStyle(
+                        fontSize: 15,
+                        color: Colors.white,
+                      ),
                     ),
                   ],
                 ),

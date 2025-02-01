@@ -16,20 +16,17 @@ class _DemoScreenState extends State<DemoScreen> {
   Language _lang = Khmer();
   int _langIndex = 0;
   @override
- Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     _lang = context.watch<LanguageLogic>().lang;
-     _langIndex = context.watch<LanguageLogic>().langIndex;
+    _langIndex = context.watch<LanguageLogic>().langIndex;
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Demo Screen"),
-      ),
-      body: _buildBody()
+      appBar: AppBar(title: Text("Demo Screen")),
+      body: _buildBody(),
     );
   }
-  Widget _buildBody(){
-     ThemeMode mode = context.watch<ThemeLogic>().mode;
-    return Center(
-      child: Text("This is just a demo screen"),
-    );
+
+  Widget _buildBody() {
+    ThemeMode mode = context.watch<ThemeLogic>().mode;
+    return Center(child: Text("This is just a demo screen"));
   }
 }
