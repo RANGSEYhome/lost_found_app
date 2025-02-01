@@ -47,9 +47,13 @@ Widget cardListNavigateTo(
   String title,
   IconData icon,
   Widget? destination,
-  {double padding = 0, double fontSize = AppTextSizes.bodyTextMedium, double iconsSize = AppTextSizes.bodyTextMedium}
+  {double padding = 0, double fontSize = AppTextSizes.bodyTextMedium, double iconsSize = AppTextSizes.headline2, borderColor = Colors.white}
 ) {
   return Card(
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(8), // Rounded corners
+      side: BorderSide(color: borderColor, width: 1), // Border color and width
+    ),
     child: Padding(
       padding: EdgeInsets.all(padding),
       child: ListTile(

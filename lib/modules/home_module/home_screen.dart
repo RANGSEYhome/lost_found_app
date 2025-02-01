@@ -33,12 +33,19 @@ class _HomeScreenState extends State<HomeScreen> {
     return ListView(
       // physics: BouncingScrollPhysics(),
       children: [
-        _buildSlideShow(
-          bookModelList,
-          Axis.horizontal,
-        ),
+        _buildSlideShow(bookModelList, Axis.horizontal),
         SizedBox(height: AppSpacing.md),
-        HeadlineLabel("Category by Posts", AppTextSizes.headline2, button: textButtonNavigateTo(context, destination: DemoScreen(), child: Text("See all")) as TextButton),
+        HeadlineLabel(
+          "Category by Posts",
+          AppTextSizes.headline2,
+          button:
+              textButtonNavigateTo(
+                    context,
+                    destination: DemoScreen(),
+                    child: Text("See all"),
+                  )
+                  as TextButton,
+        ),
         _buildCategoryView(),
         _buildBook(bookModelList),
         _buildBook(bookModelList), // Second book list - Vertical
@@ -73,13 +80,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   margin: EdgeInsets.symmetric(horizontal: 10),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
-                    // boxShadow: [
-                    //   BoxShadow(
-                    //     color: AppColors.primaryColor.withOpacity(0.2),
-                    //     blurRadius: 10,
-                    //     spreadRadius: 2,
-                    //   ),
-                    // ],
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primaryColor.withOpacity(0.2),
+                        blurRadius: 10,
+                        spreadRadius: 2,
+                      ),
+                    ],
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(15),
@@ -107,45 +114,76 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildCategoryView() {
-  final categories = _categoryList();
-  int crossAxisCount = 1; // Number of items per row
+    final categories = _categoryList();
+    int crossAxisCount = 1; // Number of items per row
 
-  return Padding(
-    padding: const EdgeInsets.all(8.0),
-    child: Column(
-      children: List.generate((categories.length / crossAxisCount).ceil(), (rowIndex) {
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: List.generate(crossAxisCount, (colIndex) {
-            int itemIndex = rowIndex * crossAxisCount + colIndex;
-            return itemIndex < categories.length
-                ? Expanded(child: _buildCategoryItem(categories[itemIndex]))
-                : SizedBox(); // Empty space if no item
-          }),
-        );
-      }),
-    ),
-  );
-}
-  
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: List.generate((categories.length / crossAxisCount).ceil(), (
+          rowIndex,
+        ) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: List.generate(crossAxisCount, (colIndex) {
+              int itemIndex = rowIndex * crossAxisCount + colIndex;
+              return itemIndex < categories.length
+                  ? Expanded(child: _buildCategoryItem(categories[itemIndex]))
+                  : SizedBox(); // Empty space if no item
+            }),
+          );
+        }),
+      ),
+    );
+  }
+
   List<Map<String, dynamic>> _categoryList() {
     return [
-      {"title": "Lost & Found of People", "icon": Icons.people_alt, "page": DemoScreen()},
-      {"title": "Lost & Found of Animal", "icon": Icons.pets_outlined, "page": DemoScreen()},
-      {"title": "Lost & Found of other Staff", "icon": Icons.all_inclusive_outlined, "page": DemoScreen()},
+      {
+        "title": "Lost & Found of People",
+        "icon": Icons.people_alt,
+        "page": DemoScreen(),
+      },
+      {
+        "title": "Lost & Found of Animal",
+        "icon": Icons.pets_outlined,
+        "page": DemoScreen(),
+      },
+      {
+        "title": "Lost & Found of other Staff",
+        "icon": Icons.all_inclusive_outlined,
+        "page": DemoScreen(),
+      },
     ];
   }
 
   Widget _buildCategoryItem(Map<String, dynamic> item) {
     return Column(
-      children: [cardListNavigateTo(context, item["title"], item["icon"], item["page"], padding: AppSpacing.md, iconsSize: 45)],
+      children: [
+        cardListNavigateTo(
+          context,
+          item["title"],
+          item["icon"],
+          item["page"],
+          padding: AppSpacing.md,
+          iconsSize: 45,
+          borderColor: AppColors.primaryColor,
+        ),
+      ],
     );
   }
 
   Widget _buildNewBookItems(BookModel items) {
     return Padding(
-      padding: const EdgeInsets.all(10.0),
+      padding: const EdgeInsets.all(0),
       child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8), // Rounded corners
+          side: BorderSide(
+            color: AppColors.primaryColor,
+            width: 1,
+          ), // Border color and width
+        ),
         child: InkWell(
           onTap: () {
             Navigator.of(context).push(
