@@ -46,18 +46,27 @@ Widget cardListNavigateTo(
   BuildContext context,
   String title,
   IconData icon,
-  Widget? destination,
-  {double padding = 0, double fontSize = AppTextSizes.bodyTextMedium, double iconsSize = AppTextSizes.headline2, borderColor = Colors.white}
-) {
+  Widget? destination, {
+  double padding = 0,
+  double fontSize = AppTextSizes.bodyTextMedium,
+  double iconsSize = AppTextSizes.bodyTextMedium,
+  Color? borderColor, // Nullable parameter
+}) {
+  // Get the theme's border color if no value is provided
+  borderColor ??= Theme.of(context).cardTheme.color;
+
   return Card(
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(8), // Rounded corners
-      side: BorderSide(color: borderColor, width: 1), // Border color and width
+      borderRadius: BorderRadius.circular(8),
+      side: BorderSide(
+        color: borderColor!, // Ensured to be non-null here
+        width: 1,
+      ),
     ),
     child: Padding(
       padding: EdgeInsets.all(padding),
       child: ListTile(
-        leading: Icon(icon, color: AppColors.primaryColor, size: iconsSize,),
+        leading: Icon(icon, color: AppColors.primaryColor, size: iconsSize),
         title: Text(title, style: TextStyle(fontSize: fontSize)),
         onTap: () {
           if (destination != null) {

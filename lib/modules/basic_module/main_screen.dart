@@ -86,7 +86,16 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Widget _buildBottomNavBar() {
-    return BottomNavigationBar(
+  return Container(
+    decoration: BoxDecoration(
+      border: Border(
+        top: BorderSide(
+          color: Colors.black12, // Change to your preferred border color
+          width: 0.5, // Adjust the width as needed
+        ),
+      ),
+    ),
+    child: BottomNavigationBar(
       currentIndex: _currentIndex,
       onTap: (index) {
         setState(() {
@@ -96,7 +105,6 @@ class _MainScreenState extends State<MainScreen> {
       type: BottomNavigationBarType.fixed,
       selectedItemColor: AppColors.primaryColor,
       unselectedItemColor: AppColors.black,
-      // backgroundColor: AppColors.originalLightThemeBg,
       items: [
         BottomNavigationBarItem(
           icon: Icon(Icons.home_outlined),
@@ -111,8 +119,9 @@ class _MainScreenState extends State<MainScreen> {
           label: _lang.account,
         ),
       ],
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildDrawer() {
     return Drawer(
