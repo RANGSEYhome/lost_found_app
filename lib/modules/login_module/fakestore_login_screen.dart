@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:lost_found_app/modules/login_module/signup_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'fakestore_home_screen.dart';
@@ -13,6 +14,8 @@ class FakeStoreLoginScreen extends StatefulWidget {
 
 class _FakeStoreLoginScreenState extends State<FakeStoreLoginScreen> {
   // const LoginScreen({super.key}); //<--remove
+   String imgLogo = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLloB5OXSTOToaT5YRDhKKp1Qtj_nQKjjNPw&s";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,11 +39,13 @@ class _FakeStoreLoginScreenState extends State<FakeStoreLoginScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                _buildImage(imgLogo),
                 _buildUsernameTextFieldBorder(),
                 SizedBox(height: 10),
                 _buildPasswordTextFieldBorder(),
                 SizedBox(height: 10),
                 _buidElevatedButton(),
+                _singUpText(),
               ],
             ),
           ),
@@ -55,7 +60,7 @@ class _FakeStoreLoginScreenState extends State<FakeStoreLoginScreen> {
       height: 50,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.pink,
+          backgroundColor: Color(0xFF45BF7A),
           foregroundColor: Colors.white,
         ),
         onPressed: () async {
@@ -104,10 +109,10 @@ class _FakeStoreLoginScreenState extends State<FakeStoreLoginScreen> {
 
   Widget _buildUsernameTextFieldBorder() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.symmetric(horizontal: 15),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.pink),
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: Color(0xFF45BF7A)),
       ),
       child: TextFormField(
         controller: _usernameCtrl,
@@ -117,12 +122,12 @@ class _FakeStoreLoginScreenState extends State<FakeStoreLoginScreen> {
           }
           return null; //no problem
         },
-        style: TextStyle(color: Colors.pink),
+        style: TextStyle(color: Color(0xFF45BF7A)),
         decoration: InputDecoration(
           icon: Icon(Icons.person),
-          iconColor: Colors.pink,
+          iconColor: Color(0xFF45BF7A),
           hintText: "Enter Username",
-          hintStyle: TextStyle(color: Colors.pink.shade300),
+          hintStyle: TextStyle(color: Color(0xFF45BF7A)),
           border: InputBorder.none,
         ),
         textInputAction: TextInputAction.send,
@@ -138,10 +143,10 @@ class _FakeStoreLoginScreenState extends State<FakeStoreLoginScreen> {
 
   Widget _buildPasswordTextFieldBorder() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.symmetric(horizontal: 15),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.pink),
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: Color(0xFF45BF7A)),
       ),
       child: TextFormField(
         controller: _passCtrl,
@@ -153,12 +158,12 @@ class _FakeStoreLoginScreenState extends State<FakeStoreLoginScreen> {
           }
           return null; //no problem
         },
-        style: TextStyle(color: Colors.pink),
+        style: TextStyle(color: Color(0xFF45BF7A)),
         decoration: InputDecoration(
           icon: Icon(Icons.key),
-          iconColor: Colors.pink,
+          iconColor: Color(0xFF45BF7A),
           hintText: "Enter Password",
-          hintStyle: TextStyle(color: Colors.pink.shade300),
+          hintStyle: TextStyle(color: Color(0xFF45BF7A)),
           border: InputBorder.none,
           suffixIcon: IconButton(
             onPressed: () {
@@ -175,6 +180,49 @@ class _FakeStoreLoginScreenState extends State<FakeStoreLoginScreen> {
         textInputAction: TextInputAction.send,
         autocorrect: false,
         obscureText: _hidePassword, //true => password
+      ),
+    );
+  }
+
+
+   Widget _buildImage(String img){
+    return Center(
+      child: Container(
+        width: 120,
+        height: 120,
+        margin: EdgeInsets.only(bottom: 30),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.green, width: 5),
+          shape: BoxShape.circle,
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.white, Colors.white],
+          ),
+          image: DecorationImage(
+            image: NetworkImage(img),
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
+    );
+  }
+  Widget _singUpText(){
+    return Container(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text("Don't have an account?"),
+          TextButton(
+            onPressed: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SignupScreen()),
+              );
+            },
+            child: Text("Sign Up", style: TextStyle(color: Colors.green),),
+          ),
+        ],
       ),
     );
   }
