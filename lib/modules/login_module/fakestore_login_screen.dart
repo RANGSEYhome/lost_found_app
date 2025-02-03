@@ -184,7 +184,6 @@ class _FakeStoreLoginScreenState extends State<FakeStoreLoginScreen> {
     );
   }
 
-
    Widget _buildImage(String img){
     return Center(
       child: Container(

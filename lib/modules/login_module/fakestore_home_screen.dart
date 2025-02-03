@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 // core
 import 'package:lost_found_app/core/localization/lang_logic.dart';
 import 'package:lost_found_app/core/localization/lang_data.dart';
+import 'package:lost_found_app/modules/basic_module/demo_screen.dart';
 // modules
 import 'package:lost_found_app/modules/basic_module/main_screen.dart';
+import 'package:lost_found_app/modules/home_module/home_screen.dart';
+import 'package:lost_found_app/modules/login_module/fakestore_loading_screen.dart';
 import 'package:provider/provider.dart';
 import 'fakestore_login_logic.dart';
 
@@ -16,34 +19,22 @@ class FakestoreHomeScreen extends StatefulWidget {
 }
 
 class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
+  Language _lang = Khmer();
+  int _langIndex = 0;
   @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     appBar: AppBar(
-  //       title: Text("Fake Store Home Scren"),
-  //       actions: [
-  //         IconButton(
-  //           onPressed: () async{
-  //             await context.read<FakestoreLoginLogic>().clear();
-  //             Navigator.of(context).pushReplacement(
-  //                   CupertinoPageRoute(
-  //                     builder: (context) => FakeStoreLoadingScreen(),
-  //                   ),
-  //                 );
-  //           },
-  //           icon: Icon(Icons.logout),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
   Widget build(BuildContext context) {
-    Language _lang = Khmer();
     _lang = context.watch<LanguageLogic>().lang;
-   
+    _langIndex = context.watch<LanguageLogic>().langIndex;
     return Scaffold(
-      body: ListTile(
+      appBar: AppBar(title: Text("Account")),
+      body: _buildBody(),
+    );
+  }
+
+  Widget _buildBody() {
+    return ListView(
+      children: [
+        ListTile(
         leading: Icon(
           Icons.logout,
         ),
@@ -53,10 +44,11 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
         onTap: () async {
           await context.read<FakestoreLoginLogic>().clear();
           Navigator.of(context).pushReplacement(
-            CupertinoPageRoute(builder: (context) => MainScreen()),
+            CupertinoPageRoute(builder: (context) => FakeStoreLoadingScreen()),
           );
         },
       ),
+      ],
     );
   }
 }

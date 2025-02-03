@@ -44,26 +44,26 @@ class _MainScreenState extends State<MainScreen> {
         ),
       },
       {
-        'appBar': AppBar(
-          title: Image.network(
-            'https://cdn-icons-png.flaticon.com/512/149/149071.png',
-            width: 60,
-          ),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 2.0),
-              child: IconButton(
-                icon: Icon(Icons.edit_note_outlined, size: 50),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    CupertinoPageRoute(builder: (context) => DemoScreen()),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
+        // 'appBar': AppBar(
+          // title: Image.network(
+          //   'https://cdn-icons-png.flaticon.com/512/149/149071.png',
+          //   width: 60,
+          // ),
+          // actions: [
+          //   Padding(
+          //     padding: const EdgeInsets.only(right: 2.0),
+          //     child: IconButton(
+          //       icon: Icon(Icons.edit_note_outlined, size: 50),
+          //       onPressed: () {
+          //         Navigator.push(
+          //           context,
+          //           CupertinoPageRoute(builder: (context) => DemoScreen()),
+          //         );
+          //       },
+          //     ),
+          //   ),
+          // ],
+        // ),
       },
     ];
     return Scaffold(
