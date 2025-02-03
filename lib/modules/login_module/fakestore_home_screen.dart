@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 // core
 import 'package:lost_found_app/core/localization/lang_logic.dart';
 import 'package:lost_found_app/core/localization/lang_data.dart';
-import 'package:lost_found_app/modules/basic_module/demo_screen.dart';
 // modules
-import 'package:lost_found_app/modules/basic_module/main_screen.dart';
-import 'package:lost_found_app/modules/home_module/home_screen.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_loading_screen.dart';
 import 'package:provider/provider.dart';
 import 'fakestore_login_logic.dart';

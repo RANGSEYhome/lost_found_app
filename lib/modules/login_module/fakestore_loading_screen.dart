@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lost_found_app/modules/basic_module/main_screen.dart';
-import 'package:lost_found_app/modules/basic_module/navigation_index.dart';
-import 'package:lost_found_app/modules/home_module/home_screen.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_home_screen.dart';
 import 'package:provider/provider.dart';
 // modules
