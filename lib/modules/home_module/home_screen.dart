@@ -38,17 +38,15 @@ class _HomeScreenState extends State<HomeScreen> {
         HeadlineLabel(
           "Category by Posts",
           AppTextSizes.headline2,
-          button:
-              textButtonNavigateTo(
-                    context,
-                    destination: DemoScreen(),
-                    child: Text("See all"),
-                  )
-                  as TextButton,
+          // button:
+          //     textButtonNavigateTo(
+          //           context,
+          //           destination: DemoScreen(),
+          //           child: Text("See all"),
+          //         )
+          //         as TextButton,
         ),
         _buildCategoryView(),
-        _buildBook(bookModelList),
-        _buildBook(bookModelList), // Second book list - Vertical
       ],
     );
   }
@@ -258,18 +256,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildBook(List<BookModel> items) {
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Column(
-        children:
-            items.map((item) {
-              return _buildNewBookItems(item);
-            }).toList(),
       ),
     );
   }

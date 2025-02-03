@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lost_found_app/modules/search_module/search_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
 // core
@@ -33,13 +34,13 @@ class _MainScreenState extends State<MainScreen> {
       {
         'appBar': AppBar(
           title: Text(_lang.appName),
-          actions: [searchButton(context, DemoScreen())],
+          actions: [searchButton(context, SearchScreen())],
         ),
       },
       {
         'appBar': AppBar(
           title: Text(_lang.ls),
-          actions: [searchButton(context, DemoScreen())],
+          actions: [searchButton(context, SearchScreen())],
         ),
       },
       {
