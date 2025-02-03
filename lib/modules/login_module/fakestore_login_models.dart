@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 
 LoginRequestModel loginRequestModelFromJson(String str) =>
@@ -9,22 +8,22 @@ String loginRequestModelToJson(LoginRequestModel data) =>
     json.encode(data.toJson());
 
 class LoginRequestModel {
-  String username;
+  String email;
   String password;
 
   LoginRequestModel({
-    required this.username,
+    required this.email,
     required this.password,
   });
 
   factory LoginRequestModel.fromJson(Map<String, dynamic> json) =>
       LoginRequestModel(
-        username: json["username"],
+        email: json["email"],
         password: json["password"],
       );
 
   Map<String, dynamic> toJson() => {
-        "username": username,
+        "email": email,
         "password": password,
       };
 }
@@ -45,27 +44,95 @@ String loginResponseModelToJson(MyResponseModel data) =>
 
 class MyResponseModel {
   String? token;
+  String? refreshToken;
+  UserModel? user;
   String? errorText;
 
-  MyResponseModel({this.token, this.errorText});
+  MyResponseModel({this.token, this.refreshToken, this.user, this.errorText});
 
-  factory MyResponseModel.fromJson(Map<String, dynamic> json) =>
-      MyResponseModel(
+  factory MyResponseModel.fromJson(Map<String, dynamic> json) => MyResponseModel(
         token: json["token"],
+        refreshToken: json["refreshToken"],
+        user: json["user"] != null ? UserModel.fromJson(json["user"]) : null,
         errorText: null,
       );
 
-  factory MyResponseModel.fromErrorText(text) => MyResponseModel(
+  factory MyResponseModel.fromErrorText(String text) => MyResponseModel(
         token: null,
-        errorText: null,
+        refreshToken: null,
+        user: null,
+        errorText: text,
       );
 
   Map<String, dynamic> toJson() => {
         "token": token,
+        "refreshToken": refreshToken,
+        "user": user?.toJson(),
       };
 
   @override
   String toString() {
-    return 'MyResponseModel(token: $token, errorText: $errorText)';
+    return 'MyResponseModel(token: $token, refreshToken: $refreshToken, user: $user, errorText: $errorText)';
+  }
+}
+
+class UserModel {
+  String id;
+  String username;
+  String firstname;
+  String lastname;
+  String email;
+  String phone;
+  String profilePic;
+  String role;
+  String address;
+  String createdDate;
+  String updatedDate;
+
+  UserModel({
+    required this.id,
+    required this.username,
+    required this.firstname,
+    required this.lastname,
+    required this.email,
+    required this.phone,
+    required this.profilePic,
+    required this.role,
+    required this.address,
+    required this.createdDate,
+    required this.updatedDate,
+  });
+
+  factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
+        id: json["_id"],
+        username: json["username"],
+        firstname: json["firstname"],
+        lastname: json["lastname"],
+        email: json["email"],
+        phone: json["phone"],
+        profilePic: json["profile_pic"],
+        role: json["role"],
+        address: json["address"],
+        createdDate: json["createdDate"],
+        updatedDate: json["updatedDate"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "_id": id,
+        "username": username,
+        "firstname": firstname,
+        "lastname": lastname,
+        "email": email,
+        "phone": phone,
+        "profile_pic": profilePic,
+        "role": role,
+        "address": address,
+        "createdDate": createdDate,
+        "updatedDate": updatedDate,
+      };
+
+  @override
+  String toString() {
+    return 'UserModel(id: $id, username: $username, firstname: $firstname, lastname: $lastname, email: $email, phone: $phone, role: $role)';
   }
 }

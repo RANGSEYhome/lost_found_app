@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lost_found_app/modules/login_module/fakestore_login_logic.dart';
 import 'package:provider/provider.dart';
 // core
 import 'package:lost_found_app/core/localization/lang_logic.dart';
@@ -11,6 +12,7 @@ import 'package:lost_found_app/modules/basic_module/main_screen.dart';
 Widget providerBasicApp() {
   return MultiProvider(
     providers: [
+      ChangeNotifierProvider(create: (context) => FakestoreLoginLogic()),
       ChangeNotifierProvider(create: (context) => LanguageLogic()),
       ChangeNotifierProvider(create: (context) => ThemeLogic()),
     ],
