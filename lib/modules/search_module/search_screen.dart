@@ -21,7 +21,7 @@ class _SearchScreenState extends State<SearchScreen> {
     _lang = context.watch<LanguageLogic>().lang;
     _langIndex = context.watch<LanguageLogic>().langIndex;
     return Scaffold(
-      appBar: AppBar(title: Text("Demo Screen")),
+      appBar: AppBar(title: Text("Search Screen")),
       body: _buildBody(),
     );
   }
