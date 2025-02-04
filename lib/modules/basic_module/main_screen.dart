@@ -150,7 +150,7 @@ class _MainScreenState extends State<MainScreen> {
             context,
             _lang.home,
             Icons.home_outlined,
-            BasicApp(),
+            providerBasicApp(),
           ),
           cardListNavigateTo(
             context,
