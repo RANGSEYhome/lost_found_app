@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lost_found_app/modules/basic_module/basic_app.dart';
 import 'package:lost_found_app/modules/search_module/search_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
@@ -149,7 +150,7 @@ class _MainScreenState extends State<MainScreen> {
             context,
             _lang.home,
             Icons.home_outlined,
-            MainScreen(),
+            BasicApp(),
           ),
           cardListNavigateTo(
             context,
