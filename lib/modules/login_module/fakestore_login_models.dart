@@ -69,70 +69,57 @@ class MyResponseModel {
         "refreshToken": refreshToken,
         "user": user?.toJson(),
       };
-
-  @override
-  String toString() {
-    return 'MyResponseModel(token: $token, refreshToken: $refreshToken, user: $user, errorText: $errorText)';
-  }
 }
 
 class UserModel {
   String id;
-  String username;
   String firstname;
   String lastname;
   String email;
   String phone;
+  String password;
+  String confirmPassword;
   String profilePic;
   String role;
   String address;
-  String createdDate;
-  String updatedDate;
 
   UserModel({
     required this.id,
-    required this.username,
     required this.firstname,
     required this.lastname,
     required this.email,
     required this.phone,
+    required this.password,
+    required this.confirmPassword,
     required this.profilePic,
     required this.role,
     required this.address,
-    required this.createdDate,
-    required this.updatedDate,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
-        id: json["_id"],
-        username: json["username"],
-        firstname: json["firstname"],
-        lastname: json["lastname"],
-        email: json["email"],
-        phone: json["phone"],
-        profilePic: json["profile_pic"],
-        role: json["role"],
-        address: json["address"],
-        createdDate: json["createdDate"],
-        updatedDate: json["updatedDate"],
+        id: json["_id"] ?? "",  // Handle null values
+        firstname: json["firstname"] ?? "",
+        lastname: json["lastname"] ?? "",
+        email: json["email"] ?? "",
+        phone: json["phone"] ?? "",
+        password: json["password"] ?? "",
+        confirmPassword: json["confirmPassword"] ?? "",
+        profilePic: json["profile_pic"] ?? "",
+        role: json["role"] ?? "",
+        address: json["address"] ?? "",
       );
 
   Map<String, dynamic> toJson() => {
         "_id": id,
-        "username": username,
         "firstname": firstname,
         "lastname": lastname,
         "email": email,
+        "password": password,
+        "confirmPassword": confirmPassword,
         "phone": phone,
         "profile_pic": profilePic,
         "role": role,
         "address": address,
-        "createdDate": createdDate,
-        "updatedDate": updatedDate,
       };
-
-  @override
-  String toString() {
-    return 'UserModel(id: $id, username: $username, firstname: $firstname, lastname: $lastname, email: $email, phone: $phone, role: $role)';
-  }
 }
+

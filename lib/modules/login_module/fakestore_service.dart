@@ -4,6 +4,12 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'fakestore_login_models.dart';
 
+enum PostMethod{
+  insert,
+  update,
+  delete,
+}
+
 class FakestoreService {
   static Future<MyResponseModel> login(
       {required LoginRequestModel request}) async {
@@ -25,6 +31,28 @@ class FakestoreService {
       return data;
     } catch (e) {
       return MyResponseModel(token: null, errorText: e.toString());
+    }
+  }
+  static Future<String> insert(UserModel user) async {
+   // String key = "d033e22ae348aeb5660fc2140aec35850c4da997";
+    String url = "https://d-api.devkrc.com/v1/auth/sign-up";
+    try {
+      http.Response response = await http.post(
+        Uri.parse(url),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode(user.toJson()), // Ensure JSON encoding
+      );
+      final output = json.decode(response.body);
+       debugPrint("output: $output");
+      if(output["status"] == "success"){
+        return "success";
+      }else{
+        return output.toString();
+      }
+    } catch (e) {
+      throw Exception(e);
     }
   }
 }
