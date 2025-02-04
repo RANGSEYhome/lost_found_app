@@ -22,7 +22,7 @@ Widget textNavigateTo(
     child: child ?? SizedBox.shrink(),
   );
 }
-// textButtonNavigateTo(context, destination: DemoScreen(), child: Text("Click Me!")),
+// textNavigateTo(context, destination: DemoScreen(), child: Text("Click Me!")),
 
 Widget textButtonNavigateTo(
   BuildContext context, {
