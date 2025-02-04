@@ -4,6 +4,7 @@ import 'package:lost_found_app/core/constants/app_text_style.dart';
 import 'package:lost_found_app/core/utils/widget_util.dart';
 import 'package:lost_found_app/modules/basic_module/demo_screen.dart';
 import 'package:lost_found_app/modules/home_module/book_data.dart';
+import 'package:lost_found_app/modules/post_detail_module/post_create_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:lost_found_app/core/localization/lang_logic.dart';
@@ -31,6 +32,7 @@ class _LostFoundScreenState extends State<LostFoundScreen> {
   Widget _buildBody(Language _lang) {
     return ListView(
       children: [
+       textButtonNavigateTo(context, destination: CreatePostScreen(), child: Text("Click Me!")),
         HeadlineLabel(
           "Recent Posts",
           AppTextSizes.headline2,
