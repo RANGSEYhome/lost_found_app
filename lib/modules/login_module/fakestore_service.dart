@@ -1,19 +1,23 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'fakestore_login_models.dart';
 
-enum PostMethod{
+enum PostMethod {
   insert,
   update,
   delete,
 }
 
+String api = "http://10.0.2.2:4001/v1";
+
+// String api = "https://d-api.devkrc.com/v1/";
 class FakestoreService {
   static Future<MyResponseModel> login(
       {required LoginRequestModel request}) async {
-    String url = "https://d-api.devkrc.com/v1/auth/login";
+    String url = "$api/auth/login";
     debugPrint("Body: ${request.toJson()}");
     try {
       http.Response response = await http.post(
@@ -33,9 +37,10 @@ class FakestoreService {
       return MyResponseModel(token: null, errorText: e.toString());
     }
   }
+
   static Future<String> insert(UserModel user) async {
-   // String key = "d033e22ae348aeb5660fc2140aec35850c4da997";
-    String url = "https://d-api.devkrc.com/v1/auth/sign-up";
+    // String key = "d033e22ae348aeb5660fc2140aec35850c4da997";
+    String url = "$api/auth/sign-up";
     try {
       http.Response response = await http.post(
         Uri.parse(url),
@@ -45,19 +50,49 @@ class FakestoreService {
         body: jsonEncode(user.toJson()), // Ensure JSON encoding
       );
       final output = json.decode(response.body);
-       debugPrint("output: $output");
-      if(output["status"] == "success"){
+      debugPrint("output: $output");
+      if (output["status"] == "success") {
         return "success";
-      }else{
+      } else {
         return output.toString();
       }
     } catch (e) {
       throw Exception(e);
     }
   }
+
+static Future<String?> uploadImage(File  imagePath) async {
+    final url = Uri.parse("$api/files/upload-single-s3"); // Replace with your API endpoint
+
+    try {
+      var request = http.MultipartRequest('POST', url);
+
+      // Attach the file
+      var file = await http.MultipartFile.fromPath(
+        'file', // This should match your backend key (req.file)
+        imagePath.path,
+      );
+      request.files.add(file);
+
+      // Send the request
+      var response = await request.send();
+
+      if (response.statusCode == 200) {
+        var responseData = await response.stream.bytesToString();
+        var jsonResponse = json.decode(responseData);
+
+        print('Upload successful: ${jsonResponse['path']}');
+        return jsonResponse['path']; // Return the uploaded image path
+      } else {
+        print('Upload failed with status: ${response.statusCode}');
+        return null; // Return null to indicate failure
+      }
+    } catch (e) {
+      print('🚨 Exception occurred: $e');
+      return null;
+    }
+  }
 }
-
-
 // class FakestoreService {
 //   static Future login({
 //     required LoginRequestModel request,
