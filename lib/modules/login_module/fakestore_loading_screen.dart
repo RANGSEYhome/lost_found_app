@@ -26,7 +26,7 @@ class _FakeStoreLoadingScreenState extends State<FakeStoreLoadingScreen> {
     return FutureBuilder(
       future: _readData(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
+        
           MyResponseModel responseModel =
               context.watch<FakestoreLoginLogic>().responseModel;
           if (responseModel.token == null) {
@@ -36,9 +36,7 @@ class _FakeStoreLoadingScreenState extends State<FakeStoreLoadingScreen> {
             debugPrint("responseModel.token: ${responseModel.token}");
             return FakestoreHomeScreen();
           }
-        } else {
-          return FakeStoreSplashscreen();
-        }
+       
       },
     );
   }

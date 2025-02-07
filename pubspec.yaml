@@ -43,6 +43,7 @@ dependencies:
   smooth_page_indicator: ^1.0.0
   flutter_rating_stars: ^1.1.0
   image_picker: ^0.8.7+5
+  font_awesome_flutter: ^10.1.0 
 
 dev_dependencies:
   flutter_test:

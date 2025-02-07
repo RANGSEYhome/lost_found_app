@@ -221,7 +221,6 @@ class _SignupScreenState extends State<SignupScreen> {
              
             if (_imageFile != null) {
               await FakestoreService.uploadImage(_imageFile!).then((path)  {
-                print("Uploading image... ${path.toString()}");
                  p =  path.toString();
                 // Navigator.pushNamed(context, '/login');
               }).catchError((e) {
@@ -230,7 +229,6 @@ class _SignupScreenState extends State<SignupScreen> {
                 ));
               });
             }
-            print("Uploading P... $p");
              UserModel user = UserModel(
               id: "",
               firstname: _firstnameController.text,
