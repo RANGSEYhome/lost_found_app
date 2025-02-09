@@ -44,6 +44,7 @@ dependencies:
   flutter_rating_stars: ^1.1.0
   image_picker: ^0.8.7+5
   font_awesome_flutter: ^10.1.0 
+  intl: ^0.18.0
 
 dev_dependencies:
   flutter_test:

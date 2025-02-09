@@ -21,13 +21,14 @@ class FakestoreLoginLogic extends ChangeNotifier {
     debugPrint("Reading Token: $tk");
 
     UserModel? user;
-    if (userData != null) {
-      try {
-        user = UserModel.fromJson(jsonDecode(userData));
-      } catch (e) {
-        debugPrint("Error decoding user data: $e");
-      }
-    }
+   if (userData != null) {
+  try {
+    final Map<String, dynamic> parsedData = jsonDecode(userData);
+    user = UserModel.fromJson(parsedData);
+  } catch (e) {
+    debugPrint("Error decoding user data: $e");
+  }
+}
 
     _responseModel = MyResponseModel(token: tk, user: user);
     notifyListeners();

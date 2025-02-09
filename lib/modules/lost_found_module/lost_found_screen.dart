@@ -5,6 +5,8 @@ import 'package:lost_found_app/core/utils/widget_util.dart';
 import 'package:lost_found_app/modules/basic_module/demo_screen.dart';
 import 'package:lost_found_app/modules/home_module/book_data.dart';
 import 'package:lost_found_app/modules/post_detail_module/post_create_screen.dart';
+import 'package:lost_found_app/modules/post_detail_module/post_logic.dart';
+import 'package:lost_found_app/modules/post_detail_module/post_model.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:lost_found_app/core/localization/lang_logic.dart';
@@ -19,6 +21,11 @@ class LostFoundScreen extends StatefulWidget {
 
 class _LostFoundScreenState extends State<LostFoundScreen> {
   // const SecondScreen({super.key});
+    @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => context.read<PostLogic>().read()); // Fetch posts on init
+  }
   @override
   Widget build(BuildContext context) {
     Language _lang = Khmer();
@@ -28,32 +35,75 @@ class _LostFoundScreenState extends State<LostFoundScreen> {
       body: _buildBody(_lang),
     );
   }
-
   Widget _buildBody(Language _lang) {
-    return ListView(
-      children: [
-       textButtonNavigateTo(context, destination: CreatePostScreen(), child: Text("Click Me!")),
-        HeadlineLabel(
-          "Recent Posts",
-          AppTextSizes.headline2,
-        ),
-        _buildBook(bookModelList),
-        HeadlineLabel(
-          "All Posts",
-          AppTextSizes.headline2,
-          button:
-              textButtonNavigateTo(
-                    context,
-                    destination: DemoScreen(),
-                    child: Text("See all"),
-                  )
-                  as TextButton,
-        ),
-        _buildBook(bookModelList),
-      ],
-    );
+  Object? error = context.watch<PostLogic>().error;
+  bool loading = context.watch<PostLogic>().loading;
+  List<Doc> records = context.watch<PostLogic>().postModel;
+
+  if (loading) {
+    return Center(child: CircularProgressIndicator());
   }
 
+  // if (error != null) {
+  //   return _buildErrorMessage(error);
+  // }
+
+  return Row(
+    children: [
+            textButtonNavigateTo(context, destination: CreatePostScreen(), child: Text("Click Me!")),
+     // _buildBook(records),
+    ],
+  );
+}
+
+
+  // Widget _buildBody(Language _lang) {
+  //    context.read<PostLogic>().read();
+  //    List<Doc> records = context.read<PostLogic>().postModel;
+  //    print("Records: $records");
+  //   return ListView(
+  //     children: [
+  //      textButtonNavigateTo(context, destination: CreatePostScreen(), child: Text("Click Me!")),
+  //       HeadlineLabel(
+  //         "Recent Posts",
+  //         AppTextSizes.headline2,
+  //       ),
+  //       _buildBook(records),
+  //       HeadlineLabel(
+  //         "All Posts",
+  //         AppTextSizes.headline2,
+  //         button:
+  //             textButtonNavigateTo(
+  //                   context,
+  //                   destination: DemoScreen(),
+  //                   child: Text("See all"),
+  //                 )
+  //                 as TextButton,
+  //       ),
+  //       _buildBook(records),
+  //     ],
+  //   );
+  // }
+  
+  Widget _buildErrorMessage(Object error) {
+    debugPrint(error.toString());
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.error, size: 50),
+          Text('${error.toString()}'),
+          ElevatedButton(
+            onPressed: () {
+              context.read<PostLogic>().setLoading();
+              context.read<PostLogic>().read();
+            },
+            child: Text("RETRY"),
+          ),
+        ],
+      ),
+    );
+  }
   Widget _buildListItem(
     String title,
     String subtitle,
@@ -93,7 +143,7 @@ class _LostFoundScreenState extends State<LostFoundScreen> {
     );
   }
 
-  Widget _buildNewBookItems(BookModel items) {
+  Widget _buildNewBookItems(Doc items) {
     return Padding(
       padding: const EdgeInsets.all(0),
       child: Card(
@@ -106,9 +156,9 @@ class _LostFoundScreenState extends State<LostFoundScreen> {
         ),
         child: InkWell(
           onTap: () {
-            Navigator.of(context).push(
-              CupertinoPageRoute(builder: (context) => PostDetailScreen(items)),
-            );
+            // Navigator.of(context).push(
+            //   CupertinoPageRoute(builder: (context) => PostDetailScreen(items)),
+            // );
           },
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -121,7 +171,7 @@ class _LostFoundScreenState extends State<LostFoundScreen> {
                   width: 100, // Adjust width as needed
                   margin: EdgeInsets.all(10), // Add some spacing
                   child: Image.network(
-                    items.img,
+                    items.images,
                     fit: BoxFit.cover, // Ensure the image fits properly
                   ),
                 ),
@@ -143,7 +193,7 @@ class _LostFoundScreenState extends State<LostFoundScreen> {
                         height: 5,
                       ), // Add some spacing between title and date
                       Text(
-                        "Price: USD ${items.price}",
+                        "Price: USD ${items.description}",
                         style: TextStyle(
                           fontSize: 14, // Adjust font size
                           fontWeight: FontWeight.bold,
@@ -160,17 +210,7 @@ class _LostFoundScreenState extends State<LostFoundScreen> {
                         ),
                       ),
                       SizedBox(height: 5),
-                      RatingStars(
-                        value: items.rate.toDouble(),
-                        starColor: Colors.orange,
-                        starOffColor: Colors.grey,
-                        valueLabelColor: Colors.orange,
-                        starSize: 15,
-                        valueLabelTextStyle: TextStyle(
-                          fontSize: 15,
-                          color: Colors.white,
-                        ),
-                      ),
+                    
                     ],
                   ),
                 ),
@@ -182,7 +222,8 @@ class _LostFoundScreenState extends State<LostFoundScreen> {
     );
   }
 
-  Widget _buildBook(List<BookModel> items) {
+  Widget _buildBook(List<Doc> items) {
+    
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Column(
