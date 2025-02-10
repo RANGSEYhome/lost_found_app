@@ -184,9 +184,9 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         child: InkWell(
           onTap: () {
-            Navigator.of(context).push(
-              CupertinoPageRoute(builder: (context) => PostDetailScreen(items)),
-            );
+            // Navigator.of(context).push(
+            //   CupertinoPageRoute(builder: (context) => PostDetailScreen(items)),
+            // );
           },
           child: Padding(
             padding: const EdgeInsets.all(8.0),

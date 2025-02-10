@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_login_logic.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_login_models.dart';
 import 'package:lost_found_app/modules/lost_found_module/lost_found_screen.dart';
+import 'package:lost_found_app/modules/post_detail_module/post_logic.dart';
 import 'dart:io';
 
 import 'package:lost_found_app/modules/post_detail_module/post_model.dart';
@@ -259,77 +260,91 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     );
   }
 
-  Widget _buildElevatedButton() {
-    return Container(
-      margin: EdgeInsets.all(10),
-      width: double.maxFinite,
-      height: 60,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Color(0xFF45BF7A),
-          foregroundColor: Colors.white,
-        ),
-        onPressed: () async{
-          setState(() => _isLoading = true);
+Widget _buildElevatedButton() {
+  return Container(
+    margin: EdgeInsets.all(10),
+    width: double.maxFinite,
+    height: 60,
+    child: ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Color(0xFF45BF7A),
+        foregroundColor: Colors.white,
+      ),
+      onPressed: _isLoading ? null : () async {
+        if (!_formKey.currentState!.validate()) {
+          return; // Stop submission if the form is invalid
+        }
+        
+        if (_imageFile == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Please select an image')),
+          );
+          return;
+        }
+
+        setState(() => _isLoading = true);
+
+        try {
           await context.read<FakestoreLoginLogic>().read();
-          // Using `Provider.of` with `listen: false` to get data once
           FakestoreLoginLogic loginLogic = Provider.of<FakestoreLoginLogic>(context, listen: false);
           MyResponseModel responseModel = loginLogic.responseModel;
-          // MyResponseModel responseModel =
-          //     context.watch<FakestoreLoginLogic>().responseModel;
 
-          if (_formKey.currentState!.validate()) {
-             String p = "";
-            print("User ID: ${responseModel.user?.id}");
-            if (_imageFile != null) {
-              await FakestoreService.uploadImage(_imageFile!).then((path)  {
-                p =  path.toString();
-                // Navigator.pushNamed(context, '/login');
-              }).catchError((e) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(e.toString()),
-                ));
-                 setState(() => _isLoading = false);
-                return;
-              });
-            }
-            Doc post = Doc(
-              userId: "${responseModel.user?.id ?? ''}",
-              title: _titleController.text,
-              description: _descriptionController.text,
-              categoryId: _selectVal,
-              type: _selectType,
-              location: _locationController.text,
-              phone: _phoneController.text,
-              date: _dateController.text,
-              status: "active",
-              images: p,
+          if (responseModel.user?.id == null || responseModel.user!.id!.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('User ID is missing. Please log in again.')),
             );
-
-            PostSeevice.insert(post).then((value) {
-              if (value == "success") {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Form submitted successfully')),
-                );
-                Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => LostFoundScreen()),
-            );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Form submission failed')),
-                );
-              }
-            }).catchError((e) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(e.toString())),
-              );
-            });
-             setState(() => _isLoading = false);
+            setState(() => _isLoading = false);
+            return;
           }
-        },
-        child: Text('Create Post'),
-      ),
-    );
-  }
+
+          String imagePath = "";
+          try {
+            imagePath = (await FakestoreService.uploadImage(_imageFile!))!;
+          } catch (e) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('Image upload failed: $e'),
+            ));
+            setState(() => _isLoading = false);
+            return;
+          }
+
+          Doc post = Doc(
+            userId: responseModel.user!.id!,
+            title: _titleController.text.trim(),
+            description: _descriptionController.text.trim(),
+            categoryId: _selectVal,
+            type: _selectType,
+            location: _locationController.text.trim(),
+            phone: _phoneController.text.trim(),
+            date: _dateController.text.trim(),
+            status: "active",
+            images: imagePath,
+          );
+
+          String result = await PostSeevice.insert(post);
+          if (result == "success") {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Post created successfully')),
+            );
+            context.read<PostLogic>().read();  // Refresh posts
+            Navigator.pop(context, true);  // Navigate back
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Failed to create post')),
+            );
+          }
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('An error occurred: $e'),
+          ));
+        } finally {
+          setState(() => _isLoading = false);
+        }
+      },
+      child: _isLoading ? CircularProgressIndicator(color: Colors.white) : Text('Create Post'),
+    ),
+  );
+}
+
+
 }

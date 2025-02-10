@@ -34,32 +34,46 @@ class PostSeevice {
       throw Exception(e);
     }
   }
-static Future read({
+static Future<void> read({
   int page = 1,
   required Function(List<Doc>) onRes,
   required Function(Object?) onError,
 }) async {
-  String url = "$api/post?page=$page&limit=10"; // Correct API format
+  String url = "$api/post?page=$page&limit=10"; 
 
   try {
-    http.Response response = await http.get(Uri.parse(url)); // Using GET instead of POST
+    final response = await http.get(Uri.parse(url));
 
     print("Raw API Response: ${response.body}"); // ✅ Print API response
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> jsonData = json.decode(response.body); // Decode JSON
-
-      print("Decoded JSON Data: $jsonData"); // ✅ Print the decoded JSON
-
-      final data = PostModel.fromJson(jsonData); // Convert to PostModel
-      onRes(data.docs); // Return list of Docs
+      if (response.body.isNotEmpty) {
+        try {
+          final jsonData = json.decode(response.body); // ✅ FIX: Remove explicit type casting
+          
+          if (jsonData is Map<String, dynamic>) { // ✅ Ensure it's a Map before processing
+         //   print("Decoded JSON Data: $jsonData");
+            final data = PostModel.fromJson(jsonData);
+             print("Decoded JSON Data: $jsonData");
+            onRes(data.docs); 
+          } else {
+            onError("Unexpected JSON format: Expected a Map, got ${jsonData.runtimeType}");
+          }
+        } catch (jsonError) {
+          onError("JSON Decoding Error: $jsonError");
+        }
+      } else {
+        onError("Error: Empty response body.");
+      }
     } else {
-      onError("Error: ${response.body}");
+      onError("HTTP Error ${response.statusCode}: ${response.body}");
     }
   } catch (e) {
-    onError(e);
+    onError("Request Failed: $e");
   }
 }
+
+
 
 
 }

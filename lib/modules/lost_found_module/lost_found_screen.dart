@@ -5,14 +5,16 @@ import 'package:lost_found_app/core/utils/widget_util.dart';
 import 'package:lost_found_app/modules/basic_module/demo_screen.dart';
 import 'package:lost_found_app/modules/home_module/book_data.dart';
 import 'package:lost_found_app/modules/post_detail_module/post_create_screen.dart';
+import 'package:lost_found_app/modules/post_detail_module/post_get_model.dart'
+    as postGet;
 import 'package:lost_found_app/modules/post_detail_module/post_logic.dart';
-import 'package:lost_found_app/modules/post_detail_module/post_model.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:lost_found_app/core/localization/lang_logic.dart';
 import 'package:lost_found_app/core/localization/lang_data.dart';
 import 'package:lost_found_app/core/constants/app_colors.dart';
 import 'package:lost_found_app/modules/post_detail_module/post_detail_screen.dart';
+import 'package:intl/intl.dart';
 
 class LostFoundScreen extends StatefulWidget {
   @override
@@ -20,71 +22,96 @@ class LostFoundScreen extends StatefulWidget {
 }
 
 class _LostFoundScreenState extends State<LostFoundScreen> {
-  // const SecondScreen({super.key});
-    @override
+  final ScrollController _scroller = ScrollController();
+  bool _showUpButton = false; // Controls visibility of the "scroll to top" button
+  int page = 1;
+
+  @override
   void initState() {
     super.initState();
+    _scroller.addListener(_scrollListener); // Add scroll listener
     Future.microtask(() => context.read<PostLogic>().read()); // Fetch posts on init
   }
+
+  @override
+  void dispose() {
+    _scroller.removeListener(_scrollListener); // Remove scroll listener
+    super.dispose();
+  }
+
+  // Scroll listener to detect scroll position
+  void _scrollListener() {
+    setState(() {
+      // Show the "scroll to top" button if the user has scrolled past 100 pixels
+      if (_scroller.hasClients && _scroller.position.pixels > 100) {
+        _showUpButton = true;
+      } else {
+        _showUpButton = false;
+      }
+
+      // Load more posts if the user reaches the bottom of the list
+      if (_scroller.hasClients &&
+          _scroller.position.pixels == _scroller.position.maxScrollExtent) {
+        page++;
+        context.read<PostLogic>().readAppend(page);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Language _lang = Khmer();
     _lang = context.watch<LanguageLogic>().lang;
     return Scaffold(
-      //  appBar: _buildAppBar(),
       body: _buildBody(_lang),
+      floatingActionButton: _showUpButton ? _buildUpButton() : null, // Show button conditionally
     );
   }
-  Widget _buildBody(Language _lang) {
-  Object? error = context.watch<PostLogic>().error;
-  bool loading = context.watch<PostLogic>().loading;
-  List<Doc> records = context.watch<PostLogic>().postModel;
 
-  if (loading) {
-    return Center(child: CircularProgressIndicator());
+  // Build the "scroll to top" button
+  Widget _buildUpButton() {
+    return FloatingActionButton(
+      child: Icon(Icons.arrow_upward),
+      onPressed: () {
+        _scroller.animateTo(
+          0.0, // Scroll to the top
+          duration: Duration(milliseconds: 600),
+          curve: Curves.easeInOut,
+        );
+      },
+    );
   }
 
-  // if (error != null) {
-  //   return _buildErrorMessage(error);
-  // }
+  // Build the main body of the screen
+  Widget _buildBody(Language _lang) {
+    Object? error = context.watch<PostLogic>().error;
+    bool loading = context.watch<PostLogic>().loading;
+    List<postGet.Doc> records = context.watch<PostLogic>().postModel;
 
-  return Row(
-    children: [
-            textButtonNavigateTo(context, destination: CreatePostScreen(), child: Text("Click Me!")),
-     // _buildBook(records),
-    ],
-  );
-}
+    if (loading) {
+      return Center(child: CircularProgressIndicator());
+    }
 
+    if (error != null) {
+      return _buildErrorMessage(error);
+    }
 
-  // Widget _buildBody(Language _lang) {
-  //    context.read<PostLogic>().read();
-  //    List<Doc> records = context.read<PostLogic>().postModel;
-  //    print("Records: $records");
-  //   return ListView(
-  //     children: [
-  //      textButtonNavigateTo(context, destination: CreatePostScreen(), child: Text("Click Me!")),
-  //       HeadlineLabel(
-  //         "Recent Posts",
-  //         AppTextSizes.headline2,
-  //       ),
-  //       _buildBook(records),
-  //       HeadlineLabel(
-  //         "All Posts",
-  //         AppTextSizes.headline2,
-  //         button:
-  //             textButtonNavigateTo(
-  //                   context,
-  //                   destination: DemoScreen(),
-  //                   child: Text("See all"),
-  //                 )
-  //                 as TextButton,
-  //       ),
-  //       _buildBook(records),
-  //     ],
-  //   );
-  // }
-  
+    return Column(
+      children: [
+        Expanded(
+          child: ListView.builder(
+            controller: _scroller, // Attach the ScrollController
+            itemCount: records.length,
+            itemBuilder: (context, index) {
+              return _buildPostItem(records[index]);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Build an error message widget
   Widget _buildErrorMessage(Object error) {
     debugPrint(error.toString());
     return Center(
@@ -104,133 +131,66 @@ class _LostFoundScreenState extends State<LostFoundScreen> {
       ),
     );
   }
-  Widget _buildListItem(
-    String title,
-    String subtitle,
-    IconData icon,
-    Widget screen,
-  ) {
-    return Container(
-      margin: EdgeInsets.only(top: 8.0),
-      decoration: BoxDecoration(
-        //  color: Colors.white,
-        // border: Border.all(color: Colors.grey),
-        borderRadius: BorderRadius.circular(8.0),
-        boxShadow: [
-          BoxShadow(
-            // color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 3,
-            blurRadius: 10,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
-      child: ListTile(
-        leading: Icon(icon),
-        title: Text(
-          title,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        subtitle: Text(subtitle),
-        trailing: Icon(Icons.arrow_forward_ios_outlined),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => screen),
-          );
-        },
-      ),
-    );
-  }
 
-  Widget _buildNewBookItems(Doc items) {
-    return Padding(
-      padding: const EdgeInsets.all(0),
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8), // Rounded corners
-          side: BorderSide(
-            color: AppColors.primaryColor,
-            width: 1,
-          ), // Border color and width
-        ),
-        child: InkWell(
-          onTap: () {
-            // Navigator.of(context).push(
-            //   CupertinoPageRoute(builder: (context) => PostDetailScreen(items)),
-            // );
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start, // Align items at the top
+  // Build a single post item
+  Widget _buildPostItem(postGet.Doc item) {
+    DateTime dateTime = DateTime.parse(item.date);
+    String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
+
+    return Card(
+      margin: EdgeInsets.all(10),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+        side: BorderSide(color: AppColors.primaryColor, width: 1),
+      ),
+      child: Stack(
+        children: [
+          ListTile(
+            leading: Image.network(
+              item.images,
+              width: 100,
+              height: 100,
+              fit: BoxFit.cover,
+            ),
+            title: Text(
+              item.title,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  height: 150, // Adjust height as needed
-                  width: 100, // Adjust width as needed
-                  margin: EdgeInsets.all(10), // Add some spacing
-                  child: Image.network(
-                    items.images,
-                    fit: BoxFit.cover, // Ensure the image fits properly
-                  ),
-                ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment:
-                        CrossAxisAlignment.start, // Align text to the left
-                    children: [
-                      Text(
-                        items.title,
-                        overflow: TextOverflow.ellipsis, // Handle long text
-                        maxLines: 2, // Limit text to 2 lines
-                        style: TextStyle(
-                          fontSize: 14, // Adjust font size
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ), // Add some spacing between title and date
-                      Text(
-                        "Price: USD ${items.description}",
-                        style: TextStyle(
-                          fontSize: 14, // Adjust font size
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ), // Add some spacing between title and date
-                      Text(
-                        "Date: ${items.date}",
-                        style: TextStyle(
-                          fontSize: 14, // Adjust font size
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                      SizedBox(height: 5),
-                    
-                    ],
-                  ),
-                ),
+                Text("At: ${item.location}"),
+                Text("Description: ${item.description}"),
+                Text("Date: ${formattedDate}"),
               ],
             ),
+            onTap: () {
+              // Navigate to post detail screen
+              // Navigator.of(context).push(
+              //   CupertinoPageRoute(builder: (context) => PostDetailScreen(item.userId)),
+              // );
+            },
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBook(List<Doc> items) {
-    
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Column(
-        children:
-            items.map((item) {
-              return _buildNewBookItems(item);
-            }).toList(),
+          Positioned(
+            right: 10,
+            top: 10,
+            child: Text(
+              "${item.type}",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+                color: item.type == "lost" ? Colors.red : Colors.green,
+                ),
+            ),
+          ),
+          Positioned(
+            right: 10,
+            bottom: 10,
+            child: Text("By: ${item.userId.firstname} ${item.userId.lastname}"),
+          ),
+        ],
       ),
     );
   }

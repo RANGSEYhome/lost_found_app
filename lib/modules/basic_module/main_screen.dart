@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lost_found_app/modules/basic_module/basic_app.dart';
+import 'package:lost_found_app/modules/post_detail_module/post_create_screen.dart';
 import 'package:lost_found_app/modules/search_module/search_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
@@ -41,7 +42,21 @@ class _MainScreenState extends State<MainScreen> {
       {
         'appBar': AppBar(
           title: Text(_lang.ls),
-          actions: [searchButton(context, SearchScreen())],
+          actions: [
+            searchButton(context, SearchScreen()),
+            Padding(
+              padding: const EdgeInsets.only(right: 2.0),
+              child: IconButton(
+                icon: Icon(Icons.add_circle_outline),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    CupertinoPageRoute(builder: (context) => CreatePostScreen()),
+                  );
+                },
+              ),
+            ),
+            ],
         ),
       },
       {
