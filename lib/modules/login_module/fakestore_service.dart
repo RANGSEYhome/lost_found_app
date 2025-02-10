@@ -11,9 +11,9 @@ enum PostMethod {
   delete,
 }
 
-String api = "http://10.0.2.2:4001/v1";
+//String api = "http://10.0.2.2:4001/v1";
 
-//String api = "https://d-api.devkrc.com/v1";
+String api = "https://d-api.devkrc.com/v1";
 class FakestoreService {
   static Future<MyResponseModel> login(
       {required LoginRequestModel request}) async {
