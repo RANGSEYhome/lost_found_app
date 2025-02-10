@@ -31,20 +31,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildBody() {
     return ListView(
-      // physics: BouncingScrollPhysics(),
+      physics: BouncingScrollPhysics(),
       children: [
-        _buildSlideShow(bookModelList, Axis.horizontal),
-        SizedBox(height: AppSpacing.md),
         HeadlineLabel(
-          "Category by Posts",
+          "Recent Posts",
           AppTextSizes.headline2,
-          // button:
-          //     textButtonNavigateTo(
-          //           context,
-          //           destination: DemoScreen(),
-          //           child: Text("See all"),
-          //         )
-          //         as TextButton,
+          button: textButtonNavigateTo(
+            context,
+            destination: DemoScreen(),
+            child: Text("All Posts"),
+          ) as TextButton,
+        ),
+        _buildSlideShow(bookModelList, Axis.horizontal),
+        SizedBox(height: AppSpacing.lg),
+        HeadlineLabel(
+          "Posts by Category",
+          AppTextSizes.headline2,
         ),
         _buildCategoryView(),
       ],
@@ -53,9 +55,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildSlideShow(List<BookModel> items, Axis direc) {
     if (items.isEmpty) {
-      return Center(child: Text("No books available"));
+      return Center(child: Text("No posts available!"));
     }
-
     return Column(
       children: [
         SizedBox(
@@ -71,25 +72,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   _pageController.hasClients && _pageController.page != null
                       ? (1 - (_pageController.page! - index).abs() * 0.1)
                       : 1;
-
-              return Transform.scale(
-                scale: scale,
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.primaryColor.withOpacity(0.2),
-                        blurRadius: 10,
-                        spreadRadius: 2,
-                      ),
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
-                    child: _buildNewBookItems(items[index]),
-                  ),
+              return Container(
+                margin: EdgeInsets.symmetric(horizontal: 15),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: _buildSlideItems(items[index]),
                 ),
               );
             },
@@ -108,6 +95,103 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildSlideItems(items) {
+    return Card(
+      child: InkWell(
+        onTap: () {
+          // Navigator.of(context).push(
+          //   CupertinoPageRoute(builder: (context) => PostDetailScreen(items)),
+          // );
+        },
+        child: SizedBox(
+          height: 220,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Stack(
+              children: [
+                Image.network(
+                  items.img,
+                  fit: BoxFit.cover,
+                ),
+                Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                      colors: [
+                        Colors.black54,
+                        Colors.black38,
+                        Colors.black26,
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 15,
+                    vertical: 10,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text.rich(
+                        TextSpan(
+                          style: const TextStyle(color: Colors.white),
+                          children: [
+                            TextSpan(
+                              text: "Lost: ",
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            TextSpan(text: "Cat")
+                          ],
+                        ),
+                      ),
+                      Text.rich(
+                        TextSpan(
+                          style: const TextStyle(color: Colors.white),
+                          children: [
+                            TextSpan(
+                              text: "Dtae: ",
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            TextSpan(text: "2025-01-01")
+                          ],
+                        ),
+                      ),
+                      Text.rich(
+                        TextSpan(
+                          style: const TextStyle(color: Colors.white),
+                          children: [
+                            TextSpan(
+                              text: "Location: ",
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            TextSpan(text: "Water Pack")
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 

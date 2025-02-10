@@ -21,7 +21,7 @@ List<BookModel> bookModelList = [
   BookModel(
     id: 1,
     title: "Train Your Mind for Extraordinary Performance and the Best",
-    img: "https://images-na.ssl-images-amazon.com/images/I/61azTLgsSwL._AC_UL254_SR254,254_.jpg",
+    img: "https://miro.medium.com/v2/resize:fit:1400/format:webp/1*mp7dOjrL0JcAW9XHyjK83Q.png",
     date: "08-08-2024",
     price: 4,
     rate: 4.2,
@@ -41,7 +41,7 @@ List<BookModel> bookModelList = [
     id: 1,
     title:
         "Essays on Friendship",
-    img: "https://m.media-amazon.com/images/I/51P9TfSERuL._SY445_SX342_.jpg",
+    img: "https://miro.medium.com/v2/resize:fit:1400/format:webp/1*72UT4blLkx5ibjscjCo4NA.png",
     date: "08-08-2024",
     price: 7.5,
     rate: 4.7,
@@ -50,7 +50,7 @@ List<BookModel> bookModelList = [
    BookModel(
     id: 1,
     title: "The Psychology of Money",
-    img: "https://images-na.ssl-images-amazon.com/images/I/811Q+Ij6h0L._AC_UL254_SR254,254_.jpg",
+    img: "https://miro.medium.com/v2/resize:fit:1400/format:webp/1*SmqZxiMcp3d_goUSmGCP-Q.png",
     date: "08-08-2024",
     price: 4,
     rate: 4.2,
@@ -60,7 +60,7 @@ List<BookModel> bookModelList = [
     id: 1,
     title: "Don't Believe Everything You Think",
     img:
-        "https://images-na.ssl-images-amazon.com/images/I/819I+YyuU-L._AC_UL210_SR195,210_.jpg",
+        "https://miro.medium.com/v2/resize:fit:1400/format:webp/1*en61YjDmg2vmO8bpNZjUGw.png",
     date: "08-08-2024",
     price: 3.5,
     rate: 3.7,
@@ -70,7 +70,7 @@ List<BookModel> bookModelList = [
     id: 1,
     title:
         "The Let Them Theory",
-    img: "https://images-na.ssl-images-amazon.com/images/I/91I1KDnK1kL._AC_UL210_SR195,210_.jpg",
+    img: "https://miro.medium.com/v2/resize:fit:1286/format:webp/1*NI8lEPt0PCJjaDhcdxZ8Ow.png",
     date: "08-08-2024",
     price: 7.5,
     rate: 4.7,
