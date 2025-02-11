@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_rating_stars/flutter_rating_stars.dart';
 
 // Core
 import 'package:lost_found_app/core/constants/app_text_style.dart';
@@ -11,8 +11,8 @@ import 'package:lost_found_app/core/localization/lang_logic.dart';
 import 'package:lost_found_app/modules/post_detail_module/post_get_model.dart';
 
 class PostDetailScreen extends StatefulWidget {
-  // final PostGetDataModel item;
-  // const PostDetailScreen(this.item, {super.key});
+  final Doc item;
+  PostDetailScreen(this.item);
 
   @override
   State<PostDetailScreen> createState() => _PostDetailScreenState();
@@ -26,7 +26,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   Widget build(BuildContext context) {
     _lang = context.watch<LanguageLogic>().lang;
     _langIndex = context.watch<LanguageLogic>().langIndex;
-
+ DateTime dateTime = DateTime.parse(widget.item.date);
+    String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -37,74 +38,105 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           ),
         ),
       ),
-      body: Text("Text")
-      
-      // SingleChildScrollView(
-      //   physics: const BouncingScrollPhysics(),
-      //   child: Padding(
-      //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      //     child: Column(
-      //       crossAxisAlignment: CrossAxisAlignment.start,
-      //       children: [
-      //         // Book Image
-      //         Center(
-      //           child: ClipRRect(
-      //             borderRadius: BorderRadius.circular(8),
-      //             child: Image.network(
-      //               widget.item. ?? '', // Ensure no null errors
-      //               height: 300,
-      //               fit: BoxFit.cover,
-      //               errorBuilder: (context, error, stackTrace) =>
-      //                   const Icon(Icons.broken_image, size: 100, color: Colors.grey),
-      //             ),
-      //           ),
-      //         ),
-      //         const SizedBox(height: 16),
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Image Card
+              Card(
+                elevation: 5,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.network(
+                    widget.item.images,
+                    height: 250,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      height: 250,
+                      color: Colors.grey[300],
+                      child: const Icon(Icons.broken_image, size: 100, color: Colors.grey),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
 
-      //         // Title
-      //         Text(
-      //           widget.item.title ?? "No Title",
-      //           style: const TextStyle(
-      //             fontSize: 24,
-      //             fontWeight: FontWeight.bold,
-      //           ),
-      //           textAlign: TextAlign.center,
-      //         ),
-      //         const SizedBox(height: 8),
+              // Title
+              Text(
+                widget.item.title ?? "No Title",
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
 
-      //         // Price (or Description as placeholder)
-      //         Text(
-      //           "USD ${widget.item.description ?? 'N/A'}",
-      //           style: const TextStyle(
-      //             fontSize: 20,
-      //             fontWeight: FontWeight.w600,
-      //             color: Colors.teal,
-      //           ),
-      //           textAlign: TextAlign.center,
-      //         ),
-      //         const SizedBox(height: 16),
+              // Location
+              Row(
+                children: [
+                  const Icon(Icons.location_on, color: Colors.green, size: 18),
+                  const SizedBox(width: 6),
+                  Text(
+                    widget.item.location ?? "No Location",
+                    style: const TextStyle(fontSize: 16, color: Colors.black87),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
 
-      //         // Rating
-      //         const SizedBox(height: 16),
+              // Date
+              Row(
+                children: [
+                  const Icon(Icons.calendar_today, color: Colors.blue, size: 18),
+                  const SizedBox(width: 6),
+                  Text(
+                    formattedDate,
+                    style: const TextStyle(fontSize: 16, color: Colors.black87),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
 
-      //         // Description
-      //         const Text(
-      //           "Description:",
-      //           style: TextStyle(
-      //             fontSize: 18,
-      //             fontWeight: FontWeight.bold,
-      //           ),
-      //         ),
-      //         const SizedBox(height: 8),
+              // Description
+              const Text(
+                "Description:",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 6),
 
-      //         Text(
-      //           widget.item.description ?? "No description available.",
-      //           style: const TextStyle(fontSize: 16, height: 1.5),
-      //         ),
-      //       ],
-      //     ),
-      //   ),
-      // ),
+              Text(
+                widget.item.description ?? "No description available.",
+                style: const TextStyle(fontSize: 16, height: 1.5, color: Colors.black87),
+              ),
+              const SizedBox(height: 16),
+              Center(
+                child: ElevatedButton.icon(
+                  onPressed: () {},
+                  icon: const Icon(Icons.message, color: Colors.white),
+                  label: const Text("Contact Owner"),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    backgroundColor: Colors.green,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lost_found_app/modules/basic_module/basic_app.dart';
+import 'package:lost_found_app/modules/login_module/fakestore_home_screen.dart';
+import 'package:lost_found_app/modules/login_module/fakestore_login_logic.dart';
+import 'package:lost_found_app/modules/login_module/fakestore_login_models.dart';
+import 'package:lost_found_app/modules/login_module/fakestore_login_screen.dart';
 import 'package:lost_found_app/modules/post_detail_module/post_create_screen.dart';
 import 'package:lost_found_app/modules/search_module/search_screen.dart';
 import 'package:provider/provider.dart';
@@ -49,36 +53,50 @@ class _MainScreenState extends State<MainScreen> {
               child: IconButton(
                 icon: Icon(Icons.add_circle_outline),
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    CupertinoPageRoute(builder: (context) => CreatePostScreen()),
-                  );
+                  //  FakestoreLoginLogic loginLogic = Provider.of<FakestoreLoginLogic>(context, listen: false);
+                  //       MyResponseModel responseModel = loginLogic.responseModel;
+                  final responseModel = context.read<FakestoreLoginLogic>().responseModel;
+                  if (responseModel.token == null) {
+                    print("responseModel.tokens: ${responseModel.token}");
+                    Navigator.push(
+                      context,
+                      CupertinoPageRoute(
+                          builder: (context) => FakeStoreLoginScreen()),
+                    );
+                  } else {
+                    debugPrint("responseModel.token: ${responseModel.token}");
+                    Navigator.push(
+                      context,
+                      CupertinoPageRoute(
+                          builder: (context) => CreatePostScreen()),
+                    );
+                  }
                 },
               ),
             ),
-            ],
+          ],
         ),
       },
       {
         // 'appBar': AppBar(
-          // title: Image.network(
-          //   'https://cdn-icons-png.flaticon.com/512/149/149071.png',
-          //   width: 60,
-          // ),
-          // actions: [
-          //   Padding(
-          //     padding: const EdgeInsets.only(right: 2.0),
-          //     child: IconButton(
-          //       icon: Icon(Icons.edit_note_outlined, size: 50),
-          //       onPressed: () {
-          //         Navigator.push(
-          //           context,
-          //           CupertinoPageRoute(builder: (context) => DemoScreen()),
-          //         );
-          //       },
-          //     ),
-          //   ),
-          // ],
+        // title: Image.network(
+        //   'https://cdn-icons-png.flaticon.com/512/149/149071.png',
+        //   width: 60,
+        // ),
+        // actions: [
+        //   Padding(
+        //     padding: const EdgeInsets.only(right: 2.0),
+        //     child: IconButton(
+        //       icon: Icon(Icons.edit_note_outlined, size: 50),
+        //       onPressed: () {
+        //         Navigator.push(
+        //           context,
+        //           CupertinoPageRoute(builder: (context) => DemoScreen()),
+        //         );
+        //       },
+        //     ),
+        //   ),
+        // ],
         // ),
       },
     ];
@@ -103,42 +121,42 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Widget _buildBottomNavBar() {
-  return Container(
-    decoration: BoxDecoration(
-      border: Border(
-        top: BorderSide(
-          color: Colors.black12, // Change to your preferred border color
-          width: 0.5, // Adjust the width as needed
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(
+            color: Colors.black12, // Change to your preferred border color
+            width: 0.5, // Adjust the width as needed
+          ),
         ),
       ),
-    ),
-    child: BottomNavigationBar(
-      currentIndex: _currentIndex,
-      onTap: (index) {
-        setState(() {
-          _currentIndex = index;
-        });
-      },
-      type: BottomNavigationBarType.fixed,
-      selectedItemColor: AppColors.primaryColor,
-      unselectedItemColor: AppColors.black,
-      items: [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home_outlined),
-          label: _lang.home,
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.category_outlined),
-          label: _lang.ls,
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.account_circle_outlined),
-          label: _lang.account,
-        ),
-      ],
-    ),
-  );
-}
+      child: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: AppColors.primaryColor,
+        unselectedItemColor: AppColors.black,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            label: _lang.home,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.category_outlined),
+            label: _lang.ls,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle_outlined),
+            label: _lang.account,
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildDrawer() {
     return Drawer(

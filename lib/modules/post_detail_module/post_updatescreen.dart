@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_login_logic.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_login_models.dart';
-import 'package:lost_found_app/modules/lost_found_module/lost_found_screen.dart';
+// import 'package:lost_found_app/modules/lost_found_module/lost_found_screen.dart';
 import 'package:lost_found_app/modules/post_detail_module/post_logic.dart';
 import 'dart:io';
 
@@ -13,27 +13,29 @@ import 'package:lost_found_app/modules/login_module/fakestore_service.dart';
 
 import 'package:provider/provider.dart';
 
-class CreatePostScreen extends StatefulWidget {
-  const CreatePostScreen({super.key});
+class UpdatePostScreen extends StatefulWidget {
+  // const UpdatePostScreen({super.key});
+  Doc item;
+  UpdatePostScreen(this.item);
 
   @override
-  State<CreatePostScreen> createState() => _CreatePostScreenState();
+  State<UpdatePostScreen> createState() => _UpdatePostScreenState();
 }
 
-class _CreatePostScreenState extends State<CreatePostScreen> {
+class _UpdatePostScreenState extends State<UpdatePostScreen> {
   final _formKey = GlobalKey<FormState>();
   final _category = ["people", "animal", "other"];
-  String _selectVal = "people";
+  late  String _selectVal = widget.item.categoryId;
 
   final _type = ["lost", "found"];
-  String _selectType = "lost";
+  late String _selectType = widget.item.type;
 
   // Text editing controllers
-  TextEditingController _titleController = TextEditingController();
-  TextEditingController _locationController = TextEditingController();
-  TextEditingController _phoneController = TextEditingController();
-  TextEditingController _descriptionController = TextEditingController();
-  TextEditingController _dateController = TextEditingController();
+late final TextEditingController _titleController = TextEditingController(text: widget.item.title);
+  late final TextEditingController _locationController = TextEditingController(text: widget.item.location);
+  late final TextEditingController _phoneController = TextEditingController(text: widget.item.phone);
+  late final TextEditingController _descriptionController = TextEditingController(text: widget.item.description);
+  late final TextEditingController _dateController = TextEditingController(text: widget.item.date);
   
  File? _imageFile;
  bool _isLoading = false;
@@ -309,7 +311,7 @@ Widget _buildElevatedButton() {
           }
 
           Doc post = Doc(
-            userId: responseModel.user!.id!,
+            userId: responseModel.user!.id,
             title: _titleController.text.trim(),
             description: _descriptionController.text.trim(),
             categoryId: _selectVal,
@@ -321,7 +323,7 @@ Widget _buildElevatedButton() {
             images: imagePath,
           );
 
-          String result = await PostSeevice.insert(post);
+          String result = await PostSeevice.update(post, this.widget.item.id);
           if (result == "success") {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Post created successfully')),
@@ -342,7 +344,7 @@ Widget _buildElevatedButton() {
           setState(() => _isLoading = false);
         }
       },
-      child: _isLoading ? CircularProgressIndicator(color: Colors.white) : Text('Create Post'),
+      child: _isLoading ? CircularProgressIndicator(color: Colors.white) : Text('Update Post'),
     ),
   );
 }

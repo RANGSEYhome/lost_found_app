@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:lost_found_app/modules/post_detail_module/post_get_model.dart';
+import 'package:lost_found_app/modules/post_detail_module/post_model.dart';
 // import 'package:lost_found_app/modules/post_detail_module/post_model.dart';
 // import 'package:lost_found_app/modules/post_detail_module/post_seevice.dart';
-import 'package:lost_found_app/modules/post_detail_module/post_service_read.dart';
+import 'package:lost_found_app/modules/post_detail_module/post_service_get.dart';
 
 
 class PostLogic extends ChangeNotifier {
@@ -22,24 +22,6 @@ class PostLogic extends ChangeNotifier {
   void setLoading() {
     _loading = true;
     notifyListeners();
-  }
- Future readAppend(page) async{
-    
-    await PostSeviceRead.readPage(
-    page: page,
-    onRes: (items) async {
-      print("Items Received: $items"); // ✅ Print received items
-
-      _postModel += items; // No need to await, it's already a List<Doc>
-      _loading = false;
-      notifyListeners();
-    },
-    onError: (err) {
-      _error = err;
-      _loading = false;
-      notifyListeners();
-    },
-  );
   }
   Future read() async {
   await PostSeviceRead.read(

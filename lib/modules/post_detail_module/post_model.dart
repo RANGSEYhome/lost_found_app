@@ -51,6 +51,7 @@ class PostModel {
 }
 
 class Doc {
+    String id;
     String userId;
     String title;
     String description;
@@ -63,6 +64,7 @@ class Doc {
     String phone;
 
     Doc({
+        this.id = "",
         required this.userId,
         required this.title,
         required this.description,
@@ -76,6 +78,7 @@ class Doc {
     });
 
     factory Doc.fromJson(Map<String, dynamic> json) => Doc(
+        id: json["_id"],
         userId: json["userId"],
         title: json["title"],
         description: json["description"],
@@ -90,6 +93,7 @@ class Doc {
     );
 
     Map<String, dynamic> toJson() => {
+        id: "_id",
         "userId": userId,
         "title": title,
         "description": description,

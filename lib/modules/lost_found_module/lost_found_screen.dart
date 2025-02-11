@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_stars/flutter_rating_stars.dart';
-import 'package:lost_found_app/core/constants/app_text_style.dart';
-import 'package:lost_found_app/core/utils/widget_util.dart';
-import 'package:lost_found_app/modules/basic_module/demo_screen.dart';
-import 'package:lost_found_app/modules/home_module/book_data.dart';
-import 'package:lost_found_app/modules/post_detail_module/post_create_screen.dart';
+// import 'package:flutter_rating_stars/flutter_rating_stars.dart';
+// import 'package:lost_found_app/core/constants/app_text_style.dart';
+// import 'package:lost_found_app/core/utils/widget_util.dart';
+// import 'package:lost_found_app/modules/basic_module/demo_screen.dart';
+// import 'package:lost_found_app/modules/home_module/book_data.dart';
+// import 'package:lost_found_app/modules/post_detail_module/post_create_screen.dart';
 import 'package:lost_found_app/modules/post_detail_module/post_get_model.dart'
     as postGet;
 import 'package:lost_found_app/modules/post_detail_module/post_logic.dart';
@@ -30,7 +30,7 @@ class _LostFoundScreenState extends State<LostFoundScreen> {
   void initState() {
     super.initState();
     _scroller.addListener(_scrollListener); // Add scroll listener
-    Future.microtask(() => context.read<PostLogic>().read()); // Fetch posts on init
+     context.read<PostLogic>().read();// Fetch posts on init
   }
 
   @override
@@ -62,6 +62,7 @@ class _LostFoundScreenState extends State<LostFoundScreen> {
   Widget build(BuildContext context) {
     Language _lang = Khmer();
     _lang = context.watch<LanguageLogic>().lang;
+    
     return Scaffold(
       body: _buildBody(_lang),
       floatingActionButton: _showUpButton ? _buildUpButton() : null, // Show button conditionally
@@ -133,65 +134,70 @@ class _LostFoundScreenState extends State<LostFoundScreen> {
   }
 
   // Build a single post item
-  Widget _buildPostItem(postGet.Doc item) {
-    DateTime dateTime = DateTime.parse(item.date);
-    String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
+Widget _buildPostItem(postGet.Doc item) {
+  DateTime dateTime = DateTime.parse(item.date);
+  String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
 
-    return Card(
-      margin: EdgeInsets.all(10),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-        side: BorderSide(color: AppColors.primaryColor, width: 1),
-      ),
-      child: Stack(
-        children: [
-          ListTile(
-            leading: Image.network(
-              item.images,
-              width: 100,
-              height: 100,
-              fit: BoxFit.cover,
-            ),
-            title: Text(
-              item.title,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 2,
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-            ),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("At: ${item.location}"),
-                Text("Description: ${item.description}"),
-                Text("Date: ${formattedDate}"),
-              ],
-            ),
-            onTap: () {
-              // Navigate to post detail screen
-              // Navigator.of(context).push(
-              //   CupertinoPageRoute(builder: (context) => PostDetailScreen(item.userId)),
-              // );
-            },
+  return Card(
+    margin: EdgeInsets.all(10),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(8),
+      side: BorderSide(color: AppColors.primaryColor, width: 1),
+    ),
+    child: Stack(
+      children: [
+        ListTile(
+          leading: Image.network(
+            item.images,
+            width: 100,
+            height: 100,
+            fit: BoxFit.cover,
           ),
-          Positioned(
-            right: 10,
-            top: 10,
-            child: Text(
-              "${item.type}",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
-                color: item.type == "lost" ? Colors.red : Colors.green,
-                ),
+          title: Text(
+            item.title,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("At: ${item.location}"),
+              Text(
+                "Description: ${item.description}",
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis, // Ensures text is truncated
+              ),
+              Text("Date: ${formattedDate}"),
+            ],
+          ),
+          onTap: () {
+            // Navigate to post detail screen
+            Navigator.of(context).push(
+              CupertinoPageRoute(builder: (context) => PostDetailScreen(item)),
+            );
+          },
+        ),
+        Positioned(
+          right: 10,
+          top: 10,
+          child: Text(
+            "${item.type}",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+              color: item.type == "lost" ? Colors.red : Colors.green,
             ),
           ),
-          Positioned(
-            right: 10,
-            bottom: 10,
-            child: Text("By: ${item.userId.firstname} ${item.userId.lastname}"),
-          ),
-        ],
-      ),
-    );
-  }
+        ),
+        Positioned(
+          right: 10,
+          bottom: 10,
+          child: Text("By: ${item.userId.firstname} ${item.userId.lastname}"),
+        ),
+      ],
+    ),
+  );
+}
+
 }

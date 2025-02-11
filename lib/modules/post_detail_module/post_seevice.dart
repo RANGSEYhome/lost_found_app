@@ -7,13 +7,36 @@ import 'package:lost_found_app/modules/post_detail_module/post_model.dart';
 
 
 
-//String api = "http://10.0.2.2:4001/v1";
+String api = "http://10.0.2.2:4001/v1";
 
-String api = "https://d-api.devkrc.com/v1";
+//String api = "https://d-api.devkrc.com/v1";
 class PostSeevice {
   static Future<String> insert(Doc post) async {
     // String key = "d033e22ae348aeb5660fc2140aec35850c4da997";
     String url = "$api/post";
+    try {
+      http.Response response = await http.post(
+        Uri.parse(url),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode(post.toJson()), // Ensure JSON encoding
+      );
+      final output = json.decode(response.body);
+      print("Output: $output");
+      debugPrint("output: $output");
+      if (output["status"] == "success") {
+        return "success";
+      } else {
+        return output.toString();
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+    static Future<String> update(Doc post, String id) async {
+    // String key = "d033e22ae348aeb5660fc2140aec35850c4da997";
+    String url = "$api/post/$id";
     try {
       http.Response response = await http.post(
         Uri.parse(url),
@@ -44,7 +67,7 @@ static Future<void> read({
   try {
     final response = await http.get(Uri.parse(url));
 
-    print("Raw API Response: ${response.body}"); // ✅ Print API response
+   // print("Raw API Response: ${response.body}"); // ✅ Print API response
 
     if (response.statusCode == 200) {
       if (response.body.isNotEmpty) {
