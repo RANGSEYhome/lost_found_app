@@ -44,24 +44,123 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
   }
 
   Widget _buildBody() {
-    return ListView(
+    return Column(
       children: [
         _buildProfile(),
-        ListTile(
-        leading: Icon(
-          Icons.logout,
-        ),
-        title: Text(
-          _lang.logout,
-        ),
-        onTap: () async {
-          await context.read<FakestoreLoginLogic>().clear();
-          Navigator.of(context).pushReplacement(
-            CupertinoPageRoute(builder: (context) => FakeStoreLoadingScreen()),
-          );
-        },
-      ),
+        _builCardHeader(),
+        Expanded(child: _builCardPost()),
+       // Text('Hello'),
+
+      //   ListTile(
+      //   leading: Icon(
+      //     Icons.logout,
+      //   ),
+      //   title: Text(
+      //     _lang.logout,
+      //   ),
+      //   onTap: () async {
+      //     await context.read<FakestoreLoginLogic>().clear();
+      //     Navigator.of(context).pushReplacement(
+      //       CupertinoPageRoute(builder: (context) => FakeStoreLoadingScreen()),
+      //     );
+      //   },
+      // ),
       ],
+    );
+  }
+
+  Widget _builCardHeader() {
+    return Card(
+      margin: EdgeInsets.only(left: 15, right: 15, top: 5),
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: Colors.green),
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20.0),
+            topRight: Radius.circular(20.0),
+          ),
+        
+      ),
+      //margin: EdgeInsets.symmetric(vertical: 5),
+      child: ListTile(
+        title: Text('Manage your post'),
+        trailing: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+             InkWell(
+              onTap: () {},
+              child: Icon(Icons.add_circle_outline, size: 20), // Small icon size
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _builCardPost() {
+    final List<String> posts = [
+      "Lost White Cat",
+      "Lost White Cat",
+      "Lost White Cat",
+      "Lost White Cat",
+      "Lost White Cat",
+      "Lost White Cat",
+      "Lost White Cat",
+      "Lost White Cat",
+      "Lost White Cat",
+      "Lost White Cat",
+      "Lost White Cat",
+      "Lost White Cat",
+      "Lost White Cat",
+      "Lost White Cat",
+      "Lost White Cat",
+      "Lost White Cat",
+      "Lost White Cat",
+    ];
+
+    return Container(
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(10.0),
+          child: ListView.builder(
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: posts.length,
+            itemBuilder: (context, index) {
+              return Card(
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(color: Colors.green),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                margin: EdgeInsets.only(left: 5, right: 5, bottom: 5),
+                child: ListTile(
+                  title: Text(posts[index]),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min, // Prevents extra spacing
+                    children: [
+                      InkWell(
+                        onTap: () {},
+                        child:
+                            Icon(Icons.settings, size: 18), // Small icon size
+                      ),
+                      SizedBox(width: 4), // Smallest possible space
+                      InkWell(
+                        onTap: () {},
+                        child: Icon(Icons.edit, size: 18),
+                      ),
+                      SizedBox(width: 4),
+                      InkWell(
+                        onTap: () {},
+                        child: Icon(Icons.remove_red_eye, size: 18),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
     );
   }
   Widget _buildProfile(){
@@ -69,10 +168,10 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
               context.watch<FakestoreLoginLogic>().responseModel;
   // String imgProfile = '${responseModel.user?.profilePic ?? 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}';
   // print("ste" + imgProfile);
-  String imgProfile = '${responseModel.user?.profilePic}';
-if (imgProfile == null || imgProfile.isEmpty) {
-  imgProfile = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-}
+    String imgProfile = '${responseModel.user?.profilePic}';
+      if (imgProfile == null || imgProfile.isEmpty) {
+        imgProfile = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+      }
 
     return Card(
       shape: RoundedRectangleBorder(
