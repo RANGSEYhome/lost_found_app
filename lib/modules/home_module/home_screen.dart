@@ -48,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
           "Posts by Category",
           AppTextSizes.headline2,
         ),
-        _buildCategoryView(),
+        _buildCategoryGrid(context)
       ],
     );
   }
@@ -112,80 +112,12 @@ class _HomeScreenState extends State<HomeScreen> {
             borderRadius: BorderRadius.circular(20),
             child: Stack(
               children: [
-                Image.network(
-                  items.img,
-                  fit: BoxFit.cover,
-                ),
-                Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.bottomCenter,
-                      end: Alignment.topCenter,
-                      colors: [
-                        Colors.black54,
-                        Colors.black38,
-                        Colors.black26,
-                        Colors.transparent,
-                      ],
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 15,
-                    vertical: 10,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text.rich(
-                        TextSpan(
-                          style: const TextStyle(color: Colors.white),
-                          children: [
-                            TextSpan(
-                              text: "Lost: ",
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            TextSpan(text: "Cat")
-                          ],
-                        ),
-                      ),
-                      Text.rich(
-                        TextSpan(
-                          style: const TextStyle(color: Colors.white),
-                          children: [
-                            TextSpan(
-                              text: "Dtae: ",
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            TextSpan(text: "2025-01-01")
-                          ],
-                        ),
-                      ),
-                      Text.rich(
-                        TextSpan(
-                          style: const TextStyle(color: Colors.white),
-                          children: [
-                            TextSpan(
-                              text: "Location: ",
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            TextSpan(text: "Water Pack")
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                _buildImageWithOverlay(items.img),
+                _buildOverlay(items), // Single overlay for first three items
+                Positioned(
+                  bottom: 10,
+                  right: 15,
+                  child: _buildPostedBy("Kaka"),
                 ),
               ],
             ),
@@ -195,152 +127,171 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildCategoryView() {
-    final categories = _categoryList();
-    int crossAxisCount = 1; // Number of items per row
+  Widget _buildImageWithOverlay(String imageUrl) {
+    return Stack(
+      children: [
+        Image.network(
+          imageUrl,
+          fit: BoxFit.cover,
+          width: double.infinity,
+          height: double.infinity,
+        ),
+        Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
+              colors: [
+                Colors.black87, // Strong dark color at the bottom
+                Colors.black54, // Medium transparency
+                Colors.black38, // Light overlay
+                Colors.transparent, // Fully transparent at the top
+              ],
+              stops: [0.0, 0.3, 0.6, 1.0], // Adjusts the fade transition
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
+  Widget _buildOverlay(items) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
       child: Column(
-        children: List.generate((categories.length / crossAxisCount).ceil(), (
-          rowIndex,
-        ) {
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: List.generate(crossAxisCount, (colIndex) {
-              int itemIndex = rowIndex * crossAxisCount + colIndex;
-              return itemIndex < categories.length
-                  ? Expanded(child: _buildCategoryItem(categories[itemIndex]))
-                  : SizedBox(); // Empty space if no item
-            }),
-          );
-        }),
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildInfoText("Lost:", "Cat"),
+          _buildInfoText("Date:", "2025-01-01"),
+          _buildInfoText("Location:", "Water Park"),
+          const SizedBox(height: 10),
+        ],
       ),
+    );
+  }
+
+  Widget _buildInfoText(String label, String value) {
+    return Text.rich(
+      TextSpan(
+        style: const TextStyle(color: Colors.white),
+        children: [
+          TextSpan(
+            text: "$label ",
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          TextSpan(
+            text: value,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPostedBy(String name) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+      // decoration: BoxDecoration(
+      //   color: Colors.black87,
+      //   borderRadius: BorderRadius.circular(6),
+      // ),
+      child: Text(
+        "Posted by $name",
+        style: const TextStyle(color: Colors.white, fontSize: 14),
+      ),
+    );
+  }
+
+  Widget _buildCategoryCard(
+      Map<String, dynamic> category, BuildContext context) {
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => category["page"]),
+          );
+        },
+        borderRadius: BorderRadius.circular(15),
+        child: Padding(
+          padding: const EdgeInsets.all(15),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(category["icon"], size: 40, color: Colors.blueAccent),
+              const SizedBox(height: 10),
+              Text(
+                category["title"],
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCategoryGrid(BuildContext context) {
+    List<Map<String, dynamic>> categories = _categoryList();
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(15),
+          itemCount: categories.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 15,
+            mainAxisSpacing: 15,
+            childAspectRatio: 1.1,
+          ),
+          itemBuilder: (context, index) {
+            if (categories.length.isOdd && index == categories.length - 1) {
+              return Center(
+                child: SizedBox(
+                  width: constraints.maxWidth * 0.45, // Center last item
+                  child: _buildCategoryCard(categories[index], context),
+                ),
+              );
+            }
+            return _buildCategoryCard(categories[index], context);
+          },
+        );
+      },
     );
   }
 
   List<Map<String, dynamic>> _categoryList() {
     return [
       {
-        "title": "Lost & Found of People",
+        "title": "People",
         "icon": Icons.people_alt,
         "page": DemoScreen(),
       },
       {
-        "title": "Lost & Found of Animal",
+        "title": "Pets",
         "icon": Icons.pets_outlined,
         "page": DemoScreen(),
       },
       {
-        "title": "Lost & Found of other Staff",
+        "title": "Staffs",
+        "icon": Icons.style_outlined,
+        "page": DemoScreen(),
+      },
+      {
+        "title": "Others",
         "icon": Icons.all_inclusive_outlined,
         "page": DemoScreen(),
       },
     ];
-  }
-
-  Widget _buildCategoryItem(Map<String, dynamic> item) {
-    return Column(
-      children: [
-        cardListNavigateTo(
-          context,
-          item["title"],
-          item["icon"],
-          item["page"],
-          padding: AppSpacing.md,
-          iconsSize: 45,
-          borderColor: AppColors.primaryColor,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildNewBookItems(BookModel items) {
-    return Padding(
-      padding: const EdgeInsets.all(0),
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8), // Rounded corners
-          side: BorderSide(
-            color: AppColors.primaryColor,
-            width: 1,
-          ), // Border color and width
-        ),
-        child: InkWell(
-          onTap: () {
-            // Navigator.of(context).push(
-            //   CupertinoPageRoute(builder: (context) => PostDetailScreen(items)),
-            // );
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start, // Align items at the top
-              children: [
-                Container(
-                  height: 150, // Adjust height as needed
-                  width: 100, // Adjust width as needed
-                  margin: EdgeInsets.all(10), // Add some spacing
-                  child: Image.network(
-                    items.img,
-                    fit: BoxFit.cover, // Ensure the image fits properly
-                  ),
-                ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment:
-                        CrossAxisAlignment.start, // Align text to the left
-                    children: [
-                      Text(
-                        items.title,
-                        overflow: TextOverflow.ellipsis, // Handle long text
-                        maxLines: 2, // Limit text to 2 lines
-                        style: TextStyle(
-                          fontSize: 14, // Adjust font size
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ), // Add some spacing between title and date
-                      Text(
-                        "Price: USD ${items.price}",
-                        style: TextStyle(
-                          fontSize: 14, // Adjust font size
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ), // Add some spacing between title and date
-                      Text(
-                        "Date: ${items.date}",
-                        style: TextStyle(
-                          fontSize: 14, // Adjust font size
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                      SizedBox(height: 5),
-                      RatingStars(
-                        value: items.rate.toDouble(),
-                        starColor: Colors.orange,
-                        starOffColor: Colors.grey,
-                        valueLabelColor: Colors.orange,
-                        starSize: 15,
-                        valueLabelTextStyle: TextStyle(
-                          fontSize: 15,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
   }
 }

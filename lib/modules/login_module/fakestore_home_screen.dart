@@ -5,7 +5,7 @@ import 'package:lost_found_app/core/constants/app_colors.dart';
 // Core
 import 'package:lost_found_app/core/localization/lang_logic.dart';
 import 'package:lost_found_app/core/localization/lang_data.dart';
-// Modules
+// modules
 import 'package:lost_found_app/modules/login_module/fakestore_loading_screen.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_login_models.dart';
 import 'package:lost_found_app/modules/post_detail_module/post_logic.dart';
@@ -252,7 +252,12 @@ Widget _buildPostItem(postGet.Doc item) {
             ),
             Spacer(),
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => EditProfileScreen()),
+                );
+              },
               icon: Icon(Icons.edit, color: Colors.green),
             ),
           ],
