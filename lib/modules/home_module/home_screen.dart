@@ -136,20 +136,21 @@ class _HomeScreenState extends State<HomeScreen> {
           width: double.infinity,
           height: double.infinity,
         ),
-        // Container(
-        //   decoration: const BoxDecoration(
-        //     gradient: LinearGradient(
-        //       begin: Alignment.bottomCenter,
-        //       end: Alignment.topCenter,
-        //       colors: [
-        //         Colors.black87,
-        //         Colors.black54,
-        //         Colors.black26,
-        //         Colors.transparent,
-        //       ],
-        //     ),
-        //   ),
-        // ),
+        Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
+              colors: [
+                Colors.black87, // Strong dark color at the bottom
+                Colors.black54, // Medium transparency
+                Colors.black38, // Light overlay
+                Colors.transparent, // Fully transparent at the top
+              ],
+              stops: [0.0, 0.3, 0.6, 1.0], // Adjusts the fade transition
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -171,27 +172,19 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildInfoText(String label, String value) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 5),
-      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-      decoration: BoxDecoration(
-        color: Colors.black54,
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Text.rich(
-        TextSpan(
-          style: const TextStyle(color: Colors.white),
-          children: [
-            TextSpan(
-              text: "$label ",
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            TextSpan(
-              text: value,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-          ],
-        ),
+    return Text.rich(
+      TextSpan(
+        style: const TextStyle(color: Colors.white),
+        children: [
+          TextSpan(
+            text: "$label ",
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          TextSpan(
+            text: value,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          ),
+        ],
       ),
     );
   }
@@ -199,10 +192,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildPostedBy(String name) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-      decoration: BoxDecoration(
-        color: Colors.black87,
-        borderRadius: BorderRadius.circular(6),
-      ),
+      // decoration: BoxDecoration(
+      //   color: Colors.black87,
+      //   borderRadius: BorderRadius.circular(6),
+      // ),
       child: Text(
         "Posted by $name",
         style: const TextStyle(color: Colors.white, fontSize: 14),
