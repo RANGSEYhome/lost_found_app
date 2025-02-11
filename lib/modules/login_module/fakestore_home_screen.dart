@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 // core
 import 'package:lost_found_app/core/localization/lang_logic.dart';
 import 'package:lost_found_app/core/localization/lang_data.dart';
+import 'package:lost_found_app/modules/login_module/edit_profile_screen.dart';
 // modules
 import 'package:lost_found_app/modules/login_module/fakestore_loading_screen.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_login_models.dart';
@@ -234,7 +235,12 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
 
             // Edit Icon
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => EditProfileScreen()),
+                );
+              },
               icon: Icon(Icons.edit, color: Colors.green),
             ),
           ],
