@@ -112,85 +112,100 @@ class _HomeScreenState extends State<HomeScreen> {
             borderRadius: BorderRadius.circular(20),
             child: Stack(
               children: [
-                Image.network(
-                  items.img,
-                  fit: BoxFit.cover,
-                ),
-                Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.bottomCenter,
-                      end: Alignment.topCenter,
-                      colors: [
-                        Colors.black54,
-                        Colors.black38,
-                        Colors.black26,
-                        Colors.transparent,
-                      ],
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 15,
-                    vertical: 10,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text.rich(
-                        TextSpan(
-                          style: const TextStyle(color: Colors.white),
-                          children: [
-                            TextSpan(
-                              text: "Lost: ",
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            TextSpan(text: "Cat")
-                          ],
-                        ),
-                      ),
-                      Text.rich(
-                        TextSpan(
-                          style: const TextStyle(color: Colors.white),
-                          children: [
-                            TextSpan(
-                              text: "Dtae: ",
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            TextSpan(text: "2025-01-01")
-                          ],
-                        ),
-                      ),
-                      Text.rich(
-                        TextSpan(
-                          style: const TextStyle(color: Colors.white),
-                          children: [
-                            TextSpan(
-                              text: "Location: ",
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            TextSpan(text: "Water Pack")
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                _buildImageWithOverlay(items.img),
+                _buildOverlay(items), // Single overlay for first three items
+                Positioned(
+                  bottom: 10,
+                  right: 15,
+                  child: _buildPostedBy("Kaka"),
                 ),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildImageWithOverlay(String imageUrl) {
+    return Stack(
+      children: [
+        Image.network(
+          imageUrl,
+          fit: BoxFit.cover,
+          width: double.infinity,
+          height: double.infinity,
+        ),
+        // Container(
+        //   decoration: const BoxDecoration(
+        //     gradient: LinearGradient(
+        //       begin: Alignment.bottomCenter,
+        //       end: Alignment.topCenter,
+        //       colors: [
+        //         Colors.black87,
+        //         Colors.black54,
+        //         Colors.black26,
+        //         Colors.transparent,
+        //       ],
+        //     ),
+        //   ),
+        // ),
+      ],
+    );
+  }
+
+  Widget _buildOverlay(items) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildInfoText("Lost:", "Cat"),
+          _buildInfoText("Date:", "2025-01-01"),
+          _buildInfoText("Location:", "Water Park"),
+          const SizedBox(height: 10),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoText(String label, String value) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 5),
+      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+      decoration: BoxDecoration(
+        color: Colors.black54,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text.rich(
+        TextSpan(
+          style: const TextStyle(color: Colors.white),
+          children: [
+            TextSpan(
+              text: "$label ",
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            TextSpan(
+              text: value,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPostedBy(String name) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+      decoration: BoxDecoration(
+        color: Colors.black87,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        "Posted by $name",
+        style: const TextStyle(color: Colors.white, fontSize: 14),
       ),
     );
   }
