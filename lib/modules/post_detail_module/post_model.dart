@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:lost_found_app/modules/login_module/fakestore_login_models.dart';
+
 PostModel postModelFromJson(dynamic jsonData) {
   if (jsonData is String) {
     jsonData = json.decode(jsonData); // Decode only if it's a String
@@ -51,59 +53,62 @@ class PostModel {
 }
 
 class Doc {
-    String id;
-    String userId;
-    String title;
-    String description;
-    String categoryId;
-    String type;
-    String location;
-    String images;
-    String date;
-    String status;
-    String phone;
+  String id;
+  final UserModel userId;
+  final String title;
+  final String description;
+  final String categoryId;
+  final String type;
+  final String location;
+  final String images;
+  final String date;
+  final String phone;
+  final String status;
 
-    Doc({
-        this.id = "",
-        required this.userId,
-        required this.title,
-        required this.description,
-        required this.categoryId,
-        required this.type,
-        required this.location,
-        required this.images,
-        required this.date,
-        required this.status,
-        required this.phone,
-    });
+  Doc({
+    this.id = "",
+    required this.userId,
+    required this.title,
+    required this.description,
+    required this.categoryId,
+    required this.type,
+    required this.location,
+    required this.images,
+    required this.date,
+    required this.phone,
+    required this.status,
+  });
 
-    factory Doc.fromJson(Map<String, dynamic> json) => Doc(
-        id: json["_id"],
-        userId: json["userId"],
-        title: json["title"],
-        description: json["description"],
-        categoryId: json["categoryId"],
-        type: json["type"],
-        location: json["location"],
-        images: json["images"],
-        date: json["date"],
-        status: json["status"],
-        phone: json["phone"],
-
-    );
-
-    Map<String, dynamic> toJson() => {
-        id: "_id",
-        "userId": userId,
-        "title": title,
-        "description": description,
-        "categoryId": categoryId,
-        "type": type,
-        "location": location,
-        "images": images,
-        "date": date,
-        "status": status,
-        "phone": phone,
+  // ✅ Add this toJson method to convert the object into a JSON-friendly format
+  Map<String, dynamic> toJson() {
+    return {
+      "userId": userId.id, // Extract only the user ID string
+      "title": title,
+      "description": description,
+      "categoryId": categoryId,
+      "type": type,
+      "location": location,
+      "images": images,
+      "date": date,
+      "phone": phone,
+      "status": status,
     };
+  }
+
+  factory Doc.fromJson(Map<String, dynamic> json) {
+    return Doc(
+      id: json["_id"] ?? "",
+      userId: UserModel.fromJson(json["userId"]),
+      title: json["title"] ?? "",
+      description: json["description"] ?? "",
+      categoryId: json["categoryId"] ?? "",
+      type: json["type"] ?? "",
+      location: json["location"] ?? "",
+      images: json["images"] ?? "",
+      date: json["date"] ?? "",
+      phone: json["phone"] ?? "",
+      status: json["status"] ?? "",
+    );
+  }
 }
 

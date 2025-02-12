@@ -31,7 +31,13 @@ class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
   // const Home_Screen({super.key});
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-
+  
+ @override
+  void initState() {
+    super.initState();
+     context.read<FakestoreLoginLogic>().responseModel;
+     context.read<FakestoreLoginLogic>().read(); 
+  }
   @override
   Widget build(BuildContext context) {
     _lang = context.watch<LanguageLogic>().lang;
@@ -53,9 +59,9 @@ class _MainScreenState extends State<MainScreen> {
               child: IconButton(
                 icon: Icon(Icons.add_circle_outline),
                 onPressed: () {
-                  //  FakestoreLoginLogic loginLogic = Provider.of<FakestoreLoginLogic>(context, listen: false);
-                  //       MyResponseModel responseModel = loginLogic.responseModel;
-                  final responseModel = context.read<FakestoreLoginLogic>().responseModel;
+                   FakestoreLoginLogic loginLogic = Provider.of<FakestoreLoginLogic>(context, listen: false);
+                        MyResponseModel responseModel = loginLogic.responseModel;
+             //   final responseModel = context.watch<FakestoreLoginLogic>().responseModel;
                   if (responseModel.token == null) {
                     print("responseModel.tokens: ${responseModel.token}");
                     Navigator.push(

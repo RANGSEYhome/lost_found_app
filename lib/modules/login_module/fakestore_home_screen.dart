@@ -1,63 +1,57 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:lost_found_app/core/constants/app_colors.dart';
-// Core
 import 'package:lost_found_app/core/localization/lang_logic.dart';
 import 'package:lost_found_app/core/localization/lang_data.dart';
-// modules
 import 'package:lost_found_app/modules/login_module/fakestore_loading_screen.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_login_models.dart';
+import 'package:lost_found_app/modules/login_module/fakestore_login_logic.dart';
 import 'package:lost_found_app/modules/post_detail_module/post_logic.dart';
+import 'package:lost_found_app/modules/post_detail_module/post_seevice.dart';
 import 'package:lost_found_app/modules/post_detail_module/post_updatescreen.dart';
-import 'package:provider/provider.dart';
-import 'fakestore_login_logic.dart';
-import 'package:lost_found_app/modules/post_detail_module/post_get_model.dart'
-    as postGet;
-// import 'package:lost_found_app/modules/post_detail_module/post_model.dart'
-//     as postGet;
-// import 'package:lost_found_app/modules/post_detail_module/post_model.dart'
-//     as post;
+import 'package:lost_found_app/modules/post_detail_module/post_get_model.dart' as postGet;
 
 class FakestoreHomeScreen extends StatefulWidget {
   @override
-  State<FakestoreHomeScreen> createState() => _FakestoreHomeScreenState();
+  _FakestoreHomeScreenState createState() => _FakestoreHomeScreenState();
 }
 
 class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
+  final ScrollController _scrollController = ScrollController();
+  bool _isDeleting = false; // Track delete operation loading state
   Language _lang = Khmer();
   int _langIndex = 0;
-final ScrollController _scroller = ScrollController();
+
   @override
-  @override
-void initState() {
-  super.initState();
-  Future.microtask(() {
-    final responseModel = context.read<FakestoreLoginLogic>().responseModel;
-    context.read<PostLogic>().readByUser(responseModel.user!.id);
-  });
-}
+  void initState() {
+    super.initState();
+    _fetchUserPosts();
+  }
+
+  // Fetch posts for the logged-in user
+  void _fetchUserPosts() {
+    Future.microtask(() {
+      final responseModel = context.read<FakestoreLoginLogic>().responseModel;
+      context.read<PostLogic>().readByUser(responseModel.user!.id);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     _lang = context.watch<LanguageLogic>().lang;
     _langIndex = context.watch<LanguageLogic>().langIndex;
-    
     final responseModel = context.watch<FakestoreLoginLogic>().responseModel;
-   // context.watch<PostLogic>().readByUser(responseModel.user!.id);
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Account"),
-        actions: <Widget>[
+        actions: [
           IconButton(
-            icon: const Icon(Icons.logout),
+            icon: Icon(Icons.logout),
             tooltip: 'Logout',
-            onPressed: () async {
-              await context.read<FakestoreLoginLogic>().clear();
-              Navigator.of(context).pushReplacement(
-                CupertinoPageRoute(builder: (context) => FakeStoreLoadingScreen()),
-              );
-            },
+            onPressed: _handleLogout,
           ),
         ],
       ),
@@ -65,142 +59,44 @@ void initState() {
     );
   }
 
+  // Handle logout
+  void _handleLogout() async {
+    await context.read<FakestoreLoginLogic>().clear();
+    Navigator.of(context).pushReplacement(
+      CupertinoPageRoute(builder: (context) => FakeStoreLoadingScreen()),
+    );
+  }
+
+  // Build the main body of the screen
   Widget _buildBody(MyResponseModel responseModel) {
-    // context.read<PostLogic>().readByUser(userId);
-    List<postGet.Doc> records = context.watch<PostLogic>().postGetModel;
+    final List<postGet.Doc> posts = context.watch<PostLogic>().postGetModel;
 
-      return Column(
+    return Column(
       children: [
-        _buildProfile(responseModel),
-        _buildCardHeader(),
+        _buildProfileCard(responseModel),
+        _buildPostHeader(),
         Expanded(
-          child: ListView.builder(
-            controller: _scroller, // Attach the ScrollController
-            itemCount: records.length,
-            itemBuilder: (context, index) {
-              return _buildPostItem(records[index]);
-            },
-          ),
-        ),
-      ],
-    );
-
-    // return Column(
-    //   children: [
-    //     _buildProfile(responseModel),
-    //     _buildCardHeader(),
-    //     Expanded(child: _buildPostItem(records[index])),
-    //   ],
-    // );
-  }
-
-  Widget _buildCardHeader() {
-    return Card(
-      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      shape: RoundedRectangleBorder(
-        side: BorderSide(color: Colors.green),
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20.0),
-          topRight: Radius.circular(20.0),
-        ),
-      ),
-      child: ListTile(
-        title: Text('Manage your post'),
-        trailing: InkWell(
-          onTap: () {},
-          child: Icon(Icons.add_circle_outline, size: 20),
-        ),
-      ),
-    );
-  }
-
-Widget _buildPostItem(postGet.Doc item) {
-  DateTime dateTime = DateTime.parse(item.date);
-  String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
-
-  return Card(
-    margin: EdgeInsets.all(10),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(8),
-      side: BorderSide(color: AppColors.primaryColor, width: 1),
-    ),
-    child: Stack(
-      children: [
-        ListTile(
-          leading: Image.network(
-            item.images,
-            width: 100,
-            height: 100,
-            fit: BoxFit.cover,
-          ),
-          title: Text(
-            item.title,
-            overflow: TextOverflow.ellipsis,
-            maxLines: 2,
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-          ),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Stack(
             children: [
-              Text("At: ${item.location}"),
-                Text(
-                "Description: ${item.description}",
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis, // Ensures text is truncated
+              ListView.builder(
+                controller: _scrollController,
+                itemCount: posts.length,
+                itemBuilder: (context, index) => _buildPostItem(posts[index]),
               ),
-              Text("Date: ${formattedDate}"),
-            ],
-          ),
-          onTap: () {
-            // Navigate to post detail screen or trigger actions
-            // Navigator.of(context).push(
-            //   CupertinoPageRoute(builder: (context) => PostDetailScreen(item.userId)),
-            // );
-          },
-        ),
-        // Positioned Column for Edit and Delete Icons
-        Positioned(
-          right: 10,
-          top: 5,
-    
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // Edit Icon (Positioned at the top right)
-              IconButton(
-                icon: Icon(Icons.edit, color: Colors.green),
-                onPressed: () {
-                  // Trigger edit action
-                  print("Edit post with ID: ${item.id}");
-                  // Navigator.of(context).push(
-                  //   CupertinoPageRoute(
-                  //     builder: (context) => UpdatePostScreen(item),
-                  //   ),
-                  // );
-                },
-              ),
-              // Delete Icon (Positioned at the bottom right)
-              IconButton(
-                icon: Icon(Icons.delete, color: Colors.red),
-                onPressed: () {
-                  // Trigger delete action
-                  print("Delete post with ID: ${item.id}");
-                },
-              ),
+              if (_isDeleting) // Show loading indicator during delete
+                Center(child: CircularProgressIndicator()),
             ],
           ),
         ),
       ],
-    ),
-  );
-}
+    );
+  }
 
-
-
-
-  Widget _buildProfile(MyResponseModel responseModel) {
-    String imgProfile = responseModel.user?.profilePic ??
-        'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+  // Build the profile card
+  Widget _buildProfileCard(MyResponseModel responseModel) {
+    final String profileImage = responseModel.user?.profilePic?.isNotEmpty == true
+        ? responseModel.user!.profilePic!
+        : 'https://cdn-icons-png.flaticon.com/512/149/149071.png'; // Default profile image
 
     return Card(
       shape: RoundedRectangleBorder(
@@ -216,52 +112,177 @@ Widget _buildPostItem(postGet.Doc item) {
           children: [
             CircleAvatar(
               radius: 40,
-              backgroundImage: NetworkImage(imgProfile),
+              backgroundImage: NetworkImage(profileImage),
             ),
             SizedBox(width: 16),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  responseModel.user?.firstname ?? 'No Name',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.green,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    responseModel.user?.firstname ?? 'No Name',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green,
+                    ),
                   ),
-                ),
-                SizedBox(height: 8),
-                Row(
-                  children: [
-                    Icon(Icons.phone, color: Colors.green, size: 18),
-                    SizedBox(width: 8),
-                    Text(responseModel.user?.phone ?? 'No Phone',
-                        style: TextStyle(fontSize: 16, color: Colors.green)),
-                  ],
-                ),
-                SizedBox(height: 8),
-                Row(
-                  children: [
-                    Icon(Icons.email, color: Colors.green, size: 18),
-                    SizedBox(width: 8),
-                    Text(responseModel.user?.email ?? 'No Email',
-                        style: TextStyle(fontSize: 16, color: Colors.green)),
-                  ],
-                ),
-              ],
+                  SizedBox(height: 8),
+                  _buildProfileInfoRow(Icons.phone, responseModel.user?.phone ?? 'No Phone'),
+                  SizedBox(height: 8),
+                  _buildProfileInfoRow(Icons.email, responseModel.user?.email ?? 'No Email'),
+                ],
+              ),
             ),
-            Spacer(),
             IconButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => EditProfileScreen()),
-                );
+                // Navigate to edit profile screen
               },
               icon: Icon(Icons.edit, color: Colors.green),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  // Build a row for profile information (phone, email, etc.)
+  Widget _buildProfileInfoRow(IconData icon, String text) {
+    return Row(
+      children: [
+        Icon(icon, color: Colors.green, size: 18),
+        SizedBox(width: 8),
+        Text(text, style: TextStyle(fontSize: 16, color: Colors.green)),
+      ],
+    );
+  }
+
+  // Build the header for the posts section
+  Widget _buildPostHeader() {
+    return Card(
+      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: Colors.green),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20.0),
+          topRight: Radius.circular(20.0),
+        ),
+      ),
+      child: ListTile(
+        title: Text('Manage your posts'),
+        trailing: IconButton(
+          icon: Icon(Icons.add_circle_outline, size: 20),
+          onPressed: () {
+            // Navigate to add post screen
+          },
+        ),
+      ),
+    );
+  }
+
+  // Build a single post item
+  Widget _buildPostItem(postGet.Doc post) {
+    final String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.parse(post.date));
+
+    return Card(
+      margin: EdgeInsets.all(10),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+        side: BorderSide(color: AppColors.primaryColor, width: 1),
+      ),
+      child: Stack(
+        children: [
+          ListTile(
+            leading: Image.network(
+              post.images,
+              width: 100,
+              height: 100,
+              fit: BoxFit.cover,
+            ),
+            title: Text(
+              post.title,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("At: ${post.location}"),
+                Text(
+                  "Description: ${post.description}",
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text("Date: $formattedDate"),
+              ],
+            ),
+            onTap: () {
+              // Navigate to post detail screen
+            },
+          ),
+          Positioned(
+            right: 10,
+            top: 5,
+            child: Column(
+              children: [
+                IconButton(
+                  icon: Icon(Icons.edit, color: Colors.green),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      CupertinoPageRoute(
+                        builder: (context) => UpdatePostScreen(post),
+                      ),
+                    );
+                  },
+                ),
+                IconButton(
+                  icon: Icon(Icons.delete, color: Colors.red),
+                  onPressed: () => _showDeleteConfirmationDialog(context, post),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Show a confirmation dialog for deleting a post
+  void _showDeleteConfirmationDialog(BuildContext context, postGet.Doc post) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Delete Post'),
+        content: Text('Are you sure you want to delete this post?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.of(context).pop();
+              setState(() => _isDeleting = true); // Start loading
+
+              final String result = await PostSeevice.delete(post.id);
+
+              setState(() => _isDeleting = false); // Stop loading
+
+              if (result == 'success') {
+                context.read<PostLogic>().readByUser(context.read<FakestoreLoginLogic>().responseModel.user!.id);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Post deleted successfully')),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Failed to delete post')),
+                );
+              }
+            },
+            child: Text('Delete'),
+          ),
+        ],
       ),
     );
   }

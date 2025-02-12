@@ -7,7 +7,9 @@ import 'package:lost_found_app/modules/lost_found_module/lost_found_screen.dart'
 import 'package:lost_found_app/modules/post_detail_module/post_logic.dart';
 import 'dart:io';
 
-import 'package:lost_found_app/modules/post_detail_module/post_model.dart';
+// import 'package:lost_found_app/modules/post_detail_module/post_model.dart';
+import 'package:lost_found_app/modules/post_detail_module/post_get_model.dart';
+
 import 'package:lost_found_app/modules/post_detail_module/post_seevice.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_service.dart';
 
@@ -307,9 +309,9 @@ Widget _buildElevatedButton() {
             setState(() => _isLoading = false);
             return;
           }
-
+// responseModel.user!.id!
           Doc post = Doc(
-            userId: responseModel.user!.id!,
+            userId: responseModel.user!,
             title: _titleController.text.trim(),
             description: _descriptionController.text.trim(),
             categoryId: _selectVal,

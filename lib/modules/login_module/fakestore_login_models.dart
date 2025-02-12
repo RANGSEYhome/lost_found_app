@@ -72,16 +72,16 @@ class MyResponseModel {
 }
 
 class UserModel {
-  String id;
-  String firstname;
-  String lastname;
-  String email;
-  String phone;
+  final String id;
+  final String firstname;
+  final String lastname;
+  final String email;
+  final String phone;
   String password;
   String confirmPassword;
-  String profilePic;
-  String role;
-  String address;
+  final String profilePic;
+  final String role;
+  final String address;
 
   UserModel({
     required this.id,
@@ -96,18 +96,20 @@ class UserModel {
     required this.address,
   });
 
-  factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
-        id: json["_id"] ?? "",  // Handle null values
-        firstname: json["firstname"] ?? "",
-        lastname: json["lastname"] ?? "",
-        email: json["email"] ?? "",
-        phone: json["phone"] ?? "",
-        password: json["password"] ?? "",
-        confirmPassword: json["confirmPassword"] ?? "",
-        profilePic: json["profile_pic"] ?? "",
-        role: json["role"] ?? "",
-        address: json["address"] ?? "",
-      );
+  factory UserModel.fromJson(Map<String, dynamic> json) {
+    return UserModel(
+      id: json["_id"],
+      firstname: json["firstname"],
+      lastname: json["lastname"],
+      email: json["email"],
+      phone: json["phone"],
+      password: json["password"] ?? "",
+      confirmPassword: json["confirmPassword"] ?? "",
+      profilePic: json["profile_pic"],
+      role: json["role"],
+      address: json["address"],
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         "_id": id,
@@ -122,4 +124,56 @@ class UserModel {
         "address": address,
       };
 }
+
+// class UserModel {
+//   String id;
+//   String firstname;
+//   String lastname;
+//   String email;
+//   String phone;
+//   String password;
+//   String confirmPassword;
+//   String profilePic;
+//   String role;
+//   String address;
+
+//   UserModel({
+//     required this.id,
+//     required this.firstname,
+//     required this.lastname,
+//     required this.email,
+//     required this.phone,
+//     required this.password,
+//     required this.confirmPassword,
+//     required this.profilePic,
+//     required this.role,
+//     required this.address,
+//   });
+
+//   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
+//         id: json["_id"] ?? "",  // Handle null values
+//         firstname: json["firstname"] ?? "",
+//         lastname: json["lastname"] ?? "",
+//         email: json["email"] ?? "",
+//         phone: json["phone"] ?? "",
+//         password: json["password"] ?? "",
+//         confirmPassword: json["confirmPassword"] ?? "",
+//         profilePic: json["profile_pic"] ?? "",
+//         role: json["role"] ?? "",
+//         address: json["address"] ?? "",
+//       );
+
+  // Map<String, dynamic> toJson() => {
+  //       "_id": id,
+  //       "firstname": firstname,
+  //       "lastname": lastname,
+  //       "email": email,
+  //       "password": password,
+  //       "confirmPassword": confirmPassword,
+  //       "phone": phone,
+  //       "profile_pic": profilePic,
+  //       "role": role,
+  //       "address": address,
+  //     };
+// }
 

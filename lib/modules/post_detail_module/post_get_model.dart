@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:lost_found_app/modules/login_module/fakestore_login_models.dart';
+
 class PostGetDataModel {
   final List<Doc> docs;
   final int totalDocs;
@@ -42,7 +44,7 @@ class PostGetDataModel {
 }
 
 class Doc {
-  final String id;
+  String id;
   final UserModel userId;
   final String title;
   final String description;
@@ -53,10 +55,9 @@ class Doc {
   final String date;
   final String phone;
   final String status;
-  final String createdDate;
 
   Doc({
-    required this.id,
+    this.id = "",
     required this.userId,
     required this.title,
     required this.description,
@@ -67,7 +68,6 @@ class Doc {
     required this.date,
     required this.phone,
     required this.status,
-    required this.createdDate,
   });
 
   factory Doc.fromJson(Map<String, dynamic> json) {
@@ -83,48 +83,61 @@ class Doc {
       date: json["date"],
       phone: json["phone"],
       status: json["status"],
-      createdDate: json["createdDate"],
     );
   }
+
+  Map<String, dynamic> toJson() => {
+        "_id": id,
+        "userId": userId.toJson(), // Ensure UserModel has a toJson method
+        "title": title,
+        "description": description,
+        "categoryId": categoryId,
+        "type": type,
+        "location": location,
+        "images": images,
+        "date": date,
+        "phone": phone,
+        "status": status,
+      };
 }
 
-class UserModel {
-  final String id;
-  final String username;
-  final String firstname;
-  final String lastname;
-  final String email;
-  final String phone;
-  final String profilePic;
-  final String role;
-  final String address;
-  final String createdDate;
+// class UserModel {
+//   final String id;
+//   final String username;
+//   final String firstname;
+//   final String lastname;
+//   final String email;
+//   final String phone;
+//   final String profilePic;
+//   final String role;
+//   final String address;
+//   final String createdDate;
 
-  UserModel({
-    required this.id,
-    required this.username,
-    required this.firstname,
-    required this.lastname,
-    required this.email,
-    required this.phone,
-    required this.profilePic,
-    required this.role,
-    required this.address,
-    required this.createdDate,
-  });
+//   UserModel({
+//     required this.id,
+//     required this.username,
+//     required this.firstname,
+//     required this.lastname,
+//     required this.email,
+//     required this.phone,
+//     required this.profilePic,
+//     required this.role,
+//     required this.address,
+//     required this.createdDate,
+//   });
 
-  factory UserModel.fromJson(Map<String, dynamic> json) {
-    return UserModel(
-      id: json["_id"],
-      username: json["username"],
-      firstname: json["firstname"],
-      lastname: json["lastname"],
-      email: json["email"],
-      phone: json["phone"],
-      profilePic: json["profile_pic"],
-      role: json["role"],
-      address: json["address"],
-      createdDate: json["createdDate"],
-    );
-  }
-}
+//   factory UserModel.fromJson(Map<String, dynamic> json) {
+//     return UserModel(
+//       id: json["_id"],
+//       username: json["username"],
+//       firstname: json["firstname"],
+//       lastname: json["lastname"],
+//       email: json["email"],
+//       phone: json["phone"],
+//       profilePic: json["profile_pic"],
+//       role: json["role"],
+//       address: json["address"],
+//       createdDate: json["createdDate"],
+//     );
+//   }
+// }
