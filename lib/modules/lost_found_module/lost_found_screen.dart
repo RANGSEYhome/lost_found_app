@@ -96,7 +96,6 @@ class _LostFoundScreenState extends State<LostFoundScreen> {
     if (error != null) {
       return _buildErrorMessage(error);
     }
-
     return Column(
       children: [
         Expanded(

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
 import 'package:lost_found_app/core/constants/app_colors.dart';
 import 'package:lost_found_app/core/constants/app_spacing.dart';
 import 'package:lost_found_app/core/constants/app_text_style.dart';
 import 'package:lost_found_app/core/utils/widget_util.dart';
+import 'package:lost_found_app/modules/post_detail_module/post_logic.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
@@ -14,7 +16,8 @@ import 'package:lost_found_app/core/localization/lang_logic.dart';
 import 'package:lost_found_app/modules/basic_module/demo_screen.dart';
 import 'package:lost_found_app/modules/home_module/book_data.dart';
 import 'package:lost_found_app/modules/post_detail_module/post_detail_screen.dart';
-
+import 'package:lost_found_app/modules/post_detail_module/post_get_model.dart'
+    as postGet;
 class HomeScreen extends StatefulWidget {
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -30,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildBody() {
+    List<postGet.Doc> records = context.watch<PostLogic>().postModel;
     return ListView(
       physics: BouncingScrollPhysics(),
       children: [
@@ -42,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Text("All Posts"),
           ) as TextButton,
         ),
-        _buildSlideShow(bookModelList, Axis.horizontal),
+        _buildSlideShow(records, Axis.horizontal),
         SizedBox(height: AppSpacing.lg),
         HeadlineLabel(
           "Posts by Category",
@@ -53,10 +57,10 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildSlideShow(List<BookModel> items, Axis direc) {
-    if (items.isEmpty) {
-      return Center(child: Text("No posts available!"));
-    }
+  Widget _buildSlideShow(List<postGet.Doc> items, Axis direc) {
+    // if (items) {
+    //   return Center(child: Text("No posts available!"));
+    // }
     return Column(
       children: [
         SizedBox(
@@ -98,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildSlideItems(items) {
+  Widget _buildSlideItems(postGet.Doc item) {
     return Card(
       color: Colors.transparent,
       child: InkWell(
@@ -113,12 +117,12 @@ class _HomeScreenState extends State<HomeScreen> {
             borderRadius: BorderRadius.circular(15),
             child: Stack(
               children: [
-                _buildImageWithOverlay(items.img),
-                _buildOverlay(items), // Single overlay for first three items
+                _buildImageWithOverlay(item.images),
+                _buildOverlay(item), // Single overlay for first three items
                 Positioned(
                   bottom: 10,
                   right: 15,
-                  child: _buildPostedBy("Kaka"),
+                  child: _buildPostedBy(item.userId.firstname + " " + item.userId.lastname),
                 ),
               ],
             ),
@@ -157,15 +161,17 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildOverlay(items) {
+     DateTime dateTime = DateTime.parse(items.date);
+    String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildInfoText("Lost:", "Cat"),
-          _buildInfoText("Date:", "2025-01-01"),
-          _buildInfoText("Location:", "Water Park"),
+          _buildInfoText("Lost:", items.title),
+          _buildInfoText("Date:", formattedDate),
+          _buildInfoText("Location:", items.location),
           const SizedBox(height: 10),
         ],
       ),
