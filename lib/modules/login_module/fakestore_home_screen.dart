@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:lost_found_app/modules/basic_module/main_screen.dart';
+import 'package:lost_found_app/modules/login_module/fakestore_login_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:lost_found_app/core/constants/app_colors.dart';
 import 'package:lost_found_app/core/localization/lang_logic.dart';
@@ -14,6 +16,8 @@ import 'package:lost_found_app/modules/post_detail_module/post_updatescreen.dart
 import 'package:lost_found_app/modules/post_detail_module/post_get_model.dart' as postGet;
 
 class FakestoreHomeScreen extends StatefulWidget {
+   final int initialIndex;
+  FakestoreHomeScreen({this.initialIndex = 2});
   @override
   _FakestoreHomeScreenState createState() => _FakestoreHomeScreenState();
 }
@@ -23,11 +27,13 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
   bool _isDeleting = false; // Track delete operation loading state
   Language _lang = Khmer();
   int _langIndex = 0;
+  int _selectedIndex = 2;
 
   @override
   void initState() {
     super.initState();
     _fetchUserPosts();
+    _selectedIndex = 2;
   }
 
   // Fetch posts for the logged-in user
@@ -63,7 +69,7 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
   void _handleLogout() async {
     await context.read<FakestoreLoginLogic>().clear();
     Navigator.of(context).pushReplacement(
-      CupertinoPageRoute(builder: (context) => FakeStoreLoadingScreen()),
+      CupertinoPageRoute(builder: (context) => MainScreen()),
     );
   }
 

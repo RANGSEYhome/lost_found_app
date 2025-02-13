@@ -10,14 +10,14 @@ class FakeStoreApp extends StatefulWidget {
 }
 
 class _FakeStoreAppState extends State<FakeStoreApp> {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: FakeStoreLoadingScreen(),
-    );
-  }
   // @override
   // Widget build(BuildContext context) {
-  //   return FakeStoreLoadingScreen();
-  // }  
+  //   return MaterialApp(
+  //     home: FakeStoreLoadingScreen(),
+  //   );
+  // }
+  @override
+  Widget build(BuildContext context) {
+    return FakeStoreLoadingScreen();
+  }  
 }

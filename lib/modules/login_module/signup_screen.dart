@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:lost_found_app/modules/login_module/fakestore_app.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_login_models.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_provider.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_service.dart';
@@ -246,7 +247,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => fakeStoreProvider()));
+                        builder: (context) => FakeStoreApp()));
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text(value),

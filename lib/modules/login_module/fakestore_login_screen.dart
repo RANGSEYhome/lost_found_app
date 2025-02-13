@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lost_found_app/modules/basic_module/main_screen.dart';
+import 'package:lost_found_app/modules/home_module/home_screen.dart';
 import 'package:lost_found_app/modules/login_module/signup_screen.dart';
 import 'package:provider/provider.dart';
 import 'fakestore_home_screen.dart';
@@ -117,7 +119,7 @@ Widget _buildSocialButton(IconData icon, Color color, VoidCallback onPressed) {
         );
         if (response.token != null) {
           Navigator.of(context).pushReplacement(
-            CupertinoPageRoute(builder: (context) => FakestoreHomeScreen()),
+            CupertinoPageRoute(builder: (context) => MainScreen()),
           );
         } else {
           _showSnackBar("Login Failed");

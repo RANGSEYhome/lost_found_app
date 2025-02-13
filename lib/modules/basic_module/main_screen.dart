@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lost_found_app/modules/basic_module/basic_app.dart';
+import 'package:lost_found_app/modules/login_module/fakestore_app.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_home_screen.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_login_logic.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_login_models.dart';
@@ -68,7 +69,7 @@ class _MainScreenState extends State<MainScreen> {
                     print("responseModel.tokens: ${responseModel.token}");
                     Navigator.push(
                       context,
-                      CupertinoPageRoute(
+                      MaterialPageRoute(
                           builder: (context) => FakeStoreLoginScreen()),
                     );
                   } else {
@@ -123,7 +124,7 @@ class _MainScreenState extends State<MainScreen> {
       padding: const EdgeInsets.all(4.0),
       child: IndexedStack(
         index: _currentIndex,
-        children: [HomeScreen(), LostFoundScreen(), fakeStoreProvider()],
+        children: [HomeScreen(), LostFoundScreen(), FakeStoreApp()],
       ),
     );
   }
