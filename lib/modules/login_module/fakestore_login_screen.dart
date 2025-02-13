@@ -121,9 +121,10 @@ Widget _buildSocialButton(IconData icon, Color color, VoidCallback onPressed) {
           _passCtrl.text.trim(),
         );
         if (response.token != null) {
-          Navigator.of(context).pushReplacement(
-            CupertinoPageRoute(builder: (context) => MainScreen()),
-          );
+          // Navigator.of(context).pushReplacement(
+          //   CupertinoPageRoute(builder: (context) => MainScreen()),
+          // );
+          setState(() {});
         } else {
           _showSnackBar("Login Failed");
         }
