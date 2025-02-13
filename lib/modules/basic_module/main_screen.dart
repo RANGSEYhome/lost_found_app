@@ -49,7 +49,7 @@ class _MainScreenState extends State<MainScreen> {
       {
         'appBar': AppBar(
           title: Text(_lang.appName),
-          actions: [searchButton(context, SearchScreen())],
+          // actions: [searchButton(context, SearchScreen())],
         ),
       },
       {
