@@ -110,9 +110,9 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: Colors.green),
+        // side: BorderSide(color: Colors.green),
       ),
-      color: Colors.grey[300],
+      // color: Colors.grey[300],
       elevation: 4,
       child: Padding(
         padding: EdgeInsets.all(16),
@@ -129,7 +129,7 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    responseModel.user?.firstname ?? 'No Name',
+                    '${responseModel.user?.firstname ?? 'No Name'} ${responseModel.user?.lastname ?? ''}'.trim(),
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -140,6 +140,8 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
                   _buildProfileInfoRow(Icons.phone, responseModel.user?.phone ?? 'No Phone'),
                   SizedBox(height: 8),
                   _buildProfileInfoRow(Icons.email, responseModel.user?.email ?? 'No Email'),
+                  // SizedBox(height: 8),
+                  // _buildProfileInfoRow(Icons.date_range_rounded, "2025-02-05" ?? 'No Email'),
                 ],
               ),
             ),
