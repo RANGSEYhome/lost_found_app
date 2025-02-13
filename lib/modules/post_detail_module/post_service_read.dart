@@ -97,6 +97,8 @@ static Future<void> readPage({
 static Future<void> search({
     int page = 1,
     String query = "",
+    String category ="",
+
     required Function(List<Doc>) onRes,
     required Function(Object?) onError,
   }) async {
@@ -104,7 +106,10 @@ static Future<void> search({
     if (query =="") {
       return ;
     }
-print("Urls: $url");
+    if(category != ""){
+      url = "$api/post?page=$page&limit=10&category=$category";
+    }
+    print("Urls: $url");
     try {
       final response = await http.get(Uri.parse(url));
 
@@ -137,5 +142,8 @@ print("Urls: $url");
       onError("Request Failed: $e");
     }
   }
+  
 }
+
+
 

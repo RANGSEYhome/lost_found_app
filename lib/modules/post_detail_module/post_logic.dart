@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:lost_found_app/modules/post_detail_module/post_get_model.dart';
 // import 'package:lost_found_app/modules/post_detail_module/post_model.dart';
@@ -12,8 +13,10 @@ class PostLogic extends ChangeNotifier {
   List<Doc> get postModel => _postModel;
   List<Doc> _postGetModel = [];
   List<Doc> get postGetModel => _postGetModel;
-   List<Doc> _postSearchModel = [];
+  List<Doc> _postSearchModel = [];
   List<Doc> get postSearchModel => _postSearchModel;
+  List<Doc> _postSearchCagetoryModel = [];
+  List<Doc> get postSearchCagetoryModel => _postSearchCagetoryModel;
 
   bool _loading = true; // Set loading to true initially
   bool get loading => _loading;
@@ -59,6 +62,25 @@ class PostLogic extends ChangeNotifier {
     },
   );
 }
+Future searchByCategory(query, category) async {
+  await PostSeviceRead.search(
+    query: query,
+    category: category,
+    onRes: (items) async {
+      print("Items Received: $items"); // ✅ Print received items
+
+      _postSearchCagetoryModel = items; // No need to await, it's already a List<Doc>
+      _loading = false;
+      notifyListeners();
+    },
+    onError: (err) {
+      _error = err;
+      _loading = false;
+      notifyListeners();
+    },
+  );
+}
+
   Future search(query) async {
   await PostSeviceRead.search(
     query: query,

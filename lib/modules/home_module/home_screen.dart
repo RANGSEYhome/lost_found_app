@@ -5,6 +5,7 @@ import 'package:lost_found_app/core/constants/app_colors.dart';
 import 'package:lost_found_app/core/constants/app_spacing.dart';
 import 'package:lost_found_app/core/constants/app_text_style.dart';
 import 'package:lost_found_app/core/utils/widget_util.dart';
+import 'package:lost_found_app/modules/home_module/category_post.dart';
 import 'package:lost_found_app/modules/post_detail_module/post_logic.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -288,7 +289,7 @@ class _HomeScreenState extends State<HomeScreen> {
       {
         "title": "People",
         "icon": Icons.people_alt,
-        "page": DemoScreen(),
+        "page": PostByCategory("People"),
         "textColor": Color(0xFF4C585B),
         "iconColor": Color(0xFF4C585B),
         "cardColor": Colors.yellow[300],
@@ -296,7 +297,7 @@ class _HomeScreenState extends State<HomeScreen> {
       {
         "title": "Pets",
         "icon": Icons.pets_outlined,
-        "page": DemoScreen(),
+        "page": PostByCategory("Pets"),
         "textColor": Colors.white,
         "iconColor": Colors.white,
         "cardColor": Colors.red[300],
@@ -304,7 +305,7 @@ class _HomeScreenState extends State<HomeScreen> {
       {
         "title": "Staffs",
         "icon": Icons.style_outlined,
-        "page": DemoScreen(),
+        "page": PostByCategory("Staffs"),
         "textColor": Colors.white,
         "iconColor": Colors.white,
         "cardColor": Colors.blue[300],
@@ -312,7 +313,7 @@ class _HomeScreenState extends State<HomeScreen> {
       {
         "title": "Others",
         "icon": Icons.all_inclusive_outlined,
-        "page": DemoScreen(),
+        "page": PostByCategory("Other"),
         "textColor": Color(0xFF4C585B),
         "iconColor": Color(0xFF4C585B),
         "cardColor": Colors.green[300],
