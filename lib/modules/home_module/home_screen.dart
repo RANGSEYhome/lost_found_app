@@ -75,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
               return Container(
                 margin: EdgeInsets.symmetric(horizontal: 15),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(15),
                   child: _buildSlideItems(items[index]),
                 ),
               );
@@ -100,6 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildSlideItems(items) {
     return Card(
+      color: Colors.transparent,
       child: InkWell(
         onTap: () {
           // Navigator.of(context).push(
@@ -109,7 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: SizedBox(
           height: 220,
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(15),
             child: Stack(
               children: [
                 _buildImageWithOverlay(items.img),
@@ -206,6 +207,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildCategoryCard(
       Map<String, dynamic> category, BuildContext context) {
     return Card(
+      color: category["cardColor"],
       elevation: 3,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: InkWell(
@@ -221,12 +223,13 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(category["icon"], size: 40, color: Colors.blueAccent),
+              Icon(category["icon"], size: 40, color: category["iconColor"]),
               const SizedBox(height: 10),
               Text(
                 category["title"],
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
+                  color: category["textColor"],
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
@@ -241,32 +244,36 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildCategoryGrid(BuildContext context) {
     List<Map<String, dynamic>> categories = _categoryList();
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return GridView.builder(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          padding: const EdgeInsets.all(15),
-          itemCount: categories.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 15,
-            mainAxisSpacing: 15,
-            childAspectRatio: 1.1,
-          ),
-          itemBuilder: (context, index) {
-            if (categories.length.isOdd && index == categories.length - 1) {
-              return Center(
-                child: SizedBox(
-                  width: constraints.maxWidth * 0.45, // Center last item
-                  child: _buildCategoryCard(categories[index], context),
-                ),
-              );
-            }
-            return _buildCategoryCard(categories[index], context);
-          },
-        );
-      },
+    return Padding(
+      padding: const EdgeInsets.all(15),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return Container(
+            padding: const EdgeInsets.all(8), // Outer padding
+            decoration: BoxDecoration(
+              color: Colors.white70, // Smoke background color
+              borderRadius:
+                  BorderRadius.circular(10), // Optional: rounded corners
+            ),
+            child: GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              padding: EdgeInsets
+                  .zero, // Remove inner padding since it's handled by Container
+              itemCount: categories.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 8,
+                childAspectRatio: 1.1,
+              ),
+              itemBuilder: (context, index) {
+                return _buildCategoryCard(categories[index], context);
+              },
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -276,21 +283,33 @@ class _HomeScreenState extends State<HomeScreen> {
         "title": "People",
         "icon": Icons.people_alt,
         "page": DemoScreen(),
+        "textColor": Color(0xFF4C585B),
+        "iconColor": Color(0xFF4C585B),
+        "cardColor": Colors.yellow[300],
       },
       {
         "title": "Pets",
         "icon": Icons.pets_outlined,
         "page": DemoScreen(),
+        "textColor": Colors.white,
+        "iconColor": Colors.white,
+        "cardColor": Colors.red[300],
       },
       {
         "title": "Staffs",
         "icon": Icons.style_outlined,
         "page": DemoScreen(),
+        "textColor": Colors.white,
+        "iconColor": Colors.white,
+        "cardColor": Colors.blue[300],
       },
       {
         "title": "Others",
         "icon": Icons.all_inclusive_outlined,
         "page": DemoScreen(),
+        "textColor": Color(0xFF4C585B),
+        "iconColor": Color(0xFF4C585B),
+        "cardColor": Colors.green[300],
       },
     ];
   }

@@ -81,11 +81,12 @@ class BasicApp extends StatelessWidget {
 
       themeMode: mode,
       theme: ThemeData(
+        scaffoldBackgroundColor: Colors.green[50],
         brightness: Brightness.light,
         primarySwatch: AppColors.primarySwatch,
         fontFamily: AppTextFonts.primaryFont,
         appBarTheme: AppBarTheme(
-          backgroundColor: AppColors.originalLightThemeBg,
+          backgroundColor: Colors.green[300],
           foregroundColor: AppColors.black,
           titleTextStyle: AppTextStylesLight.headline2,
         ),
