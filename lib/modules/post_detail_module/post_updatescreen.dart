@@ -21,7 +21,7 @@ class UpdatePostScreen extends StatefulWidget {
 class _UpdatePostScreenState extends State<UpdatePostScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  final _categories = ["people", "pets", "staffs", "other"];
+  final _categories = ["people", "pets", "staffs", "others"];
   final _types = ["lost", "found"];
 
   late String _selectedCategory;
