@@ -77,20 +77,20 @@ class _SignupScreenState extends State<SignupScreen> {
         child: Column(
           children: <Widget>[
             imageProfile(),
-            _buildTextField("Firstname", "Enter your firstname",
+            _buildTextField("Firstname", "Enter your firstname", TextInputType.text,
                 controller: _firstnameController),
-            _buildTextField("Lastname", "Enter your lastname",
+            _buildTextField("Lastname", "Enter your lastname", TextInputType.text,
                 controller: _lastnameController),
             // _buildTextField("Username", "Enter your username", controller: _usernameController),
-            _buildTextField('Email', 'Enter your email',
+            _buildTextField('Email', 'Enter your email',  TextInputType.emailAddress,
                 isEmail: true, controller: _emailController),
-            _buildTextField('Password', 'Enter your password',
+            _buildTextField('Password', 'Enter your password', TextInputType.text,
                 isPassword: true, controller: _passwordController),
-            _buildTextField('Confirm Password', 'Re-enter your password',
+            _buildTextField('Confirm Password', 'Re-enter your password', TextInputType.text,
                 isPassword: true,
                 isConfirmPassword: true,
                 controller: _confirmPasswordController),
-            _buildTextField('Phone', 'Enter your phone number',
+            _buildTextField('Phone', 'Enter your phone number', TextInputType.phone,
                 isPhone: true, controller: _phoneController),
             _buildElevatedButton(),
           ],
@@ -99,7 +99,7 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 
-  Widget _buildTextField(String labelText, String hintText,
+  Widget _buildTextField(String labelText, String hintText, TextInputType inputType,
       {bool isEmail = false,
       bool isPassword = false,
       bool isConfirmPassword = false,
@@ -110,6 +110,7 @@ class _SignupScreenState extends State<SignupScreen> {
         return Container(
           margin: EdgeInsets.only(top: 10, left: 10, right: 10),
           child: TextFormField(
+            keyboardType: inputType,
             controller: controller,
             obscureText: isPassword,
             decoration: InputDecoration(
@@ -124,29 +125,29 @@ class _SignupScreenState extends State<SignupScreen> {
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15.0),
                 borderSide: BorderSide(
-                  color: Colors.blue,
-                  width: 2.0,
+                  color: Colors.green,
+                  width: 1.0,
                 ),
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15.0),
                 borderSide: BorderSide(
-                  color: Colors.blue,
-                  width: 2.0,
+                  color: Colors.green,
+                  width: 1.0,
                 ),
               ),
               errorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15.0),
                 borderSide: BorderSide(
                   color: Colors.red,
-                  width: 2.0,
+                  width: 1.0,
                 ),
               ),
               focusedErrorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15.0),
                 borderSide: BorderSide(
                   color: Colors.red,
-                  width: 2.0,
+                  width: 1.0,
                 ),
               ),
               contentPadding:
