@@ -71,6 +71,7 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
   void _handleLogout() async {
     await context.read<FakestoreLoginLogic>().clear();
     Navigator.of(context).pushReplacement(
+      // setState(() {});
       CupertinoPageRoute(builder: (context) => MainScreen()),
     );
   }
