@@ -25,8 +25,11 @@ class _FakeStoreLoginScreenState extends State<FakeStoreLoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(""),
+        backgroundColor: Colors.green[50],
+      ),
       body: Center(
-        
         child: Container(
           alignment: Alignment.center,
           padding: EdgeInsets.all(20),

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lost_found_app/modules/basic_module/main_screen.dart';
+import 'package:lost_found_app/modules/login_module/edit_profile_screen.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_login_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:lost_found_app/core/constants/app_colors.dart';
@@ -53,6 +54,7 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Account"),
+        backgroundColor: Colors.green[50],
         actions: [
           IconButton(
             icon: Icon(Icons.logout),
@@ -142,7 +144,10 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
             ),
             IconButton(
               onPressed: () {
-                // Navigate to edit profile screen
+                Navigator.push(
+                  context,
+                  CupertinoPageRoute(builder: (context) => EditProfileScreen()),
+                );
               },
               icon: Icon(Icons.edit, color: Colors.green),
             ),
