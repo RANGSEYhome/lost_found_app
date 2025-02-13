@@ -182,7 +182,7 @@ Widget _buildPostItem(postGet.Doc item) {
           right: 10,
           top: 10,
           child: Text(
-            "${item.type}",
+            "${item.type.toUpperCase()}",
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 12,

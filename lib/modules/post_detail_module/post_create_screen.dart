@@ -14,7 +14,8 @@ import 'package:lost_found_app/modules/post_detail_module/post_seevice.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_service.dart';
 
 import 'package:provider/provider.dart';
-
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 class CreatePostScreen extends StatefulWidget {
   const CreatePostScreen({super.key});
 
@@ -62,6 +63,45 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       });
     }
   }
+  Future<void> sendTelegramNotification(Doc post) async {
+  const String botToken = "7502527933:AAEsmBCy-ja8EpRr0smIQBo-rNRhuh4izrc"; // Replace with your bot token
+  // const String chatId = "298697300"; // Replace with your chat ID
+  List<String> chatIds = ["298697300", "351373897", "534190102","226209214"];
+
+  // Format the message
+  String message = """
+📢 *New Post Created* 📢
+📝 *Title:* ${post.title}
+📍 *Location:* ${post.location}
+📅 *Date:* ${post.date}
+📞 *Phone:* ${post.phone}
+📖 *Description:* ${post.description}
+🔖 *Type:* ${post.type[0].toUpperCase()}${post.type.substring(1)}
+🗂 *Category:* ${post.categoryId}
+""";
+
+  String url = "https://api.telegram.org/bot7502527933:AAEsmBCy-ja8EpRr0smIQBo-rNRhuh4izrc/sendMessage";
+
+  try {
+     for (String chatId in chatIds) {
+    try {
+      await http.post(
+        Uri.parse(url),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "chat_id": chatId,
+          "text": message,
+          "parse_mode": "Markdown",
+        }),
+      );
+    } catch (e) {
+      print("Failed to send notification to $chatId: $e");
+    }
+  }
+  } catch (e) {
+    print("Failed to send Telegram notification: $e");
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -325,6 +365,7 @@ Widget _buildElevatedButton() {
 
           String result = await PostSeevice.insert(post);
           if (result == "success") {
+            await sendTelegramNotification(post);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Post created successfully')),
             );

@@ -103,6 +103,17 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                 ],
               ),
               const SizedBox(height: 16),
+              Row(
+                children: [
+                  const Icon(Icons.phone, color: Colors.blue, size: 18),
+                  const SizedBox(width: 6),
+                  Text(
+                     widget.item.phone ?? "No Phone number",
+                    style: const TextStyle(fontSize: 16, color: Colors.black87),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
 
               // Description
               const Text(

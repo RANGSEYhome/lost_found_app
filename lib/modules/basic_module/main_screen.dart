@@ -5,6 +5,7 @@ import 'package:lost_found_app/modules/login_module/fakestore_login_logic.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_login_models.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_login_screen.dart';
 import 'package:lost_found_app/modules/post_detail_module/post_create_screen.dart';
+import 'package:lost_found_app/modules/post_detail_module/post_logic.dart';
 import 'package:lost_found_app/modules/search_module/search_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
@@ -37,6 +38,7 @@ class _MainScreenState extends State<MainScreen> {
     super.initState();
      context.read<FakestoreLoginLogic>().responseModel;
      context.read<FakestoreLoginLogic>().read(); 
+    // context.read<PostLogic>().read();
   }
   @override
   Widget build(BuildContext context) {

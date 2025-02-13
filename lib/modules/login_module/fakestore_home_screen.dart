@@ -270,7 +270,9 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
               setState(() => _isDeleting = false); // Stop loading
 
               if (result == 'success') {
+                //print("Users ID"+ context.read<FakestoreLoginLogic>().responseModel.user!.id);
                 context.read<PostLogic>().readByUser(context.read<FakestoreLoginLogic>().responseModel.user!.id);
+                context.read<PostLogic>().read();
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Post deleted successfully')),
                 );

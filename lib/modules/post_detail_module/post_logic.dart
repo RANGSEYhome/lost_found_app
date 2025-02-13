@@ -12,6 +12,8 @@ class PostLogic extends ChangeNotifier {
   List<Doc> get postModel => _postModel;
   List<Doc> _postGetModel = [];
   List<Doc> get postGetModel => _postGetModel;
+   List<Doc> _postSearchModel = [];
+  List<Doc> get postSearchModel => _postSearchModel;
 
   bool _loading = true; // Set loading to true initially
   bool get loading => _loading;
@@ -47,6 +49,23 @@ class PostLogic extends ChangeNotifier {
       print("Items Received: $items"); // ✅ Print received items
 
       _postModel = items; // No need to await, it's already a List<Doc>
+      _loading = false;
+      notifyListeners();
+    },
+    onError: (err) {
+      _error = err;
+      _loading = false;
+      notifyListeners();
+    },
+  );
+}
+  Future search(query) async {
+  await PostSeviceRead.search(
+    query: query,
+    onRes: (items) async {
+      print("Items Received: $items"); // ✅ Print received items
+
+      _postSearchModel = items; // No need to await, it's already a List<Doc>
       _loading = false;
       notifyListeners();
     },

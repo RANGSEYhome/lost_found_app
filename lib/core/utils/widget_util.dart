@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:lost_found_app/core/constants/app_colors.dart';
 import 'package:lost_found_app/core/constants/app_text_style.dart';
 import 'package:lost_found_app/core/localization/lang_data.dart';
+import 'package:lost_found_app/modules/post_detail_module/post_logic_get.dart';
+import 'package:provider/provider.dart';
 
 Language _lang = Khmer();
 
@@ -166,16 +168,35 @@ Widget HeadlineLabel(String headline, double fontSize, {TextButton? button}) {
   );
 }
 // HeadlineLabel("Headline", AppTextSizes.headline2, button: textButtonNavigateTo(context, destination: DemoScreen(), child: Text("Click Me!")) as TextButton),
+final TextEditingController _searchController = TextEditingController();
 
-Widget searchBox() {
+Widget searchBox(BuildContext context) {
   return Padding(
     padding: const EdgeInsets.all(10.0),
     child: TextField(
       decoration: InputDecoration(
         hintText: _lang.search,
-        suffixIcon: Icon(Icons.search),
+        suffixIcon: IconButton(
+          icon: Icon(Icons.search),
+          onPressed: () async{
+            // Trigger search when the search icon is clicked
+            if (_searchController.text.isNotEmpty) {
+              // print("Search query press: ${_searchController.text}");
+              await context.read()<PostLogic>().search(_searchController.text.trim());
+
+            }
+          },
+        ),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(50)),
       ),
+      controller: _searchController, // Add a TextEditingController
+      onSubmitted: (query) {
+        // Trigger search when the user presses "Enter"
+        if (query.isNotEmpty) {
+           context.read()<PostLogic>().search(query.trim());
+          print("Search query: $query");
+        }
+      },
     ),
   );
 }
