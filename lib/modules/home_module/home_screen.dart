@@ -41,11 +41,6 @@ class _HomeScreenState extends State<HomeScreen> {
         HeadlineLabel(
           "Recent Posts",
           AppTextSizes.headline2,
-          button: textButtonNavigateTo(
-            context,
-            destination: DemoScreen(),
-            child: Text("All Posts"),
-          ) as TextButton,
         ),
         _buildSlideShow(records, Axis.horizontal),
         SizedBox(height: AppSpacing.lg),
@@ -108,9 +103,9 @@ class _HomeScreenState extends State<HomeScreen> {
       color: Colors.transparent,
       child: InkWell(
         onTap: () {
-          // Navigator.of(context).push(
-          //   CupertinoPageRoute(builder: (context) => PostDetailScreen(items)),
-          // );
+          Navigator.of(context).push(
+            CupertinoPageRoute(builder: (context) => PostDetailScreen(item)),
+          );
         },
         child: SizedBox(
           height: 220,
