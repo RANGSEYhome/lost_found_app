@@ -1,254 +1,231 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'dart:io';
 
-class EditProfileScreen extends StatelessWidget {
-  const EditProfileScreen({super.key});
+import 'package:flutter/material.dart';
+import 'package:lost_found_app/modules/login_module/fakestore_app.dart';
+import 'package:lost_found_app/modules/login_module/fakestore_login_models.dart';
+import 'package:lost_found_app/modules/login_module/fakestore_provider.dart';
+import 'package:lost_found_app/modules/login_module/fakestore_service.dart';
+import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
+
+class EditProfileScreen extends StatefulWidget {
+  final UserModel user;
+  const EditProfileScreen(this.user, {Key? key}) : super(key: key);
+
+  @override
+  State<EditProfileScreen> createState() => _EditProfileScreenState();
+}
+
+class _EditProfileScreenState extends State<EditProfileScreen> {
+  final _formKey = GlobalKey<FormState>();
+  File? _imageFile; // To store the selected image
+  final ImagePicker _picker = ImagePicker();
+  String p = "";
+
+  final TextEditingController _firstnameController = TextEditingController();
+  final TextEditingController _lastnameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize controllers with current user data
+    _firstnameController.text = widget.user.firstname;
+    _lastnameController.text = widget.user.lastname;
+    _emailController.text = widget.user.email;
+    _phoneController.text = widget.user.phone;
+    p = widget.user.profilePic;
+  }
+
+  @override
+  void dispose() {
+    _firstnameController.dispose();
+    _lastnameController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pickImage() async {
+    final pickedFile = await _picker.pickImage(
+      source: ImageSource.gallery, // Use ImageSource.camera for camera
+    );
+
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        centerTitle: false,
-        elevation: 0,
-        // backgroundColor: const Color(0xFF00BF6D),
-        // foregroundColor: Colors.black,
-        title: const Text("Edit Profile"),
+        title: Text('Update Profile'),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      body: Center(
+        child: _buildSignupForm(),
+      ),
+    );
+  }
+
+  Widget _buildSignupForm() {
+    return SingleChildScrollView(
+      child: Form(
+        key: _formKey,
         child: Column(
-          children: [
-            ProfilePic(
-              image: 'https://i.postimg.cc/cCsYDjvj/user-2.png',
-              imageUploadBtnPress: () {},
-            ),
-            const Divider(),
-            Form(
-              child: Column(
-                children: [
-                  UserInfoEditField(
-                    text: "Name",
-                    child: TextFormField(
-                      initialValue: "Annette Black",
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: const Color(0xFF00BF6D).withOpacity(0.05),
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16.0 * 1.5, vertical: 16.0),
-                        border: const OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
-                        ),
-                      ),
-                    ),
-                  ),
-                  UserInfoEditField(
-                    text: "Email",
-                    child: TextFormField(
-                      initialValue: "annette@gmail.com",
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: const Color(0xFF00BF6D).withOpacity(0.05),
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16.0 * 1.5, vertical: 16.0),
-                        border: const OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
-                        ),
-                      ),
-                    ),
-                  ),
-                  UserInfoEditField(
-                    text: "Phone",
-                    child: TextFormField(
-                      initialValue: "(316) 555-0116",
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: const Color(0xFF00BF6D).withOpacity(0.05),
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16.0 * 1.5, vertical: 16.0),
-                        border: const OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
-                        ),
-                      ),
-                    ),
-                  ),
-                  // UserInfoEditField(
-                  //   text: "Address",
-                  //   child: TextFormField(
-                  //     initialValue: "New York, NVC",
-                  //     decoration: InputDecoration(
-                  //       filled: true,
-                  //       fillColor: const Color(0xFF00BF6D).withOpacity(0.05),
-                  //       contentPadding: const EdgeInsets.symmetric(
-                  //           horizontal: 16.0 * 1.5, vertical: 16.0),
-                  //       border: const OutlineInputBorder(
-                  //         borderSide: BorderSide.none,
-                  //         borderRadius: BorderRadius.all(Radius.circular(50)),
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-                  UserInfoEditField(
-                    text: "Old Password",
-                    child: TextFormField(
-                      obscureText: true,
-                      initialValue: "demopass",
-                      decoration: InputDecoration(
-                        suffixIcon: const Icon(
-                          Icons.visibility_off,
-                          size: 20,
-                        ),
-                        filled: true,
-                        fillColor: const Color(0xFF00BF6D).withOpacity(0.05),
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16.0 * 1.5, vertical: 16.0),
-                        border: const OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
-                        ),
-                      ),
-                    ),
-                  ),
-                  UserInfoEditField(
-                    text: "New Password",
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        hintText: "New Password",
-                        filled: true,
-                        fillColor: const Color(0xFF00BF6D).withOpacity(0.05),
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16.0 * 1.5, vertical: 16.0),
-                        border: const OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                          borderRadius: BorderRadius.all(Radius.circular(50)),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                SizedBox(
-                  width: 120,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context)
-                          .textTheme
-                          .bodyLarge!
-                          .color!
-                          .withOpacity(0.08),
-                      foregroundColor: Colors.white,
-                      minimumSize: const Size(double.infinity, 48),
-                      shape: const StadiumBorder(),
-                    ),
-                    child: const Text("Cancel"),
-                  ),
-                ),
-                const SizedBox(width: 16.0),
-                SizedBox(
-                  width: 160,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF00BF6D),
-                      foregroundColor: Colors.white,
-                      minimumSize: const Size(double.infinity, 48),
-                      shape: const StadiumBorder(),
-                    ),
-                    onPressed: () {},
-                    child: const Text("Save Update"),
-                  ),
-                ),
-              ],
-            ),
+          children: <Widget>[
+            imageProfile(),
+            _buildTextField("Firstname", "Enter your firstname", TextInputType.text,
+                controller: _firstnameController),
+            _buildTextField("Lastname", "Enter your lastname", TextInputType.text,
+                controller: _lastnameController),
+            _buildTextField('Email', 'Enter your email', TextInputType.emailAddress,
+                isEmail: true, controller: _emailController),
+            _buildTextField('Phone', 'Enter your phone number', TextInputType.phone,
+                isPhone: true, controller: _phoneController),
+            _buildElevatedButton(),
           ],
         ),
       ),
     );
   }
+Widget _buildTextField(
+  String labelText,
+  String hintText,
+  TextInputType inputType, {
+  bool isEmail = false,
+  bool isPhone = false,
+  required TextEditingController controller,
+}) {
+  return StatefulBuilder(
+    builder: (context, setState) {
+      return Container(
+        margin: EdgeInsets.only(top: 10, left: 10, right: 10),
+        child: TextFormField(
+          keyboardType: inputType,
+          controller: controller,
+          decoration: InputDecoration(
+            hintText: hintText,
+            labelText: labelText,
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15.0),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15.0),
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15.0),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15.0),
+              borderSide: BorderSide(color: Colors.red),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15.0),
+              borderSide: BorderSide(color: Colors.red),
+            ),
+            contentPadding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 12.0),
+            errorStyle: TextStyle(fontSize: 12.0, height: 0.8),
+          ),
+          validator: (value) {
+            return null;
+          },
+          onChanged: (value) {
+            setState(() {});
+            _formKey.currentState!.validate();
+          },
+        ),
+      );
+    },
+  );
 }
 
-class ProfilePic extends StatelessWidget {
-  const ProfilePic({
-    super.key,
-    required this.image,
-    this.isShowPhotoUpload = false,
-    this.imageUploadBtnPress,
-  });
-
-  final String image;
-  final bool isShowPhotoUpload;
-  final VoidCallback? imageUploadBtnPress;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      margin: const EdgeInsets.symmetric(vertical: 16.0),
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(
-          color:
-              Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.08),
-        ),
-      ),
+  Widget imageProfile() {
+    return Center(
       child: Stack(
-        alignment: Alignment.bottomRight,
-        children: [
+        children: <Widget>[
           CircleAvatar(
-            radius: 50,
-            backgroundImage: NetworkImage(image),
+            radius: 75.0,
+            backgroundImage: _imageFile != null
+                ? FileImage(_imageFile!) // Use FileImage if the user selects an image
+                : NetworkImage(widget.user.profilePic) as ImageProvider, // Default image
+            backgroundColor: Colors.grey[200], // Optional: Set a background color
           ),
-          InkWell(
-            onTap: imageUploadBtnPress,
-            child: CircleAvatar(
-              radius: 13,
-              // backgroundColor: Theme.of(context).primaryColor,
-              backgroundColor: Colors.green,
-              child: const Icon(
-                Icons.add,
-                color: Colors.white,
-                size: 20,
+          Positioned(
+            bottom: 15.0,
+            right: 15.0,
+            child: InkWell(
+              onTap: _pickImage, // Open the image picker
+              child: Icon(
+                Icons.camera_alt,
+                color: Colors.teal,
+                size: 28.0,
               ),
             ),
-          )
+          ),
         ],
       ),
     );
   }
-}
 
-class UserInfoEditField extends StatelessWidget {
-  const UserInfoEditField({
-    super.key,
-    required this.text,
-    required this.child,
-  });
+  Widget _buildElevatedButton() {
+    return Container(
+      margin: EdgeInsets.only(top: 10, left: 10, right: 10),
+      width: double.maxFinite,
+      height: 60,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Color(0xFF45BF7A),
+          foregroundColor: Colors.white,
+        ),
+        onPressed: () async {
+          if (_formKey.currentState!.validate()) {
+            if (_imageFile != null) {
+              await FakestoreService.uploadImage(_imageFile!).then((path) {
+                p = path.toString();
+              }).catchError((e) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(e.toString()),
+                ));
+              });
+            }
 
-  final String text;
-  final Widget child;
+            UserModel user = UserModel(
+              id: widget.user.id,
+              firstname: _firstnameController.text,
+              lastname: _lastnameController.text,
+              email: _emailController.text,
+              phone: _phoneController.text,
+              password: widget.user.password,
+              confirmPassword: widget.user.password,
+              profilePic: p,
+              role: widget.user.role,
+              address: widget.user.address,
+            );
 
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0 / 2),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 2,
-            child: Text(text),
-          ),
-          Expanded(
-            flex: 3,
-            child: child,
-          ),
-        ],
+            FakestoreService.updateUser(user, widget.user.id).then((value) {
+              if (value == "success") {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => FakeStoreApp()));
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(value),
+                ));
+              }
+            }).catchError((e) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(e.toString()),
+              ));
+            });
+          }
+        },
+        child: Text('Update Profile'),
       ),
     );
   }

@@ -59,6 +59,28 @@ class FakestoreService {
       throw Exception(e);
     }
   }
+  static Future<String> updateUser(UserModel user, String id) async {
+    // String key = "d033e22ae348aeb5660fc2140aec35850c4da997";
+    String url = "$api/user/$id";
+    try {
+      http.Response response = await http.post(
+        Uri.parse(url),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode(user.toJson()), // Ensure JSON encoding
+      );
+      final output = json.decode(response.body);
+      debugPrint("output: $output");
+      if (output["status"] == "success") {
+        return "success";
+      } else {
+        return output.toString();
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
 
 static Future<String?> uploadImage(File  imagePath) async {
     final url = Uri.parse("$api/files/upload-single-s3"); // Replace with your API endpoint

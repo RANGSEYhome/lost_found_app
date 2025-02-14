@@ -21,6 +21,9 @@ class PostLogic extends ChangeNotifier {
   bool _loading = true; // Set loading to true initially
   bool get loading => _loading;
 
+  bool _loadingMore = false; // Add loadingMore state
+  bool get loadingMore => _loadingMore;
+
   Object? _error;
   Object? get error => _error;
 
@@ -28,93 +31,95 @@ class PostLogic extends ChangeNotifier {
     _loading = true;
     notifyListeners();
   }
- Future readAppend(page) async{
-    
+
+  Future<void> readAppend(int page) async {
+    _loadingMore = true; // Set loadingMore to true when fetching more data
+    notifyListeners();
+
     await PostSeviceRead.readPage(
-    page: page,
-    onRes: (items) async {
-      print("Items Received: $items"); // ✅ Print received items
+      page: page,
+      onRes: (items) async {
+        print("Items Received: $items"); // ✅ Print received items
 
-      _postModel += items; // No need to await, it's already a List<Doc>
-      _loading = false;
-      notifyListeners();
-    },
-    onError: (err) {
-      _error = err;
-      _loading = false;
-      notifyListeners();
-    },
-  );
+        _postModel += items; // Append new items to the existing list
+        _loadingMore = false; // Set loadingMore to false after fetching
+        notifyListeners();
+      },
+      onError: (err) {
+        _error = err;
+        _loadingMore = false; // Set loadingMore to false on error
+        notifyListeners();
+      },
+    );
   }
-  Future read() async {
-  await PostSeviceRead.read(
-    onRes: (items) async {
-      print("Items Received: $items"); // ✅ Print received items
 
-      _postModel = items; // No need to await, it's already a List<Doc>
-      _loading = false;
-      notifyListeners();
-    },
-    onError: (err) {
-      _error = err;
-      _loading = false;
-      notifyListeners();
-    },
-  );
+  Future<void> read() async {
+    await PostSeviceRead.read(
+      onRes: (items) async {
+        print("Items Received: $items"); // ✅ Print received items
+
+        _postModel = items; // Replace the list with new items
+        _loading = false;
+        notifyListeners();
+      },
+      onError: (err) {
+        _error = err;
+        _loading = false;
+        notifyListeners();
+      },
+    );
+  }
+
+  Future<void> searchByCategory(String query, String category) async {
+    await PostSeviceRead.search(
+      query: query,
+      category: category,
+      onRes: (items) async {
+        print("Items Received: $items"); // ✅ Print received items
+
+        _postSearchCagetoryModel = items; // Replace the list with new items
+        _loading = false;
+        notifyListeners();
+      },
+      onError: (err) {
+        _error = err;
+        _loading = false;
+        notifyListeners();
+      },
+    );
+  }
+
+  Future<void> search(String query) async {
+    await PostSeviceRead.search(
+      query: query,
+      onRes: (items) async {
+        print("Items Received: $items"); // ✅ Print received items
+
+        _postSearchModel = items; // Replace the list with new items
+        _loading = false;
+        notifyListeners();
+      },
+      onError: (err) {
+        _error = err;
+        _loading = false;
+        notifyListeners();
+      },
+    );
+  }
+
+  Future<void> readByUser(String userId) async {
+    await PostSeviceRead.read(
+      userId: userId,
+      onRes: (items) async {
+        _postGetModel = items; // Replace the list with new items
+        _loading = false;
+        notifyListeners();
+      },
+      onError: (err) {
+        _error = err;
+        _loading = false;
+        notifyListeners();
+      },
+    );
+  }
 }
-Future searchByCategory(query, category) async {
-  await PostSeviceRead.search(
-    query: query,
-    category: category,
-    onRes: (items) async {
-      print("Items Received: $items"); // ✅ Print received items
-
-      _postSearchCagetoryModel = items; // No need to await, it's already a List<Doc>
-      _loading = false;
-      notifyListeners();
-    },
-    onError: (err) {
-      _error = err;
-      _loading = false;
-      notifyListeners();
-    },
-  );
-}
-
-  Future search(query) async {
-  await PostSeviceRead.search(
-    query: query,
-    onRes: (items) async {
-      print("Items Received: $items"); // ✅ Print received items
-
-      _postSearchModel = items; // No need to await, it's already a List<Doc>
-      _loading = false;
-      notifyListeners();
-    },
-    onError: (err) {
-      _error = err;
-      _loading = false;
-      notifyListeners();
-    },
-  );
-}
-  Future readByUser(String userId) async {
-  await PostSeviceRead.read(
-    userId: userId,
-    onRes: (items) async {
-     
-
-      _postGetModel = items; // No need to await, it's already a List<Doc>
-      _loading = false;
-      notifyListeners();
-    },
-    onError: (err) {
-      _error = err;
-      _loading = false;
-      notifyListeners();
-    },
-  );
-}
-
-}
-

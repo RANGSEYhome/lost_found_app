@@ -150,7 +150,8 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  CupertinoPageRoute(builder: (context) => EditProfileScreen()),
+                  CupertinoPageRoute(builder: (context) => EditProfileScreen(responseModel.user!)),
+
                 );
               },
               icon: Icon(Icons.edit, color: Colors.green),
