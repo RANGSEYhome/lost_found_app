@@ -207,17 +207,105 @@ class _LostFoundScreenState extends State<LostFoundScreen> {
   //   );
   // }
 
+  // Widget _buildPostItem(postGet.Doc item) {
+  //   DateTime dateTime = DateTime.parse(item.date);
+  //   String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
+
+  //   return Card(
+  //     margin: EdgeInsets.only(left: 12, right: 12, bottom: 4, top: 4),
+  //     shape: RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.circular(12),
+  //     ),
+  //     child: GestureDetector(
+  //       // Use GestureDetector to capture tap events
+  //       onTap: () {
+  //         // Navigate to post detail screen
+  //         Navigator.of(context).push(
+  //           CupertinoPageRoute(builder: (context) => PostDetailScreen(item)),
+  //         );
+  //       },
+  //       child: Stack(
+  //         children: [
+  //           Padding(
+  //             padding: EdgeInsets.all(12),
+  //             child: Row(
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: [
+  //                 ClipRRect(
+  //                   borderRadius: BorderRadius.circular(12),
+  //                   child: Image.network(
+  //                     item.images,
+  //                     width: 160,
+  //                     height: 160,
+  //                     fit: BoxFit.cover,
+  //                   ),
+  //                 ),
+  //                 SizedBox(width: 12),
+  //                 Expanded(
+  //                   child: Column(
+  //                     crossAxisAlignment: CrossAxisAlignment.start,
+  //                     children: [
+  //                       Text(
+  //                         item.title,
+  //                         overflow: TextOverflow.ellipsis,
+  //                         maxLines: 2,
+  //                         style: TextStyle(
+  //                             fontSize: 16, fontWeight: FontWeight.bold),
+  //                       ),
+  //                       SizedBox(height: 6),
+  //                       Text("At: ${item.location}"),
+  //                       Text(
+  //                         "Description: ${item.description}",
+  //                         maxLines: 2,
+  //                         overflow: TextOverflow.ellipsis,
+  //                       ),
+  //                       Text("Date: ${formattedDate}"),
+  //                       SizedBox(height: 8),
+  //                       Text(
+  //                           "By: ${item.userId.firstname} ${item.userId.lastname}"),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //           // "LOST" or "FOUND" label at the top-right
+  //           Positioned(
+  //             right: 12,
+  //             top: 12,
+  //             child: Container(
+  //               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+  //               decoration: BoxDecoration(
+  //                 color: item.type == "lost" ? Colors.red : Colors.green,
+  //                 borderRadius: BorderRadius.circular(8),
+  //               ),
+  //               child: Text(
+  //                 item.type == "lost" ? "LOST" : "FOUND",
+  //                 style: TextStyle(
+  //                   fontWeight: FontWeight.bold,
+  //                   fontSize: 14,
+  //                   color: Colors.white,
+  //                 ),
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+
   Widget _buildPostItem(postGet.Doc item) {
     DateTime dateTime = DateTime.parse(item.date);
     String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
 
     return Card(
-      margin: EdgeInsets.only(left: 12, right: 12, bottom: 4, top: 4),
+      margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
+      elevation: 2, // Subtle shadow for depth
       child: GestureDetector(
-        // Use GestureDetector to capture tap events
         onTap: () {
           // Navigate to post detail screen
           Navigator.of(context).push(
@@ -226,53 +314,83 @@ class _LostFoundScreenState extends State<LostFoundScreen> {
         },
         child: Stack(
           children: [
-            Padding(
-              padding: EdgeInsets.all(12),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.network(
-                      item.images,
-                      width: 160,
-                      height: 160,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          item.title,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header with user info
+                Padding(
+                  padding: EdgeInsets.all(12),
+                  child: Row(
+                    children: [
+                      // User's name without profile image
+                      Expanded(
+                        child: Text(
+                          "${item.userId.firstname} ${item.userId.lastname}",
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
                         ),
-                        SizedBox(height: 6),
-                        Text("At: ${item.location}"),
-                        Text(
-                          "Description: ${item.description}",
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Text("Date: ${formattedDate}"),
-                        SizedBox(height: 8),
-                        Text(
-                            "By: ${item.userId.firstname} ${item.userId.lastname}"),
-                      ],
-                    ),
+                      ),
+                      Text(
+                        formattedDate,
+                        style: TextStyle(color: Colors.grey[600]),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+                // Post image
+                ClipRRect(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                  child: Image.network(
+                    item.images,
+                    width: double.infinity, // Full width
+                    height: 220, // Height for the image
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                // Post content
+                Padding(
+                  padding: EdgeInsets.all(12), // Padding for content
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Title
+                      Text(
+                        item.title,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      SizedBox(height: 6), // Spacing
+                      // Description
+                      Text(
+                        item.description,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                      ),
+                      SizedBox(height: 6),
+                      // Location
+                      if (item.location.isNotEmpty)
+                        Text(
+                          "📍 ${item.location}",
+                          style:
+                              TextStyle(fontSize: 14, color: Colors.grey[600]),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            // "LOST" or "FOUND" label at the top-right
+            // "LOST" or "FOUND" label at the bottom-right of the card
             Positioned(
-              right: 12,
-              top: 12,
+              right: 16,
+              bottom: 16,
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
