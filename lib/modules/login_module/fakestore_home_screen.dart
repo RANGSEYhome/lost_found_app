@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:lost_found_app/modules/basic_module/main_screen.dart';
 import 'package:lost_found_app/modules/login_module/edit_profile_screen.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_login_screen.dart';
+import 'package:lost_found_app/modules/post_detail_module/post_create_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:lost_found_app/core/constants/app_colors.dart';
 import 'package:lost_found_app/core/localization/lang_logic.dart';
@@ -14,10 +15,11 @@ import 'package:lost_found_app/modules/login_module/fakestore_login_logic.dart';
 import 'package:lost_found_app/modules/post_detail_module/post_logic.dart';
 import 'package:lost_found_app/modules/post_detail_module/post_seevice.dart';
 import 'package:lost_found_app/modules/post_detail_module/post_updatescreen.dart';
-import 'package:lost_found_app/modules/post_detail_module/post_get_model.dart' as postGet;
+import 'package:lost_found_app/modules/post_detail_module/post_get_model.dart'
+    as postGet;
 
 class FakestoreHomeScreen extends StatefulWidget {
-   final int initialIndex;
+  final int initialIndex;
   FakestoreHomeScreen({this.initialIndex = 2});
   @override
   _FakestoreHomeScreenState createState() => _FakestoreHomeScreenState();
@@ -104,57 +106,58 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
 
   // Build the profile card
   Widget _buildProfileCard(MyResponseModel responseModel) {
-    final String profileImage = responseModel.user?.profilePic?.isNotEmpty == true
-        ? responseModel.user!.profilePic!
-        : 'https://cdn-icons-png.flaticon.com/512/149/149071.png'; // Default profile image
+    final user = responseModel.user;
+    final String profileImage = (user?.profilePic?.isNotEmpty ?? false)
+        ? user!.profilePic!
+        : 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
 
     return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        // side: BorderSide(color: Colors.green),
-      ),
-      // color: Colors.grey[300],
+      margin: const EdgeInsets.all(10),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 4,
       child: Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             CircleAvatar(
               radius: 40,
               backgroundImage: NetworkImage(profileImage),
             ),
-            SizedBox(width: 16),
+            const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${responseModel.user?.firstname ?? 'No Name'} ${responseModel.user?.lastname ?? ''}'.trim(),
-                    style: TextStyle(
+                    "${user?.firstname ?? 'No Name'} ${user?.lastname ?? ''}"
+                        .trim(),
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: Colors.green,
                     ),
+                    overflow: TextOverflow.ellipsis, // Prevent overflow
+                    maxLines: 1, // Limit to one line
                   ),
-                  SizedBox(height: 8),
-                  _buildProfileInfoRow(Icons.phone, responseModel.user?.phone ?? 'No Phone'),
-                  SizedBox(height: 8),
-                  _buildProfileInfoRow(Icons.email, responseModel.user?.email ?? 'No Email'),
-                  // SizedBox(height: 8),
-                  // _buildProfileInfoRow(Icons.date_range_rounded, "2025-02-05" ?? 'No Email'),
+                  const SizedBox(height: 8),
+                  _buildProfileInfoRow(Icons.phone, user?.phone ?? 'No Phone'),
+                  const SizedBox(height: 8),
+                  _buildProfileInfoRow(Icons.email, user?.email ?? 'No Email'),
                 ],
               ),
             ),
             IconButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  CupertinoPageRoute(builder: (context) => EditProfileScreen(responseModel.user!)),
-
-                );
+                if (user != null) {
+                  Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                      builder: (context) => EditProfileScreen(user),
+                    ),
+                  );
+                }
               },
-              icon: Icon(Icons.edit, color: Colors.green),
+              icon: const Icon(Icons.edit, color: Colors.green),
             ),
           ],
         ),
@@ -162,13 +165,22 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
     );
   }
 
-  // Build a row for profile information (phone, email, etc.)
+// Updated Profile Info Row to Prevent Overflow
   Widget _buildProfileInfoRow(IconData icon, String text) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Icon(icon, color: Colors.green, size: 18),
-        SizedBox(width: 8),
-        Text(text, style: TextStyle(fontSize: 16, color: Colors.green)),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            text,
+            style: const TextStyle(fontSize: 16, color: Colors.green),
+            overflow: TextOverflow.ellipsis, // Prevents overflow
+            maxLines: 1, // Restrict to one line
+            softWrap: true,
+          ),
+        ),
       ],
     );
   }
@@ -176,21 +188,35 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
   // Build the header for the posts section
   Widget _buildPostHeader() {
     return Card(
-      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       shape: RoundedRectangleBorder(
-        side: BorderSide(color: Colors.green),
+        // side: BorderSide(color: Colors.green.shade400, width: 1.5),
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(20.0),
           topRight: Radius.circular(20.0),
         ),
       ),
+      elevation: 4, // Adds a subtle shadow
+      shadowColor: Colors.black26,
       child: ListTile(
-        title: Text('Manage your posts'),
+        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        title: Text(
+          'Manage Your Posts',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.5,
+          ),
+        ),
         trailing: IconButton(
-          icon: Icon(Icons.add_circle_outline, size: 20),
+          icon: Icon(Icons.add_circle_outline,
+              size: 24, color: Colors.green.shade700),
           onPressed: () {
-            // Navigate to add post screen
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => CreatePostScreen()),
+            );
           },
+          splashRadius: 24, // Makes the tap effect more natural
         ),
       ),
     );
@@ -198,49 +224,59 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
 
   // Build a single post item
   Widget _buildPostItem(postGet.Doc post) {
-    final String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.parse(post.date));
+    final String formattedDate =
+        DateFormat('yyyy-MM-dd').format(DateTime.parse(post.date));
 
     return Card(
-      margin: EdgeInsets.all(10),
+      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-        side: BorderSide(color: AppColors.primaryColor, width: 1),
+        borderRadius: BorderRadius.circular(10),
+        // side: BorderSide(color: AppColors.primaryColor, width: 1),
       ),
-      child: Stack(
-        children: [
-          ListTile(
-            leading: Image.network(
-              post.images,
-              width: 100,
-              height: 100,
-              fit: BoxFit.cover,
+      child: Padding(
+        padding: EdgeInsets.all(8),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.network(
+                post.images,
+                width: 90,
+                height: 90,
+                fit: BoxFit.cover,
+              ),
             ),
-            title: Text(
-              post.title,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 2,
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    post.title,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    "At: ${post.location}",
+                    style: TextStyle(color: Colors.grey[700], fontSize: 12),
+                  ),
+                  Text(
+                    "Description: ${post.description}",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: Colors.grey[700], fontSize: 12),
+                  ),
+                  Text(
+                    "Date: $formattedDate",
+                    style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                  ),
+                ],
+              ),
             ),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("At: ${post.location}"),
-                Text(
-                  "Description: ${post.description}",
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Text("Date: $formattedDate"),
-              ],
-            ),
-            onTap: () {
-              // Navigate to post detail screen
-            },
-          ),
-          Positioned(
-            right: 10,
-            top: 5,
-            child: Column(
+            Column(
               children: [
                 IconButton(
                   icon: Icon(Icons.edit, color: Colors.green),
@@ -258,8 +294,8 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
                 ),
               ],
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -287,7 +323,8 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
 
               if (result == 'success') {
                 //print("Users ID"+ context.read<FakestoreLoginLogic>().responseModel.user!.id);
-                context.read<PostLogic>().readByUser(context.read<FakestoreLoginLogic>().responseModel.user!.id);
+                context.read<PostLogic>().readByUser(
+                    context.read<FakestoreLoginLogic>().responseModel.user!.id);
                 context.read<PostLogic>().read();
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Post deleted successfully')),
