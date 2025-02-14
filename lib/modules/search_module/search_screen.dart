@@ -88,7 +88,7 @@ Widget _buildSearchResults() {
     margin: EdgeInsets.all(10),
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(8),
-      side: BorderSide(color: AppColors.primaryColor, width: 1),
+      // side: BorderSide(color: AppColors.primaryColor, width: 1),
     ),
     child: Stack(
       children: [
