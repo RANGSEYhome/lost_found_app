@@ -49,7 +49,9 @@ class _SearchScreenState extends State<SearchScreen> {
             icon: Icon(Icons.search),
             onPressed: () async {
               if (_searchController.text.isNotEmpty) {
-                await context.read<PostLogic>().search(_searchController.text.trim());
+                await context
+                    .read<PostLogic>()
+                    .search(_searchController.text.trim());
               }
             },
           ),
@@ -65,89 +67,93 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   /// **Display Search Results**
-Widget _buildSearchResults() {
-  return Consumer<PostLogic>(
-    builder: (context, postLogic, child) {
-      // Check if no search has been conducted yet
-      if (postLogic.postSearchModel.isEmpty && _searchController.text.isEmpty) {
-        return Center(child: Text("Enter a search query to see results"));
-      }
+  Widget _buildSearchResults() {
+    return Consumer<PostLogic>(
+      builder: (context, postLogic, child) {
+        // Check if no search has been conducted yet
+        if (postLogic.postSearchModel.isEmpty &&
+            _searchController.text.isEmpty) {
+          return Center(child: Text("Enter a search query to see results"));
+        }
 
-      // If search is done but no results found
-      if (postLogic.postModel.isEmpty) {
-        return Center(child: Text("No results found"));
-      }
+        // If search is done but no results found
+        if (postLogic.postModel.isEmpty) {
+          return Center(child: Text("No results found"));
+        }
 
-      return ListView.builder(
-        itemCount: postLogic.postSearchModel.length,
-        itemBuilder: (context, index) {
-          final item = postLogic.postSearchModel[index];
+        return ListView.builder(
+          itemCount: postLogic.postSearchModel.length,
+          itemBuilder: (context, index) {
+            final item = postLogic.postSearchModel[index];
             DateTime dateTime = DateTime.parse(item.date);
             String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
-          return Card(
-    margin: EdgeInsets.all(10),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(8),
-      // side: BorderSide(color: AppColors.primaryColor, width: 1),
-    ),
-    child: Stack(
-      children: [
-        ListTile(
-          leading: Image.network(
-            item.images,
-            width: 100,
-            height: 100,
-            fit: BoxFit.cover,
-          ),
-          title: Text(
-            item.title,
-            overflow: TextOverflow.ellipsis,
-            maxLines: 2,
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-          ),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("At: ${item.location}"),
-              Text(
-                "Description: ${item.description}",
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis, // Ensures text is truncated
+            return Card(
+              margin: EdgeInsets.all(10),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+                // side: BorderSide(color: AppColors.primaryColor, width: 1),
               ),
-              Text("Date: ${formattedDate}"),
-            ],
-          ),
-          onTap: () {
-            // Navigate to post detail screen
-            Navigator.of(context).push(
-              CupertinoPageRoute(builder: (context) => PostDetailScreen(item)),
+              child: Stack(
+                children: [
+                  ListTile(
+                    leading: Image.network(
+                      item.images,
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                    ),
+                    title: Text(
+                      item.title,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                      style:
+                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("At: ${item.location}"),
+                        Text(
+                          "Description: ${item.description}",
+                          maxLines: 1,
+                          overflow: TextOverflow
+                              .ellipsis, // Ensures text is truncated
+                        ),
+                        Text("Date: ${formattedDate}"),
+                      ],
+                    ),
+                    onTap: () {
+                      // Navigate to post detail screen
+                      Navigator.of(context).push(
+                        CupertinoPageRoute(
+                            builder: (context) => PostDetailScreen(item)),
+                      );
+                    },
+                  ),
+                  Positioned(
+                    right: 10,
+                    top: 10,
+                    child: Text(
+                      item.type.toUpperCase(),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                        color: item.type == "lost" ? Colors.red : Colors.green,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    right: 10,
+                    bottom: 10,
+                    child: Text(
+                        "By: ${item.userId.firstname} ${item.userId.lastname}"),
+                  ),
+                ],
+              ),
             );
           },
-        ),
-        Positioned(
-          right: 10,
-          top: 10,
-          child: Text(
-            item.type.toUpperCase(),
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
-              color: item.type == "lost" ? Colors.red : Colors.green,
-            ),
-          ),
-        ),
-        Positioned(
-          right: 10,
-          bottom: 10,
-          child: Text("By: ${item.userId.firstname} ${item.userId.lastname}"),
-        ),
-      ],
-    ),
-  );
-        },
-      );
-    },
-  );
-}
-
+        );
+      },
+    );
+  }
 }
