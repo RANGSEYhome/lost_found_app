@@ -295,9 +295,130 @@ class _LostFoundScreenState extends State<LostFoundScreen> {
   //   );
   // }
 
+  // Widget _buildPostItem(postGet.Doc item) {
+  //   DateTime dateTime = DateTime.parse(item.date);
+  //   String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
+
+  //   return Card(
+  //     margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+  //     shape: RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.circular(12),
+  //     ),
+  //     elevation: 2, // Subtle shadow for depth
+  //     child: GestureDetector(
+  //       onTap: () {
+  //         // Navigate to post detail screen
+  //         Navigator.of(context).push(
+  //           CupertinoPageRoute(builder: (context) => PostDetailScreen(item)),
+  //         );
+  //       },
+  //       child: Stack(
+  //         children: [
+  //           Column(
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: [
+  //               // Header with user info
+  //               Padding(
+  //                 padding: EdgeInsets.all(12),
+  //                 child: Row(
+  //                   children: [
+  //                     // User's name without profile image
+  //                     Expanded(
+  //                       child: Text(
+  //                         "${item.userId.firstname} ${item.userId.lastname}",
+  //                         style: TextStyle(
+  //                           fontWeight: FontWeight.bold,
+  //                           fontSize: 16,
+  //                         ),
+  //                       ),
+  //                     ),
+  //                     Text(
+  //                       formattedDate,
+  //                       style: TextStyle(color: Colors.grey[600]),
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),
+  //               // Post image
+  //               ClipRRect(
+  //                 borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+  //                 child: Image.network(
+  //                   item.images,
+  //                   width: double.infinity, // Full width
+  //                   height: 220, // Height for the image
+  //                   fit: BoxFit.cover,
+  //                 ),
+  //               ),
+  //               // Post content
+  //               Padding(
+  //                 padding: EdgeInsets.all(12), // Padding for content
+  //                 child: Column(
+  //                   crossAxisAlignment: CrossAxisAlignment.start,
+  //                   children: [
+  //                     // Title
+  //                     Text(
+  //                       item.title,
+  //                       overflow: TextOverflow.ellipsis,
+  //                       maxLines: 2,
+  //                       style: TextStyle(
+  //                         fontSize: 18,
+  //                         fontWeight: FontWeight.bold,
+  //                         color: Colors.black,
+  //                       ),
+  //                     ),
+  //                     SizedBox(height: 6), // Spacing
+  //                     // Description
+  //                     Text(
+  //                       item.description,
+  //                       maxLines: 2,
+  //                       overflow: TextOverflow.ellipsis,
+  //                       style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+  //                     ),
+  //                     SizedBox(height: 6),
+  //                     // Location
+  //                     if (item.location.isNotEmpty)
+  //                       Text(
+  //                         "📍 ${item.location}",
+  //                         style:
+  //                             TextStyle(fontSize: 14, color: Colors.grey[600]),
+  //                       ),
+  //                   ],
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //           // "LOST" or "FOUND" label at the bottom-right of the card
+  //           Positioned(
+  //             right: 16,
+  //             bottom: 16,
+  //             child: Container(
+  //               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+  //               decoration: BoxDecoration(
+  //                 color: item.type == "lost" ? Colors.red : Colors.green,
+  //                 borderRadius: BorderRadius.circular(8),
+  //               ),
+  //               child: Text(
+  //                 item.type == "lost" ? "LOST" : "FOUND",
+  //                 style: TextStyle(
+  //                   fontWeight: FontWeight.bold,
+  //                   fontSize: 14,
+  //                   color: Colors.white,
+  //                 ),
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+
   Widget _buildPostItem(postGet.Doc item) {
     DateTime dateTime = DateTime.parse(item.date);
     String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
+    final String profileImage = item.userId.profilePic.isNotEmpty
+        ? item.userId.profilePic
+        : 'https://cdn-icons-png.flaticon.com/512/149/149071.png'; // Default profile image
 
     return Card(
       margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -322,7 +443,12 @@ class _LostFoundScreenState extends State<LostFoundScreen> {
                   padding: EdgeInsets.all(12),
                   child: Row(
                     children: [
-                      // User's name without profile image
+                      // User's profile image
+                      CircleAvatar(
+                        backgroundImage: NetworkImage(profileImage),
+                        radius: 20, // Radius for the profile image
+                      ),
+                      SizedBox(width: 8), // Spacing between image and name
                       Expanded(
                         child: Text(
                           "${item.userId.firstname} ${item.userId.lastname}",

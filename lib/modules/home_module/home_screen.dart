@@ -57,9 +57,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildSlideShow(List<postGet.Doc> items, Axis direc) {
-    // if (items) {
-    //   return Center(child: Text("No posts available!"));
-    // }
+    if (items.isEmpty) {
+      return Center(child: Text("No posts available!"));
+    }
     return Column(
       children: [
         SizedBox(
