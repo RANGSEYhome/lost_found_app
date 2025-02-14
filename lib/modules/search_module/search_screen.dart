@@ -157,6 +157,107 @@ class _SearchScreenState extends State<SearchScreen> {
   //   );
   // }
 
+  // Widget _buildSearchResults() {
+  //   return Consumer<PostLogic>(
+  //     builder: (context, postLogic, child) {
+  //       // Check if no search has been conducted yet
+  //       if (postLogic.postSearchModel.isEmpty &&
+  //           _searchController.text.isEmpty) {
+  //         return Center(child: Text("Enter a search query to see results"));
+  //       }
+
+  //       // If search is done but no results found
+  //       if (postLogic.postModel.isEmpty) {
+  //         return Center(child: Text("No results found"));
+  //       }
+
+  //       return ListView.builder(
+  //         itemCount: postLogic.postSearchModel.length,
+  //         itemBuilder: (context, index) {
+  //           final item = postLogic.postSearchModel[index];
+  //           DateTime dateTime = DateTime.parse(item.date);
+  //           String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
+  //           return Card(
+  //             margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+  //             shape: RoundedRectangleBorder(
+  //               borderRadius: BorderRadius.circular(
+  //                   12), // Increased radius for a smoother look
+  //               // side: BorderSide(color: AppColors.primaryColor, width: 1),
+  //             ),
+  //             elevation: 4, // Added elevation for a shadow effect
+  //             child: Stack(
+  //               children: [
+  //                 ListTile(
+  //                   leading: ClipRRect(
+  //                     borderRadius: BorderRadius.circular(
+  //                         8), // Rounded corners for the image
+  //                     child: Image.network(
+  //                       item.images,
+  //                       width: 80, // Adjust width for a better fit
+  //                       height: 80, // Adjust height for a better fit
+  //                       fit: BoxFit.cover,
+  //                     ),
+  //                   ),
+  //                   title: Text(
+  //                     item.title,
+  //                     overflow: TextOverflow.ellipsis,
+  //                     maxLines: 2,
+  //                     style:
+  //                         TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+  //                   ),
+  //                   subtitle: Column(
+  //                     crossAxisAlignment: CrossAxisAlignment.start,
+  //                     children: [
+  //                       Text("At: ${item.location}"),
+  //                       Text(
+  //                         "Description: ${item.description}",
+  //                         maxLines: 1,
+  //                         overflow: TextOverflow
+  //                             .ellipsis, // Ensures text is truncated
+  //                       ),
+  //                       Text("Date: ${formattedDate}"),
+  //                     ],
+  //                   ),
+  //                   onTap: () {
+  //                     // Navigate to post detail screen
+  //                     Navigator.of(context).push(
+  //                       CupertinoPageRoute(
+  //                           builder: (context) => PostDetailScreen(item)),
+  //                     );
+  //                   },
+  //                 ),
+  //                 Positioned(
+  //                   right: 10,
+  //                   top: 10,
+  //                   child: Text(
+  //                     item.type.toUpperCase(),
+  //                     style: TextStyle(
+  //                       fontWeight: FontWeight.bold,
+  //                       fontSize: 12,
+  //                       color: item.type == "lost" ? Colors.red : Colors.green,
+  //                     ),
+  //                   ),
+  //                 ),
+  //                 Positioned(
+  //                   right: 10,
+  //                   bottom: 10,
+  //                   child: Text(
+  //                     "By: ${item.userId.firstname} ${item.userId.lastname}",
+  //                     style: TextStyle(
+  //                         fontSize: 12,
+  //                         color: Colors.grey[
+  //                             600]), // Optional: Different color for author
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           );
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
+
   Widget _buildSearchResults() {
     return Consumer<PostLogic>(
       builder: (context, postLogic, child) {
@@ -177,33 +278,52 @@ class _SearchScreenState extends State<SearchScreen> {
             final item = postLogic.postSearchModel[index];
             DateTime dateTime = DateTime.parse(item.date);
             String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
+
             return Card(
               margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(
-                    12), // Increased radius for a smoother look
-                // side: BorderSide(color: AppColors.primaryColor, width: 1),
+                borderRadius: BorderRadius.circular(12),
               ),
-              elevation: 4, // Added elevation for a shadow effect
+              elevation: 4,
               child: Stack(
                 children: [
                   ListTile(
                     leading: ClipRRect(
-                      borderRadius: BorderRadius.circular(
-                          8), // Rounded corners for the image
+                      borderRadius: BorderRadius.circular(8),
                       child: Image.network(
                         item.images,
-                        width: 80, // Adjust width for a better fit
-                        height: 80, // Adjust height for a better fit
+                        width: 80,
+                        height: 80,
                         fit: BoxFit.cover,
                       ),
                     ),
-                    title: Text(
-                      item.title,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            item.title,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                            style: TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(
+                              left: 8), // Add some space between title and type
+                          child: Text(
+                            item.type.toUpperCase(),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                              color: item.type == "lost"
+                                  ? Colors.red
+                                  : Colors.green,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -212,10 +332,9 @@ class _SearchScreenState extends State<SearchScreen> {
                         Text(
                           "Description: ${item.description}",
                           maxLines: 1,
-                          overflow: TextOverflow
-                              .ellipsis, // Ensures text is truncated
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        Text("Date: ${formattedDate}"),
+                        Text("Date: $formattedDate"),
                       ],
                     ),
                     onTap: () {
@@ -228,25 +347,10 @@ class _SearchScreenState extends State<SearchScreen> {
                   ),
                   Positioned(
                     right: 10,
-                    top: 10,
-                    child: Text(
-                      item.type.toUpperCase(),
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12,
-                        color: item.type == "lost" ? Colors.red : Colors.green,
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    right: 10,
                     bottom: 10,
                     child: Text(
                       "By: ${item.userId.firstname} ${item.userId.lastname}",
-                      style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[
-                              600]), // Optional: Different color for author
+                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                     ),
                   ),
                 ],
