@@ -55,6 +55,7 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
       appBar: AppBar(
         title: Text("Account"),
         // backgroundColor: Colors.green[50],
+        backgroundColor: Colors.transparent,
         actions: [
           IconButton(
             icon: Icon(Icons.logout),
