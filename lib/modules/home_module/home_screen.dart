@@ -19,6 +19,7 @@ import 'package:lost_found_app/modules/home_module/book_data.dart';
 import 'package:lost_found_app/modules/post_detail_module/post_detail_screen.dart';
 import 'package:lost_found_app/modules/post_detail_module/post_get_model.dart'
     as postGet;
+
 class HomeScreen extends StatefulWidget {
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -38,10 +39,12 @@ class _HomeScreenState extends State<HomeScreen> {
     return ListView(
       physics: BouncingScrollPhysics(),
       children: [
+        SizedBox(height: AppSpacing.sm),
         HeadlineLabel(
           "Recent Posts",
           AppTextSizes.headline2,
         ),
+        SizedBox(height: AppSpacing.sm),
         _buildSlideShow(records, Axis.horizontal),
         SizedBox(height: AppSpacing.lg),
         HeadlineLabel(
@@ -118,7 +121,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 Positioned(
                   bottom: 10,
                   right: 15,
-                  child: _buildPostedBy(item.userId.firstname + " " + item.userId.lastname),
+                  child: _buildPostedBy(
+                      item.userId.firstname + " " + item.userId.lastname),
                 ),
               ],
             ),
@@ -157,7 +161,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildOverlay(items) {
-     DateTime dateTime = DateTime.parse(items.date);
+    DateTime dateTime = DateTime.parse(items.date);
     String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
@@ -206,43 +210,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildCategoryCard(
-      Map<String, dynamic> category, BuildContext context) {
-    return Card(
-      color: category["cardColor"],
-      elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => category["page"]),
-          );
-        },
-        borderRadius: BorderRadius.circular(15),
-        child: Padding(
-          padding: const EdgeInsets.all(15),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(category["icon"], size: 40, color: category["iconColor"]),
-              const SizedBox(height: 10),
-              Text(
-                category["title"],
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: category["textColor"],
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildCategoryGrid(BuildContext context) {
     List<Map<String, dynamic>> categories = _categoryList();
 
@@ -253,9 +220,9 @@ class _HomeScreenState extends State<HomeScreen> {
           return Container(
             padding: const EdgeInsets.all(8), // Outer padding
             decoration: BoxDecoration(
-              color: Colors.white70, // Smoke background color
+              color: Colors.grey.withOpacity(0.1), // Smoke background color
               borderRadius:
-                  BorderRadius.circular(10), // Optional: rounded corners
+                  BorderRadius.circular(28), // Optional: rounded corners
             ),
             child: GridView.builder(
               shrinkWrap: true,
@@ -279,6 +246,52 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Widget _buildCategoryCard(
+      Map<String, dynamic> category, BuildContext context) {
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => category["page"]),
+          );
+        },
+        borderRadius: BorderRadius.circular(15),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: category["gradient"] ??
+                LinearGradient(
+                  // Default gradient if none provided
+                  colors: [category["cardColorStart"], category["cardColorEnd"]],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+            borderRadius: BorderRadius.circular(15),
+          ),
+          padding: const EdgeInsets.all(15),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(category["icon"], size: 40, color: category["iconColor"]),
+              const SizedBox(height: 10),
+              Text(
+                category["title"],
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: category["textColor"],
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   List<Map<String, dynamic>> _categoryList() {
     return [
       {
@@ -287,7 +300,8 @@ class _HomeScreenState extends State<HomeScreen> {
         "page": PostByCategory("People"),
         "textColor": Color(0xFF4C585B),
         "iconColor": Color(0xFF4C585B),
-        "cardColor": Colors.yellow[300],
+        "cardColorStart": Colors.yellow,
+        "cardColorEnd": Colors.yellow[300],
       },
       {
         "title": "Pets",
@@ -295,7 +309,8 @@ class _HomeScreenState extends State<HomeScreen> {
         "page": PostByCategory("Pets"),
         "textColor": Colors.white,
         "iconColor": Colors.white,
-        "cardColor": Colors.red[300],
+        "cardColorStart": Colors.red,
+        "cardColorEnd": Colors.red[300],
       },
       {
         "title": "Staffs",
@@ -303,7 +318,8 @@ class _HomeScreenState extends State<HomeScreen> {
         "page": PostByCategory("Staffs"),
         "textColor": Colors.white,
         "iconColor": Colors.white,
-        "cardColor": Colors.blue[300],
+        "cardColorStart": Colors.blue,
+        "cardColorEnd": Colors.blue[300],
       },
       {
         "title": "Others",
@@ -311,7 +327,8 @@ class _HomeScreenState extends State<HomeScreen> {
         "page": PostByCategory("Other"),
         "textColor": Color(0xFF4C585B),
         "iconColor": Color(0xFF4C585B),
-        "cardColor": Colors.green[300],
+        "cardColorStart": Colors.green,
+        "cardColorEnd": Colors.green[300],
       },
     ];
   }
