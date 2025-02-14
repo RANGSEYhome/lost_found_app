@@ -58,8 +58,48 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildSlideShow(List<postGet.Doc> items, Axis direc) {
     if (items.isEmpty) {
-      return Center(child: Text("No posts available!"));
+      return Center(
+        child: SizedBox(
+          height: 220,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+                horizontal: 16), // Add margin on left & right
+            child: Card(
+              elevation: 4, // Adds shadow for depth
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12), // Rounded corners
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.warning_amber_rounded,
+                        size: 48,
+                        color: Colors.orangeAccent,
+                      ),
+                      SizedBox(height: 12),
+                      Text(
+                        "No posts available!",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[700],
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
     }
+
     return Column(
       children: [
         SizedBox(
@@ -264,7 +304,10 @@ class _HomeScreenState extends State<HomeScreen> {
             gradient: category["gradient"] ??
                 LinearGradient(
                   // Default gradient if none provided
-                  colors: [category["cardColorStart"], category["cardColorEnd"]],
+                  colors: [
+                    category["cardColorStart"],
+                    category["cardColorEnd"]
+                  ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
