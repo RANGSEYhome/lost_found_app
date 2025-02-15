@@ -112,7 +112,7 @@ class AboutScreen extends StatelessWidget {
             ),
             const Spacer(),
             const Text(
-              'Developed by Rangsey P. Heng',
+              'Developed by AAA',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ],
