@@ -10,9 +10,9 @@ enum PostMethod {
   update,
   delete,
 }
-//String api = "http://10.0.2.2:4001/v1";
+String api = "http://10.0.2.2:4001/v1";
 
-String api = "https://d-api.devkrc.com/v1";
+//String api = "https://d-api.devkrc.com/v1";
 class FakestoreService {
   static Future<MyResponseModel> login(
       {required LoginRequestModel request}) async {
@@ -63,7 +63,7 @@ class FakestoreService {
     // String key = "d033e22ae348aeb5660fc2140aec35850c4da997";
     String url = "$api/user/$id";
     try {
-      http.Response response = await http.post(
+      http.Response response = await http.put(
         Uri.parse(url),
         headers: {
           "Content-Type": "application/json",

@@ -21,6 +21,7 @@ class _SignupScreenState extends State<SignupScreen> {
   //String _imageFile = "";
   File? _imageFile; // To store the selected image
   final ImagePicker _picker = ImagePicker();
+   bool _isLoading = false;
 
   Future<void> _pickImage() async {
     final pickedFile = await _picker.pickImage(
@@ -165,6 +166,11 @@ class _SignupScreenState extends State<SignupScreen> {
               if (isPassword && value.length < 6) {
                 return "Password must be at least 6 characters";
               }
+               if (isConfirmPassword) {
+                if (value != _passwordController.text) {
+                  return "Passwords do not match";
+                }
+              }
               return null;
             },
             onChanged: (value) {
@@ -208,61 +214,78 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 
-  Widget _buildElevatedButton() {
-    return Container(
-      margin: EdgeInsets.only(top: 10, left: 10, right: 10),
-      width: double.maxFinite,
-      height: 60,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Color(0xFF45BF7A),
-          foregroundColor: Colors.white,
-        ),
-        onPressed: () async {
-          if (_formKey.currentState!.validate()) {
-             
-            if (_imageFile != null) {
-              await FakestoreService.uploadImage(_imageFile!).then((path)  {
-                 p =  path.toString();
-                // Navigator.pushNamed(context, '/login');
-              }).catchError((e) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(e.toString()),
-                ));
-              });
-            }
-             UserModel user = UserModel(
-              id: "",
-              firstname: _firstnameController.text,
-              lastname: _lastnameController.text,
-              email: _emailController.text,
-              phone: _phoneController.text,
-              password: _passwordController.text,
-              confirmPassword: _confirmPasswordController.text,
-              profilePic: p,
-              role: "user",
-              address: "",
-            );
-            FakestoreService.insert(user).then((value) {
-              if (value == "success") {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => FakeStoreApp()));
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(value),
-                ));
-              }
-            }).catchError((e) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text(e.toString()),
-              ));
-            });
-          }
-        },
-        child: Text('Signup'),
+Widget _buildElevatedButton() {
+  return Container(
+    margin: EdgeInsets.only(top: 10, left: 10, right: 10),
+    width: double.maxFinite,
+    height: 60,
+    child: ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Color(0xFF45BF7A),
+        foregroundColor: Colors.white,
       ),
-    );
-  }
+      onPressed: _isLoading
+          ? null // Disable the button when loading
+          : () async {
+              if (_formKey.currentState!.validate()) {
+                setState(() {
+                  _isLoading = true; // Start loading
+                });
+
+                try {
+                  if (_imageFile != null) {
+                    await FakestoreService.uploadImage(_imageFile!).then((path) {
+                      p = path.toString();
+                    }).catchError((e) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text(e.toString()),
+                      ));
+                    });
+                  } else {
+                    p = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+                  }
+
+                  UserModel user = UserModel(
+                    id: "",
+                    firstname: _firstnameController.text,
+                    lastname: _lastnameController.text,
+                    email: _emailController.text,
+                    phone: _phoneController.text,
+                    password: _passwordController.text,
+                    confirmPassword: _confirmPasswordController.text,
+                    profilePic: p,
+                    role: "user",
+                    address: "",
+                  );
+
+                  String result = await FakestoreService.insert(user);
+                  if (result == "success") {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => FakeStoreApp()),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(result),
+                    ));
+                  }
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(e.toString()),
+                  ));
+                } finally {
+                  setState(() {
+                    _isLoading = false; // Stop loading
+                  });
+                }
+              }
+            },
+      child: _isLoading
+          ? CircularProgressIndicator(
+              color: Colors.white, // Show loading indicator
+            )
+          : Text('Signup'),
+    ),
+  );
+}
 }

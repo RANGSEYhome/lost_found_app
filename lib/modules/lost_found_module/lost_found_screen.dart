@@ -91,13 +91,16 @@ class _LostFoundScreenState extends State<LostFoundScreen> {
     Object? error = context.watch<PostLogic>().error;
     bool loading = context.watch<PostLogic>().loading;
     List<postGet.Doc> records = context.watch<PostLogic>().postModel;
-
+    
     if (loading) {
       return Center(child: CircularProgressIndicator());
     }
 
     if (error != null) {
       return _buildErrorMessage(error);
+    }
+    if(records.isEmpty){
+      return _buildEmptyData();
     }
     return Column(
       children: [
@@ -412,8 +415,46 @@ class _LostFoundScreenState extends State<LostFoundScreen> {
   //     ),
   //   );
   // }
-
+  Widget _buildEmptyData(){
+      return Center(
+        child: SizedBox(
+          height: 220,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+                horizontal: 16), // Add margin on left & right
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.warning_amber_rounded,
+                      size: 48,
+                      color: Colors.orangeAccent,
+                    ),
+                    SizedBox(height: 12),
+                    Text(
+                      "No posts available!",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[700],
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+  
   Widget _buildPostItem(postGet.Doc item) {
+  
+
     DateTime dateTime = DateTime.parse(item.date);
     String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
     final String profileImage = item.userId.profilePic.isNotEmpty
@@ -516,7 +557,7 @@ class _LostFoundScreenState extends State<LostFoundScreen> {
             // "LOST" or "FOUND" label at the bottom-right of the card
             Positioned(
               right: 16,
-              bottom: 16,
+              bottom: 10,
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
