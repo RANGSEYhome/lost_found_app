@@ -27,7 +27,8 @@ class _FakeStoreLoginScreenState extends State<FakeStoreLoginScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(""),
-        backgroundColor: Colors.green[50],
+        // backgroundColor: Colors.green[50],
+        backgroundColor: Colors.transparent,
       ),
       body: Center(
         child: Container(
