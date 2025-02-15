@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lost_found_app/modules/basic_module/basic_app.dart';
+import 'package:lost_found_app/modules/info_module/contact_us_screen.dart';
+import 'package:lost_found_app/modules/info_module/terms_privacy_screen.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_app.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_home_screen.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_login_logic.dart';
@@ -20,6 +22,7 @@ import 'package:lost_found_app/modules/basic_module/setting.dart';
 import 'package:lost_found_app/modules/home_module/home_screen.dart';
 import 'package:lost_found_app/modules/lost_found_module/lost_found_screen.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_provider.dart';
+import 'package:lost_found_app/modules/info_module/about_screen.dart';
 import 'package:lost_found_app/modules/basic_module/demo_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -209,19 +212,19 @@ class _MainScreenState extends State<MainScreen> {
             context,
             _lang.aboutUs,
             Icons.info_outline,
-            DemoScreen(),
+            AboutScreen(),
           ),
           cardListNavigateTo(
             context,
             _lang.contactUs,
             Icons.contact_support_outlined,
-            DemoScreen(),
+            ContactUsScreen(),
           ),
           cardListNavigateTo(
             context,
             _lang.privacyPolicy,
             Icons.privacy_tip_outlined,
-            DemoScreen(),
+            TermsPrivacyScreen(),
           ),
           cardListNavigateTo(
             context,
