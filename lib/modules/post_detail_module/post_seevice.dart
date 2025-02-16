@@ -57,26 +57,29 @@ class PostSeevice {
     }
   }
 
-    static Future<String> delete(String id) async {
-    // String key = "d033e22ae348aeb5660fc2140aec35850c4da997";
-    String url = "$api/post/$id";
-    try {
-      http.Response response = await http.delete(
-        Uri.parse(url),
-        // Encode the Doc object to JSON
-      );
+static Future<String> updateStatus(String id, String status) async {
+  String url = "$api/post/$id"; // Update the endpoint if necessary
+  try {
+    // Use http.put or http.patch for updating the status
+    http.Response response = await http.delete(
+      Uri.parse(url),
+      body: json.encode({"status": status}), // Send the new status in the request body
+      headers: {"Content-Type": "application/json"}, // Set the content type
+    );
 
-      final output = json.decode(response.body);
-      debugPrint("output: $output");
-      if (output["status"] == "success") {
-        return "success";
-      } else {
-        return output.toString();
-      }
-    } catch (e) {
-      throw Exception(e);
+    final output = json.decode(response.body);
+    debugPrint("output: $output");
+
+    if (output["status"] == "success") {
+      return "success";
+    } else {
+      return output.toString();
     }
+  } catch (e) {
+    debugPrint("Error updating status: $e");
+    throw Exception(e);
   }
+}
 
   static Future<void> read({
     int page = 1,

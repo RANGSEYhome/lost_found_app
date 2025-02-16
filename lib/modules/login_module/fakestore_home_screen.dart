@@ -3,40 +3,31 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lost_found_app/modules/basic_module/main_screen.dart';
 import 'package:lost_found_app/modules/login_module/edit_profile_screen.dart';
-import 'package:lost_found_app/modules/login_module/fakestore_login_screen.dart';
-import 'package:lost_found_app/modules/post_detail_module/post_create_screen.dart';
-import 'package:provider/provider.dart';
-import 'package:lost_found_app/core/constants/app_colors.dart';
-import 'package:lost_found_app/core/localization/lang_logic.dart';
-import 'package:lost_found_app/core/localization/lang_data.dart';
-import 'package:lost_found_app/modules/login_module/fakestore_loading_screen.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_login_models.dart';
+import 'package:provider/provider.dart';
+import 'package:lost_found_app/modules/post_detail_module/post_create_screen.dart';
+import 'package:lost_found_app/modules/post_detail_module/post_updatescreen.dart';
+import 'package:lost_found_app/modules/post_detail_module/post_get_model.dart' as postGet;
 import 'package:lost_found_app/modules/login_module/fakestore_login_logic.dart';
 import 'package:lost_found_app/modules/post_detail_module/post_logic.dart';
 import 'package:lost_found_app/modules/post_detail_module/post_seevice.dart';
-import 'package:lost_found_app/modules/post_detail_module/post_updatescreen.dart';
-import 'package:lost_found_app/modules/post_detail_module/post_get_model.dart'
-    as postGet;
 
 class FakestoreHomeScreen extends StatefulWidget {
   final int initialIndex;
   FakestoreHomeScreen({this.initialIndex = 2});
+
   @override
   _FakestoreHomeScreenState createState() => _FakestoreHomeScreenState();
 }
 
 class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
   final ScrollController _scrollController = ScrollController();
-  bool _isDeleting = false; // Track delete operation loading state
-  Language _lang = Khmer();
-  int _langIndex = 0;
-  int _selectedIndex = 2;
+  bool _isLoading = false; // Track loading state for async operations
 
   @override
   void initState() {
     super.initState();
     _fetchUserPosts();
-    _selectedIndex = 2;
   }
 
   // Fetch posts for the logged-in user
@@ -49,58 +40,47 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _lang = context.watch<LanguageLogic>().lang;
-    _langIndex = context.watch<LanguageLogic>().langIndex;
     final responseModel = context.watch<FakestoreLoginLogic>().responseModel;
+    final List<postGet.Doc> posts = context.watch<PostLogic>().postGetModel;
 
     return Scaffold(
       appBar: AppBar(
         title: Text("Account"),
-        // backgroundColor: Colors.green[50],
         backgroundColor: Colors.transparent,
         actions: [
           IconButton(
             icon: Icon(Icons.logout),
-            tooltip: 'Logout',
             onPressed: _handleLogout,
           ),
         ],
       ),
-      body: _buildBody(responseModel),
+      body: Column(
+        children: [
+          _buildProfileCard(responseModel),
+          _buildPostHeader(),
+          Expanded(
+            child: Stack(
+              children: [
+                ListView.builder(
+                  controller: _scrollController,
+                  itemCount: posts.length,
+                  itemBuilder: (context, index) => _buildPostItem(posts[index], index),
+                ),
+                if (_isLoading) // Show loading indicator during async operations
+                  Center(child: CircularProgressIndicator()),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   // Handle logout
   void _handleLogout() async {
     await context.read<FakestoreLoginLogic>().clear();
-    setState(() {});
-    // Navigator.of(context).pushReplacement(
-    //   CupertinoPageRoute(builder: (context) => MainScreen()),
-    // );
-  }
-
-  // Build the main body of the screen
-  Widget _buildBody(MyResponseModel responseModel) {
-    final List<postGet.Doc> posts = context.watch<PostLogic>().postGetModel;
-
-    return Column(
-      children: [
-        _buildProfileCard(responseModel),
-        _buildPostHeader(),
-        Expanded(
-          child: Stack(
-            children: [
-              ListView.builder(
-                controller: _scrollController,
-                itemCount: posts.length,
-                itemBuilder: (context, index) => _buildPostItem(posts[index]),
-              ),
-              if (_isDeleting) // Show loading indicator during delete
-                Center(child: CircularProgressIndicator()),
-            ],
-          ),
-        ),
-      ],
+    Navigator.of(context).pushReplacement(
+      CupertinoPageRoute(builder: (context) => MainScreen()),
     );
   }
 
@@ -129,15 +109,14 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "${user?.firstname ?? 'No Name'} ${user?.lastname ?? ''}"
-                        .trim(),
+                    "${user?.firstname ?? 'No Name'} ${user?.lastname ?? ''}".trim(),
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: Colors.green,
                     ),
-                    overflow: TextOverflow.ellipsis, // Prevent overflow
-                    maxLines: 1, // Limit to one line
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                   ),
                   const SizedBox(height: 8),
                   _buildProfileInfoRow(Icons.phone, user?.phone ?? 'No Phone'),
@@ -165,7 +144,7 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
     );
   }
 
-// Updated Profile Info Row to Prevent Overflow
+  // Build profile info row
   Widget _buildProfileInfoRow(IconData icon, String text) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -176,9 +155,8 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
           child: Text(
             text,
             style: const TextStyle(fontSize: 16, color: Colors.green),
-            overflow: TextOverflow.ellipsis, // Prevents overflow
-            maxLines: 1, // Restrict to one line
-            softWrap: true,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
           ),
         ),
       ],
@@ -190,14 +168,12 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
     return Card(
       margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       shape: RoundedRectangleBorder(
-        // side: BorderSide(color: Colors.green.shade400, width: 1.5),
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(20.0),
           topRight: Radius.circular(20.0),
         ),
       ),
-      elevation: 4, // Adds a subtle shadow
-      shadowColor: Colors.black26,
+      elevation: 4,
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         title: Text(
@@ -209,92 +185,139 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
           ),
         ),
         trailing: IconButton(
-          icon: Icon(Icons.add_circle_outline,
-              size: 24, color: Colors.green.shade700),
+          icon: Icon(Icons.add_circle_outline, size: 24, color: Colors.green.shade700),
           onPressed: () {
             Navigator.of(context).push(
               MaterialPageRoute(builder: (context) => CreatePostScreen()),
             );
           },
-          splashRadius: 24, // Makes the tap effect more natural
         ),
       ),
     );
   }
 
   // Build a single post item
-  Widget _buildPostItem(postGet.Doc post) {
-    final String formattedDate =
-        DateFormat('yyyy-MM-dd').format(DateTime.parse(post.date));
+  Widget _buildPostItem(postGet.Doc post, int index) {
+    final String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.parse(post.date));
+    final Color statusColor = post.status == "completed" ? Colors.blue : Colors.grey[600]!;
 
-    return Card(
-      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-        // side: BorderSide(color: AppColors.primaryColor, width: 1),
+    return Dismissible(
+      key: Key(post.id),
+      direction: DismissDirection.horizontal,
+      background: Container(
+        color: Colors.green,
+        alignment: Alignment.centerLeft,
+        padding: EdgeInsets.only(left: 20),
+        child: Icon(Icons.check, color: Colors.white, size: 50),
       ),
-      child: Padding(
-        padding: EdgeInsets.all(8),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                post.images,
-                width: 90,
-                height: 90,
-                fit: BoxFit.cover,
+      secondaryBackground: Container(
+        color: Colors.blue,
+        alignment: Alignment.centerRight,
+        padding: EdgeInsets.only(right: 20),
+        child: Icon(Icons.archive, color: Colors.white, size: 50),
+      ),
+      confirmDismiss: (direction) async {
+        if (direction == DismissDirection.startToEnd) {
+          if (post.status == "completed") {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Post already completed')),
+            );
+            return false;
+          } else {
+            return await _showUpdateStatusConfirmationDialog(context, post);
+          }
+        } else if (direction == DismissDirection.endToStart) {
+          return await _showArchiveConfirmationDialog(context, post);
+        }
+        return false;
+      },
+      onDismissed: (direction) {
+        setState(() {
+          context.read<PostLogic>().postGetModel.removeAt(index);
+        });
+
+        if (direction == DismissDirection.startToEnd) {
+          _updatePostStatus(post, "completed");
+        } else if (direction == DismissDirection.endToStart) {
+          _updatePostStatus(post, "active");
+        }
+      },
+      child: Card(
+        margin: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(8),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(
+                  post.images,
+                  width: 90,
+                  height: 90,
+                  fit: BoxFit.cover,
+                ),
               ),
-            ),
-            SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      post.title,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      "At: ${post.location}",
+                      style: TextStyle(color: Colors.grey[700], fontSize: 12),
+                    ),
+                    Text(
+                      "Description: ${post.description}",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(color: Colors.grey[700], fontSize: 12),
+                    ),
+                    Text(
+                      "Date: $formattedDate",
+                      style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                    ),
+                    Text(
+                      "Status: ${post.status}",
+                      style: TextStyle(
+                        color: statusColor,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Column(
                 children: [
-                  Text(
-                    post.title,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 2,
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  IconButton(
+                    icon: Icon(Icons.edit, color: Colors.green),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        CupertinoPageRoute(
+                          builder: (context) => UpdatePostScreen(post),
+                        ),
+                      );
+                    },
                   ),
-                  SizedBox(height: 4),
-                  Text(
-                    "At: ${post.location}",
-                    style: TextStyle(color: Colors.grey[700], fontSize: 12),
-                  ),
-                  Text(
-                    "Description: ${post.description}",
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: Colors.grey[700], fontSize: 12),
-                  ),
-                  Text(
-                    "Date: $formattedDate",
-                    style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                  IconButton(
+                    icon: Icon(Icons.delete, color: Colors.red),
+                    onPressed: () => _showDeleteConfirmationDialog(context, post),
                   ),
                 ],
               ),
-            ),
-            Column(
-              children: [
-                IconButton(
-                  icon: Icon(Icons.edit, color: Colors.green),
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      CupertinoPageRoute(
-                        builder: (context) => UpdatePostScreen(post),
-                      ),
-                    );
-                  },
-                ),
-                IconButton(
-                  icon: Icon(Icons.delete, color: Colors.red),
-                  onPressed: () => _showDeleteConfirmationDialog(context, post),
-                ),
-              ],
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -315,14 +338,13 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
           TextButton(
             onPressed: () async {
               Navigator.of(context).pop();
-              setState(() => _isDeleting = true); // Start loading
+              setState(() => _isLoading = true);
 
-              final String result = await PostSeevice.delete(post.id);
+              final String result = await PostSeevice.updateStatus(post.id, "deactive");
 
-              setState(() => _isDeleting = false); // Stop loading
+              setState(() => _isLoading = false);
 
               if (result == 'success') {
-                //print("Users ID"+ context.read<FakestoreLoginLogic>().responseModel.user!.id);
                 context.read<PostLogic>().readByUser(
                     context.read<FakestoreLoginLogic>().responseModel.user!.id);
                 context.read<PostLogic>().read();
@@ -336,6 +358,67 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
               }
             },
             child: Text('Delete'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<bool> _showUpdateStatusConfirmationDialog(BuildContext context, postGet.Doc post) async {
+    return await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Update Status'),
+        content: Text('Are you sure you want to mark this post as "Completed"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text('Update'),
+          ),
+        ],
+      ),
+    ) ?? false;
+  }
+
+  void _updatePostStatus(postGet.Doc post, String status) async {
+    setState(() => _isLoading = true);
+
+    final String result = await PostSeevice.updateStatus(post.id, status);
+
+    setState(() => _isLoading = false);
+
+    if (result == 'success') {
+      context.read<PostLogic>().readByUser(
+          context.read<FakestoreLoginLogic>().responseModel.user!.id);
+      context.read<PostLogic>().read();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Post status updated successfully')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to update post status')),
+      );
+    }
+  }
+
+  Future<bool> _showArchiveConfirmationDialog(BuildContext context, postGet.Doc post) async {
+    return await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Post"),
+        content: Text("Are you sure you want to uncomplete this post?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text("Uncomplete"),
           ),
         ],
       ),
