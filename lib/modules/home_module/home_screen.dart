@@ -358,7 +358,7 @@ class _HomeScreenState extends State<HomeScreen> {
       {
         "title": "Stuffs",
         "icon": Icons.style_outlined,
-        "page": PostByCategory("Staffs"),
+        "page": PostByCategory("Stuffs"),
         "textColor": Colors.white,
         "iconColor": Colors.white,
         "cardColorStart": Colors.blue,
