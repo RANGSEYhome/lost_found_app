@@ -97,18 +97,19 @@ class BasicApp extends StatelessWidget {
       ),
 
       darkTheme: ThemeData(
+        scaffoldBackgroundColor: const Color.fromARGB(255, 24, 24, 24),
         brightness: Brightness.dark,
         primarySwatch: AppColors.primarySwatch,
         fontFamily: AppTextFonts.primaryFont,
         appBarTheme: AppBarTheme(
-          backgroundColor: AppColors.originalDarkThemeBg,
-          foregroundColor: AppColors.white,
+          backgroundColor: const Color.fromARGB(255, 31, 31, 31),
+          foregroundColor: const Color.fromARGB(255, 215, 215, 215),
           titleTextStyle: AppTextStylesDark.headline2,
         ),
         drawerTheme: DrawerThemeData(
-          backgroundColor: AppColors.originalDarkThemeBg,
+          backgroundColor: const Color.fromARGB(255, 31, 31, 31),
         ),
-        cardTheme: CardTheme(color: AppColors.darkColorBg),
+        cardTheme: CardTheme(color: const Color.fromARGB(255, 56, 59, 63)),
       ),
     );
   }

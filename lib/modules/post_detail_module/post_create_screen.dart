@@ -25,7 +25,7 @@ class CreatePostScreen extends StatefulWidget {
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _category = ["people", "pets","staffs", "others"];
+  final _category = ["people", "pets","stuffs", "others"];
   String _selectVal = "people";
 
   final _type = ["lost", "found"];
