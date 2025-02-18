@@ -199,37 +199,38 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
   // Build a single post item
   Widget _buildPostItem(postGet.Doc post, int index) {
     final String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.parse(post.date));
-    final Color statusColor = post.status == "completed" ? Colors.blue : Colors.grey[600]!;
+    final Color statusColor = post.status == "Resolved" ? Colors.blue : Colors.grey[600]!;
 
     return Dismissible(
       key: Key(post.id),
-      direction: DismissDirection.horizontal,
+      direction: DismissDirection.startToEnd,
       background: Container(
         color: Colors.green,
         alignment: Alignment.centerLeft,
         padding: EdgeInsets.only(left: 20),
         child: Icon(Icons.check, color: Colors.white, size: 50),
       ),
-      secondaryBackground: Container(
-        color: Colors.blue,
-        alignment: Alignment.centerRight,
-        padding: EdgeInsets.only(right: 20),
-        child: Icon(Icons.archive, color: Colors.white, size: 50),
-      ),
+      // secondaryBackground: Container(
+      //   color: Colors.blue,
+      //   alignment: Alignment.centerRight,
+      //   padding: EdgeInsets.only(right: 20),
+      //   child: Icon(Icons.close, color: Colors.white, size: 50),
+      // ),
       confirmDismiss: (direction) async {
         if (direction == DismissDirection.startToEnd) {
-          if (post.status == "completed") {
+          if (post.status == "Resolved") {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Post already completed')),
+              SnackBar(content: Text('Post already Resolved')),
             );
             return false;
           } else {
             return await _showUpdateStatusConfirmationDialog(context, post);
           }
-        } else if (direction == DismissDirection.endToStart) {
-          return await _showArchiveConfirmationDialog(context, post);
-        }
-        return false;
+        } 
+        // else if (direction == DismissDirection.endToStart) {
+        //   return await _showArchiveConfirmationDialog(context, post);
+        // }
+        //return false;
       },
       onDismissed: (direction) {
         setState(() {
@@ -237,10 +238,11 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
         });
 
         if (direction == DismissDirection.startToEnd) {
-          _updatePostStatus(post, "completed");
-        } else if (direction == DismissDirection.endToStart) {
-          _updatePostStatus(post, "active");
-        }
+          _updatePostStatus(post, "Resolved");
+        } 
+        // else if (direction == DismissDirection.endToStart) {
+        //   _updatePostStatus(post, "active");
+        // }
       },
       child: Card(
         margin: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -369,7 +371,7 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Update Status'),
-        content: Text('Are you sure you want to mark this post as "Completed"?'),
+        content: Text('Are you sure you want to mark this post as "Resolved"?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
