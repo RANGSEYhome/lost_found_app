@@ -224,6 +224,8 @@ Widget _buildElevatedButton() {
                   final loginLogic = Provider.of<FakestoreLoginLogic>(context, listen: false);
                   await loginLogic.updateUser(user);
                   loginLogic.read();
+                  context.read<PostLogic>().read();
+
 
                   if (result == "success") {
                     Navigator.pop(context);
