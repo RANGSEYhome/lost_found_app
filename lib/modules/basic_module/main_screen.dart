@@ -22,7 +22,7 @@ import 'package:lost_found_app/modules/basic_module/setting.dart';
 import 'package:lost_found_app/modules/home_module/home_screen.dart';
 import 'package:lost_found_app/modules/lost_found_module/lost_found_screen.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_provider.dart';
-import 'package:lost_found_app/modules/info_module/about_screen.dart';
+import 'package:lost_found_app/modules/info_module/about_us_screen.dart';
 import 'package:lost_found_app/modules/basic_module/demo_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -204,15 +204,9 @@ class _MainScreenState extends State<MainScreen> {
           ),
           cardListNavigateTo(
             context,
-            _lang.ls,
-            Icons.category_outlined,
-            DemoScreen(),
-          ),
-          cardListNavigateTo(
-            context,
             _lang.aboutUs,
             Icons.info_outline,
-            AboutScreen(),
+            AboutUsScreen(),
           ),
           cardListNavigateTo(
             context,

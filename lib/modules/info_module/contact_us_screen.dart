@@ -1,92 +1,118 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ContactUsScreen extends StatelessWidget {
-  const ContactUsScreen({super.key});
+  void _launchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
 
-  // Email function
-  void _sendEmail() async {
-    final Uri emailUri = Uri(
+  void _launchEmail(String email) async {
+    final Uri params = Uri(
       scheme: 'mailto',
-      path: 'support@lostandfound.com',
-      queryParameters: {'subject': 'Support Request'},
+      path: email,
     );
-    await launchUrl(emailUri);
+    _launchURL(params.toString());
   }
 
-  // Phone call function
-  void _makePhoneCall() async {
-    final Uri phoneUri = Uri(scheme: 'tel', path: '+1234567890');
-    await launchUrl(phoneUri);
-  }
-
-  // Website function
-  void _openWebsite() async {
-    final Uri websiteUri = Uri.parse('https://www.lostandfound.com');
-    await launchUrl(websiteUri, mode: LaunchMode.externalApplication);
+  void _launchPhone(String phoneNumber) async {
+    _launchURL('tel:$phoneNumber');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Contact Us')),
+      appBar: AppBar(
+        title: Text('Contact Us'),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Icon(Icons.support_agent, size: 100, color: Colors.blue),
-            const SizedBox(height: 16),
-            const Text(
-              'Need Help? Get in touch with us!',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            // Contact Us Section
+            Text(
+              'You can contact us through',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 24),
-
-            // Email Button
-            ElevatedButton.icon(
-              icon: const Icon(Icons.email),
-              label: const Text('Email Support'),
-              onPressed: _sendEmail,
+            SizedBox(height: 16),
+            ListTile(
+              leading: Icon(Icons.email, color: Colors.blue),
+              title: Text('Email Us'),
+              subtitle: Text('support@lostfound.com'),
+              onTap: () => _launchEmail('support@lostfound.com'),
             ),
-
-            // Phone Button
-            ElevatedButton.icon(
-              icon: const Icon(Icons.phone),
-              label: const Text('Call Us'),
-              onPressed: _makePhoneCall,
+            ListTile(
+              leading: Icon(Icons.phone, color: Colors.green),
+              title: Text('Call Us'),
+              subtitle: Text('+1 234 567 890'),
+              onTap: () => _launchPhone('+1234567890'),
             ),
 
-            // Website Button
-            ElevatedButton.icon(
-              icon: const Icon(Icons.public),
-              label: const Text('Visit Our Website'),
-              onPressed: _openWebsite,
+            SizedBox(height: 24),
+
+            // Support Us Section
+            Text(
+              'Support us through',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 16),
+            Center(
+              child: Column(
+                children: [
+                  Image.network(
+                    'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/QR_code_for_mobile_English_Wikipedia.svg/1280px-QR_code_for_mobile_English_Wikipedia.svg.png', // Replace with your QR code image
+                    width: 150,
+                    height: 150,
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    'Bank Account: 123-456-789',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
             ),
 
-            const Spacer(),
+            Spacer(),
 
-            // Social Media Links
-            const Text(
-              'Follow us on social media',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.facebook, color: Colors.blue),
-                  onPressed: () async {
-                    await launchUrl(Uri.parse('https://facebook.com/lostandfound'));
-                  },
-                ),
-                IconButton(
-                  icon: const Icon(Icons.link, color: Colors.blueAccent),
-                  onPressed: _openWebsite,
-                ),
-              ],
+            // Footer Section
+            Center(
+              child: Column(
+                children: [
+                  Text(
+                    'Follow Us',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        icon: FaIcon(FontAwesomeIcons.facebook, color: Colors.blue),
+                        onPressed: () => _launchURL('https://facebook.com/lostfoundapp'),
+                      ),
+                      IconButton(
+                        icon: FaIcon(FontAwesomeIcons.instagram, color: Colors.purple),
+                        onPressed: () => _launchURL('https://instagram.com/lostfoundapp'),
+                      ),
+                      IconButton(
+                        icon: FaIcon(FontAwesomeIcons.twitter, color: Colors.blue),
+                        onPressed: () => _launchURL('https://twitter.com/lostfoundapp'),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    '© 2025 Lost & Found. All rights reserved.',
+                    style: TextStyle(fontSize: 14, color: Colors.grey),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
