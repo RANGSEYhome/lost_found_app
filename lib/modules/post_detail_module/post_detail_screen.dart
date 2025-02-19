@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:lost_found_app/core/constants/app_text_style.dart';
 import 'package:lost_found_app/core/localization/lang_data.dart';
 import 'package:lost_found_app/core/localization/lang_logic.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 // Modules
 import 'package:lost_found_app/modules/post_detail_module/post_get_model.dart';
 
@@ -131,19 +131,29 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               ),
               const SizedBox(height: 16),
               Center(
-                child: ElevatedButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.message, color: Colors.white),
-                  label: const Text("Contact Owner"),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                    backgroundColor: Colors.green,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
-              ),
+  child: ElevatedButton.icon(
+    onPressed: () async {
+      final Uri phoneUri = Uri(scheme: 'tel', path: widget.item.phone);
+      if (await canLaunch(phoneUri.toString())) {
+        await launch(phoneUri.toString());
+      } else {
+        // Handle the error, maybe show a dialog or a snackbar
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Could not launch phone dialer')),
+        );
+      }
+    },
+    icon: const Icon(Icons.message, color: Colors.white),
+    label: const Text("Contact Owner"),
+    style: ElevatedButton.styleFrom(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      backgroundColor: Colors.green,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+    ),
+  ),
+),
             ],
           ),
         ),
