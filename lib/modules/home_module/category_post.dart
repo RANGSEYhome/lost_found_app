@@ -11,7 +11,7 @@
 // import 'package:provider/provider.dart';
 // class PostByCategory extends StatefulWidget {
 //    final String category; // Declare a final variable
-//    const PostByCategory(this.category, {Key? key}) : super(key: key); 
+//    const PostByCategory(this.category, {Key? key}) : super(key: key);
 //   //String categori="";
 
 //   @override
@@ -65,7 +65,6 @@
 //       }
 //     });
 //   }
-
 
 //   // Build the "scroll to top" button
 //   Widget _buildUpButton() {
@@ -303,7 +302,8 @@ import 'package:lost_found_app/core/constants/app_colors.dart';
 import 'package:lost_found_app/core/localization/lang_data.dart';
 import 'package:lost_found_app/core/localization/lang_logic.dart';
 import 'package:lost_found_app/modules/post_detail_module/post_detail_screen.dart';
-import 'package:lost_found_app/modules/post_detail_module/post_get_model.dart' as postGet;
+import 'package:lost_found_app/modules/post_detail_module/post_get_model.dart'
+    as postGet;
 import 'package:lost_found_app/modules/post_detail_module/post_logic.dart';
 import 'package:provider/provider.dart';
 
@@ -315,7 +315,8 @@ class PostByCategory extends StatefulWidget {
   State<PostByCategory> createState() => _PostByCategoryState();
 }
 
-class _PostByCategoryState extends State<PostByCategory> with SingleTickerProviderStateMixin {
+class _PostByCategoryState extends State<PostByCategory>
+    with SingleTickerProviderStateMixin {
   final ScrollController _scroller = ScrollController();
   bool _showUpButton = false;
   int page = 1;
@@ -324,9 +325,12 @@ class _PostByCategoryState extends State<PostByCategory> with SingleTickerProvid
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this); // 2 tabs: Lost & Found
+    _tabController =
+        TabController(length: 2, vsync: this); // 2 tabs: Lost & Found
     _scroller.addListener(_scrollListener);
-    context.read<PostLogic>().searchByCategory(widget.category, widget.category);
+    context
+        .read<PostLogic>()
+        .searchByCategory(widget.category, widget.category);
   }
 
   @override
@@ -344,7 +348,8 @@ class _PostByCategoryState extends State<PostByCategory> with SingleTickerProvid
         _showUpButton = false;
       }
 
-      if (_scroller.hasClients && _scroller.position.pixels == _scroller.position.maxScrollExtent) {
+      if (_scroller.hasClients &&
+          _scroller.position.pixels == _scroller.position.maxScrollExtent) {
         page++;
         context.read<PostLogic>().readAppend(page);
       }
@@ -383,10 +388,12 @@ class _PostByCategoryState extends State<PostByCategory> with SingleTickerProvid
     Object? error = context.watch<PostLogic>().error;
     bool loading = context.watch<PostLogic>().loading;
     bool loadingMore = context.watch<PostLogic>().loadingMore;
-    List<postGet.Doc> records = context.watch<PostLogic>().postSearchCagetoryModel;
+    List<postGet.Doc> records =
+        context.watch<PostLogic>().postSearchCagetoryModel;
 
     // Filter records based on type
-    List<postGet.Doc> filteredRecords = records.where((item) => item.type == type).toList();
+    List<postGet.Doc> filteredRecords =
+        records.where((item) => item.type == type).toList();
 
     if (loading) {
       return const Center(child: CircularProgressIndicator());
@@ -394,6 +401,9 @@ class _PostByCategoryState extends State<PostByCategory> with SingleTickerProvid
 
     if (error != null) {
       return _buildErrorMessage(error);
+    }
+    if(filteredRecords.isEmpty){
+      return _buildEmptyData();
     }
 
     return ListView.builder(
@@ -410,6 +420,43 @@ class _PostByCategoryState extends State<PostByCategory> with SingleTickerProvid
         }
         return _buildPostItem(filteredRecords[index]);
       },
+    );
+  }
+
+  Widget _buildEmptyData() {
+    return Center(
+      child: SizedBox(
+        height: 220,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+              horizontal: 16), // Add margin on left & right
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.warning_amber_rounded,
+                    size: 48,
+                    color: Colors.orangeAccent,
+                  ),
+                  SizedBox(height: 12),
+                  Text(
+                    "No posts available!",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey[700],
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -455,7 +502,8 @@ class _PostByCategoryState extends State<PostByCategory> with SingleTickerProvid
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: GestureDetector(
         onTap: () {
-          Navigator.of(context).push(CupertinoPageRoute(builder: (context) => PostDetailScreen(item)));
+          Navigator.of(context).push(
+              CupertinoPageRoute(builder: (context) => PostDetailScreen(item)));
         },
         child: Stack(
           children: [
@@ -482,14 +530,17 @@ class _PostByCategoryState extends State<PostByCategory> with SingleTickerProvid
                           item.title,
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2,
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 6),
                         Text("At: ${item.location}"),
-                        Text("Description: ${item.description}", maxLines: 2, overflow: TextOverflow.ellipsis),
+                        Text("Description: ${item.description}",
+                            maxLines: 2, overflow: TextOverflow.ellipsis),
                         Text("Date: $formattedDate"),
                         const SizedBox(height: 8),
-                        Text("By: ${item.userId.firstname} ${item.userId.lastname}"),
+                        Text(
+                            "By: ${item.userId.firstname} ${item.userId.lastname}"),
                       ],
                     ),
                   ),
@@ -500,14 +551,18 @@ class _PostByCategoryState extends State<PostByCategory> with SingleTickerProvid
               right: 12,
               top: 12,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: item.type == "lost" ? Colors.red : Colors.green,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   item.type.toUpperCase(),
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: Colors.white),
                 ),
               ),
             ),
