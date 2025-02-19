@@ -23,8 +23,7 @@ class LostFoundScreen extends StatefulWidget {
 
 class _LostFoundScreenState extends State<LostFoundScreen> {
   final ScrollController _scroller = ScrollController();
-  bool _showUpButton =
-      false; // Controls visibility of the "scroll to top" button
+  bool _showUpButton = false; // Controls visibility of the "scroll to top" button
   int page = 1;
 
   @override
@@ -59,6 +58,12 @@ class _LostFoundScreenState extends State<LostFoundScreen> {
     });
   }
 
+  // Function to refresh data
+  Future<void> _refreshData() async {
+    page = 1; // Reset the page to 1
+    await context.read<PostLogic>().read(); // Fetch fresh data
+  }
+
   @override
   Widget build(BuildContext context) {
     Language _lang = Khmer();
@@ -91,29 +96,34 @@ class _LostFoundScreenState extends State<LostFoundScreen> {
     Object? error = context.watch<PostLogic>().error;
     bool loading = context.watch<PostLogic>().loading;
     List<postGet.Doc> records = context.watch<PostLogic>().postModel;
-    
-    if (loading) {
+
+    if (loading && records.isEmpty) {
       return Center(child: CircularProgressIndicator());
     }
 
     if (error != null) {
       return _buildErrorMessage(error);
     }
-    if(records.isEmpty){
+
+    if (records.isEmpty) {
       return _buildEmptyData();
     }
-    return Column(
-      children: [
-        Expanded(
-          child: ListView.builder(
-            controller: _scroller, // Attach the ScrollController
-            itemCount: records.length,
-            itemBuilder: (context, index) {
-              return _buildPostItem(records[index]);
-            },
+
+    return RefreshIndicator(
+      onRefresh: _refreshData, // Callback to refresh data
+      child: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              controller: _scroller, // Attach the ScrollController
+              itemCount: records.length,
+              itemBuilder: (context, index) {
+                return _buildPostItem(records[index]);
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -139,322 +149,7 @@ class _LostFoundScreenState extends State<LostFoundScreen> {
   }
 
   // Build a single post item
-  // Widget _buildPostItem(postGet.Doc item) {
-  //   DateTime dateTime = DateTime.parse(item.date);
-  //   String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
-
-  //   return Card(
-  //     margin: EdgeInsets.all(10),
-  //     shape: RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.circular(8),
-  //       // side: BorderSide(color: AppColors.primaryColor, width: 1),
-  //     ),
-  //     child: Stack(
-  //       children: [
-  //         ListTile(
-  //           leading: ClipRRect(
-  //             borderRadius:
-  //                 BorderRadius.circular(8), // Adjust the radius as needed
-  //             child: Image.network(
-  //               item.images,
-  //               width: 100,
-  //               height: 300,
-  //               fit: BoxFit.cover,
-  //             ),
-  //           ),
-  //           title: Text(
-  //             item.title,
-  //             overflow: TextOverflow.ellipsis,
-  //             maxLines: 2,
-  //             style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-  //           ),
-  //           subtitle: Column(
-  //             crossAxisAlignment: CrossAxisAlignment.start,
-  //             children: [
-  //               Text("At: ${item.location}"),
-  //               Text(
-  //                 "Description: ${item.description}",
-  //                 maxLines: 1,
-  //                 overflow: TextOverflow.ellipsis, // Ensures text is truncated
-  //               ),
-  //               Text("Date: ${formattedDate}"),
-  //             ],
-  //           ),
-  //           onTap: () {
-  //             // Navigate to post detail screen
-  //             Navigator.of(context).push(
-  //               CupertinoPageRoute(
-  //                   builder: (context) => PostDetailScreen(item)),
-  //             );
-  //           },
-  //         ),
-  //         Positioned(
-  //           right: 10,
-  //           top: 10,
-  //           child: Text(
-  //             "${item.type.toUpperCase()}",
-  //             style: TextStyle(
-  //               fontWeight: FontWeight.bold,
-  //               fontSize: 12,
-  //               color: item.type == "lost" ? Colors.red : Colors.green,
-  //             ),
-  //           ),
-  //         ),
-  //         Positioned(
-  //           right: 10,
-  //           bottom: 10,
-  //           child: Text("By: ${item.userId.firstname} ${item.userId.lastname}"),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
-  // Widget _buildPostItem(postGet.Doc item) {
-  //   DateTime dateTime = DateTime.parse(item.date);
-  //   String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
-
-  //   return Card(
-  //     margin: EdgeInsets.only(left: 12, right: 12, bottom: 4, top: 4),
-  //     shape: RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.circular(12),
-  //     ),
-  //     child: GestureDetector(
-  //       // Use GestureDetector to capture tap events
-  //       onTap: () {
-  //         // Navigate to post detail screen
-  //         Navigator.of(context).push(
-  //           CupertinoPageRoute(builder: (context) => PostDetailScreen(item)),
-  //         );
-  //       },
-  //       child: Stack(
-  //         children: [
-  //           Padding(
-  //             padding: EdgeInsets.all(12),
-  //             child: Row(
-  //               crossAxisAlignment: CrossAxisAlignment.start,
-  //               children: [
-  //                 ClipRRect(
-  //                   borderRadius: BorderRadius.circular(12),
-  //                   child: Image.network(
-  //                     item.images,
-  //                     width: 160,
-  //                     height: 160,
-  //                     fit: BoxFit.cover,
-  //                   ),
-  //                 ),
-  //                 SizedBox(width: 12),
-  //                 Expanded(
-  //                   child: Column(
-  //                     crossAxisAlignment: CrossAxisAlignment.start,
-  //                     children: [
-  //                       Text(
-  //                         item.title,
-  //                         overflow: TextOverflow.ellipsis,
-  //                         maxLines: 2,
-  //                         style: TextStyle(
-  //                             fontSize: 16, fontWeight: FontWeight.bold),
-  //                       ),
-  //                       SizedBox(height: 6),
-  //                       Text("At: ${item.location}"),
-  //                       Text(
-  //                         "Description: ${item.description}",
-  //                         maxLines: 2,
-  //                         overflow: TextOverflow.ellipsis,
-  //                       ),
-  //                       Text("Date: ${formattedDate}"),
-  //                       SizedBox(height: 8),
-  //                       Text(
-  //                           "By: ${item.userId.firstname} ${item.userId.lastname}"),
-  //                     ],
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //           // "LOST" or "FOUND" label at the top-right
-  //           Positioned(
-  //             right: 12,
-  //             top: 12,
-  //             child: Container(
-  //               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-  //               decoration: BoxDecoration(
-  //                 color: item.type == "lost" ? Colors.red : Colors.green,
-  //                 borderRadius: BorderRadius.circular(8),
-  //               ),
-  //               child: Text(
-  //                 item.type == "lost" ? "LOST" : "FOUND",
-  //                 style: TextStyle(
-  //                   fontWeight: FontWeight.bold,
-  //                   fontSize: 14,
-  //                   color: Colors.white,
-  //                 ),
-  //               ),
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  // Widget _buildPostItem(postGet.Doc item) {
-  //   DateTime dateTime = DateTime.parse(item.date);
-  //   String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
-
-  //   return Card(
-  //     margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-  //     shape: RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.circular(12),
-  //     ),
-  //     elevation: 2, // Subtle shadow for depth
-  //     child: GestureDetector(
-  //       onTap: () {
-  //         // Navigate to post detail screen
-  //         Navigator.of(context).push(
-  //           CupertinoPageRoute(builder: (context) => PostDetailScreen(item)),
-  //         );
-  //       },
-  //       child: Stack(
-  //         children: [
-  //           Column(
-  //             crossAxisAlignment: CrossAxisAlignment.start,
-  //             children: [
-  //               // Header with user info
-  //               Padding(
-  //                 padding: EdgeInsets.all(12),
-  //                 child: Row(
-  //                   children: [
-  //                     // User's name without profile image
-  //                     Expanded(
-  //                       child: Text(
-  //                         "${item.userId.firstname} ${item.userId.lastname}",
-  //                         style: TextStyle(
-  //                           fontWeight: FontWeight.bold,
-  //                           fontSize: 16,
-  //                         ),
-  //                       ),
-  //                     ),
-  //                     Text(
-  //                       formattedDate,
-  //                       style: TextStyle(color: Colors.grey[600]),
-  //                     ),
-  //                   ],
-  //                 ),
-  //               ),
-  //               // Post image
-  //               ClipRRect(
-  //                 borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-  //                 child: Image.network(
-  //                   item.images,
-  //                   width: double.infinity, // Full width
-  //                   height: 220, // Height for the image
-  //                   fit: BoxFit.cover,
-  //                 ),
-  //               ),
-  //               // Post content
-  //               Padding(
-  //                 padding: EdgeInsets.all(12), // Padding for content
-  //                 child: Column(
-  //                   crossAxisAlignment: CrossAxisAlignment.start,
-  //                   children: [
-  //                     // Title
-  //                     Text(
-  //                       item.title,
-  //                       overflow: TextOverflow.ellipsis,
-  //                       maxLines: 2,
-  //                       style: TextStyle(
-  //                         fontSize: 18,
-  //                         fontWeight: FontWeight.bold,
-  //                         color: Colors.black,
-  //                       ),
-  //                     ),
-  //                     SizedBox(height: 6), // Spacing
-  //                     // Description
-  //                     Text(
-  //                       item.description,
-  //                       maxLines: 2,
-  //                       overflow: TextOverflow.ellipsis,
-  //                       style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-  //                     ),
-  //                     SizedBox(height: 6),
-  //                     // Location
-  //                     if (item.location.isNotEmpty)
-  //                       Text(
-  //                         "📍 ${item.location}",
-  //                         style:
-  //                             TextStyle(fontSize: 14, color: Colors.grey[600]),
-  //                       ),
-  //                   ],
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //           // "LOST" or "FOUND" label at the bottom-right of the card
-  //           Positioned(
-  //             right: 16,
-  //             bottom: 16,
-  //             child: Container(
-  //               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-  //               decoration: BoxDecoration(
-  //                 color: item.type == "lost" ? Colors.red : Colors.green,
-  //                 borderRadius: BorderRadius.circular(8),
-  //               ),
-  //               child: Text(
-  //                 item.type == "lost" ? "LOST" : "FOUND",
-  //                 style: TextStyle(
-  //                   fontWeight: FontWeight.bold,
-  //                   fontSize: 14,
-  //                   color: Colors.white,
-  //                 ),
-  //               ),
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-  Widget _buildEmptyData(){
-      return Center(
-        child: SizedBox(
-          height: 220,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: 16), // Add margin on left & right
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.warning_amber_rounded,
-                      size: 48,
-                      color: Colors.orangeAccent,
-                    ),
-                    SizedBox(height: 12),
-                    Text(
-                      "No posts available!",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey[700],
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
-    }
-  
   Widget _buildPostItem(postGet.Doc item) {
-  
-
     DateTime dateTime = DateTime.parse(item.date);
     String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
     final String profileImage = item.userId.profilePic.isNotEmpty
@@ -575,6 +270,44 @@ class _LostFoundScreenState extends State<LostFoundScreen> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  // Build an empty data widget
+  Widget _buildEmptyData() {
+    return Center(
+      child: SizedBox(
+        height: 220,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+              horizontal: 16), // Add margin on left & right
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.warning_amber_rounded,
+                    size: 48,
+                    color: Colors.orangeAccent,
+                  ),
+                  SizedBox(height: 12),
+                  Text(
+                    "No posts available!",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey[700],
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );
