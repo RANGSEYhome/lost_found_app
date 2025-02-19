@@ -268,7 +268,7 @@ class _SearchScreenState extends State<SearchScreen> {
         }
 
         // If search is done but no results found
-        if (postLogic.postModel.isEmpty) {
+        if (postLogic.postSearchModel.isEmpty) {
           return Center(child: Text("No results found"));
         }
 
