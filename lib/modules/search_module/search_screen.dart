@@ -386,17 +386,31 @@ class _SearchScreenState extends State<SearchScreen> {
   Language _lang = Khmer();
   int _langIndex = 0;
   final TextEditingController _searchController = TextEditingController();
-  String _selectedType = 'All Types'; // Default to 'all' types
-  String _selectedCategory = 'All Categories'; // Default to 'all' categories
-  final List<String> _types = ['All Types', 'lost', 'found']; // Added 'all' option
-  final List<String> _categories = ['All Categories', 'people', 'pets', 'stuffs', 'others']; // Added 'all' option
+  String _selectedType = 'All Types';
+  String _selectedCategory = 'All Categories';
+  
+  // Using a map for types and categories for better flexibility
+  final Map<String, String> _types = {
+    'All Types': 'All Types',
+    'lost': 'Lost',
+    'found': 'Found'
+  };
+
+  final Map<String, String> _categories = {
+    'All Categories': 'All Categories',
+    'people': 'People',
+    'pets': 'Pets',
+    'stuffs': 'Stuffs',
+    'others': 'Others'
+  };
 
   @override
   Widget build(BuildContext context) {
     _lang = context.watch<LanguageLogic>().lang;
     _langIndex = context.watch<LanguageLogic>().langIndex;
+
     return Scaffold(
-      appBar: AppBar(title: Text("Search Screen")),
+      appBar: AppBar(title: Text(_lang.search)),
       body: Column(
         children: [
           _buildSearchBox(context),
@@ -441,10 +455,10 @@ class _SearchScreenState extends State<SearchScreen> {
         children: [
           DropdownButton<String>(
             value: _selectedType,
-            items: _types.map((String type) {
+            items: _types.entries.map((entry) {
               return DropdownMenuItem<String>(
-                value: type,
-                child: Text(type),
+                value: entry.key,
+                child: Text(entry.value),
               );
             }).toList(),
             onChanged: (String? newValue) {
@@ -455,10 +469,10 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
           DropdownButton<String>(
             value: _selectedCategory,
-            items: _categories.map((String category) {
+            items: _categories.entries.map((entry) {
               return DropdownMenuItem<String>(
-                value: category,
-                child: Text(category),
+                value: entry.key,
+                child: Text(entry.value),
               );
             }).toList(),
             onChanged: (String? newValue) {
@@ -478,18 +492,16 @@ class _SearchScreenState extends State<SearchScreen> {
         // Filter results based on search query, type, and category
         var filteredResults = postLogic.postSearchModel.where((item) {
           final matchesType = _selectedType == 'All Types' || item.type == _selectedType;
-          final matchesCategory = _selectedCategory == 'All Categories' || item.categoryId == _selectedCategory; // Assuming category is a field in item
+          final matchesCategory = _selectedCategory == 'All Categories' || item.categoryId == _selectedCategory;
           final matchesSearch = item.title.toLowerCase().contains(_searchController.text.toLowerCase()) ||
                                 item.description.toLowerCase().contains(_searchController.text.toLowerCase());
           return matchesType && matchesCategory && matchesSearch;
         }).toList();
 
-        // Check if no search has been conducted yet
         if (filteredResults.isEmpty && _searchController.text.isEmpty) {
           return Center(child: Text("Enter a search query to see results"));
         }
 
-        // If search is done but no results found
         if (filteredResults.isEmpty) {
           return Center(child: Text("No results found"));
         }
@@ -556,7 +568,6 @@ class _SearchScreenState extends State<SearchScreen> {
                       ],
                     ),
                     onTap: () {
-                      // Navigate to post detail screen
                       Navigator.of(context).push(
                         CupertinoPageRoute(builder: (context) => PostDetailScreen(item)),
                       );
