@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lost_found_app/core/constants/app_text_style.dart';
 import 'package:lost_found_app/modules/basic_module/basic_app.dart';
 import 'package:lost_found_app/modules/info_module/contact_us_screen.dart';
 import 'package:lost_found_app/modules/info_module/terms_privacy_screen.dart';
@@ -137,40 +138,81 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
+  // Widget _buildBottomNavBar() {
+  //   return Container(
+  //     decoration: BoxDecoration(
+  //       border: Border(
+  //         top: BorderSide(
+  //           color: Colors.black12, // Change to your preferred border color
+  //           width: 0.5, // Adjust the width as needed
+  //         ),
+  //       ),
+  //     ),
+  //     child: BottomNavigationBar(
+  //       currentIndex: _currentIndex,
+  //       onTap: (index) {
+  //         setState(() {
+  //           _currentIndex = index;
+  //         });
+  //       },
+  //       type: BottomNavigationBarType.fixed,
+  //       selectedItemColor: AppColors.primaryColor,
+  //       unselectedItemColor: AppColors.black,
+  //       items: [
+  //         BottomNavigationBarItem(
+  //           icon: Icon(Icons.home_outlined),
+  //           label: _lang.home,
+  //         ),
+  //         BottomNavigationBarItem(
+  //           icon: Icon(Icons.category_outlined),
+  //           label: _lang.ls,
+  //         ),
+  //         BottomNavigationBarItem(
+  //           icon: Icon(Icons.account_circle_outlined),
+  //           label: _lang.account,
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
   Widget _buildBottomNavBar() {
     return Container(
       decoration: BoxDecoration(
         border: Border(
           top: BorderSide(
-            color: Colors.black12, // Change to your preferred border color
-            width: 0.5, // Adjust the width as needed
+            color: Colors.black12, // Adjust border color as needed
+            width: 0.5, // Adjust width as needed
           ),
         ),
+        color: Colors.white, // Set background color
       ),
-      child: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: AppColors.primaryColor,
-        unselectedItemColor: AppColors.black,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            label: _lang.home,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.category_outlined),
-            label: _lang.ls,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle_outlined),
-            label: _lang.account,
-          ),
+      padding: EdgeInsets.symmetric(vertical: 12), // Adjust padding if needed
+      child: Row(
+        mainAxisAlignment:
+            MainAxisAlignment.spaceAround, // Evenly distribute icons
+        children: [
+          _buildNavItem(Icons.home_outlined, 0),
+          _buildNavItem(Icons.category_outlined, 1),
+          _buildNavItem(Icons.account_circle_outlined, 2),
         ],
+      ),
+    );
+  }
+
+// Helper method to build each navigation item with bigger icons
+  Widget _buildNavItem(IconData icon, int index) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _currentIndex = index;
+        });
+      },
+      child: Icon(
+        icon,
+        size: 28, // Increase size of the icon
+        color:
+            _currentIndex == index ? AppColors.primaryColor : AppColors.black,
       ),
     );
   }
