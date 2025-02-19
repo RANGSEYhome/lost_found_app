@@ -197,109 +197,97 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
   }
 
   // Build a single post item
-  Widget _buildPostItem(postGet.Doc post, int index) {
-    final String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.parse(post.date));
-    final Color statusColor = post.status == "Resolved" ? Colors.blue : Colors.grey[600]!;
+Widget _buildPostItem(postGet.Doc post, int index) {
+  final String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.parse(post.date));
+  final Color statusColor = post.status == "Resolved" ? Colors.blue : Colors.grey[600]!;
 
-    return Dismissible(
-      key: Key(post.id),
-      direction: DismissDirection.startToEnd,
-      background: Container(
-        color: Colors.green,
-        alignment: Alignment.centerLeft,
-        padding: EdgeInsets.only(left: 20),
-        child: Icon(Icons.check, color: Colors.white, size: 50),
+  return Dismissible(
+    key: Key(post.id),
+    direction: DismissDirection.startToEnd,
+    background: Container(
+      color: Colors.green,
+      alignment: Alignment.centerLeft,
+      padding: EdgeInsets.only(left: 20),
+      child: Icon(Icons.check, color: Colors.white, size: 50),
+    ),
+    confirmDismiss: (direction) async {
+      if (direction == DismissDirection.startToEnd) {
+        if (post.status == "Resolved") {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Post already Resolved')),
+          );
+          return false;
+        } else {
+          return await _showUpdateStatusConfirmationDialog(context, post);
+        }
+      }
+    },
+    onDismissed: (direction) {
+      setState(() {
+        context.read<PostLogic>().postGetModel.removeAt(index);
+      });
+
+      if (direction == DismissDirection.startToEnd) {
+        _updatePostStatus(post, "Resolved");
+      }
+    },
+    child: Card(
+      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
       ),
-      // secondaryBackground: Container(
-      //   color: Colors.blue,
-      //   alignment: Alignment.centerRight,
-      //   padding: EdgeInsets.only(right: 20),
-      //   child: Icon(Icons.close, color: Colors.white, size: 50),
-      // ),
-      confirmDismiss: (direction) async {
-        if (direction == DismissDirection.startToEnd) {
-          if (post.status == "Resolved") {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Post already Resolved')),
-            );
-            return false;
-          } else {
-            return await _showUpdateStatusConfirmationDialog(context, post);
-          }
-        } 
-        // else if (direction == DismissDirection.endToStart) {
-        //   return await _showArchiveConfirmationDialog(context, post);
-        // }
-        //return false;
-      },
-      onDismissed: (direction) {
-        setState(() {
-          context.read<PostLogic>().postGetModel.removeAt(index);
-        });
-
-        if (direction == DismissDirection.startToEnd) {
-          _updatePostStatus(post, "Resolved");
-        } 
-        // else if (direction == DismissDirection.endToStart) {
-        //   _updatePostStatus(post, "active");
-        // }
-      },
-      child: Card(
-        margin: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(8),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.network(
-                  post.images,
-                  width: 90,
-                  height: 90,
-                  fit: BoxFit.cover,
-                ),
+      child: Padding(
+        padding: EdgeInsets.all(8),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.network(
+                post.images,
+                width: 90,
+                height: 90,
+                fit: BoxFit.cover,
               ),
-              SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      post.title,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    post.title,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    "At: ${post.location}",
+                    style: TextStyle(color: Colors.grey[700], fontSize: 12),
+                  ),
+                  Text(
+                    "Description: ${post.description}",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: Colors.grey[700], fontSize: 12),
+                  ),
+                  Text(
+                    "Date: $formattedDate",
+                    style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                  ),
+                  Text(
+                    "Status: ${post.status}",
+                    style: TextStyle(
+                      color: statusColor,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
                     ),
-                    SizedBox(height: 4),
-                    Text(
-                      "At: ${post.location}",
-                      style: TextStyle(color: Colors.grey[700], fontSize: 12),
-                    ),
-                    Text(
-                      "Description: ${post.description}",
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(color: Colors.grey[700], fontSize: 12),
-                    ),
-                    Text(
-                      "Date: $formattedDate",
-                      style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                    ),
-                    Text(
-                      "Status: ${post.status}",
-                      style: TextStyle(
-                        color: statusColor,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
+            ),
+            if (post.status != "Resolved") // Conditionally render the buttons
               Column(
                 children: [
                   IconButton(
@@ -318,12 +306,12 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
                   ),
                 ],
               ),
-            ],
-          ),
+          ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   // Show a confirmation dialog for deleting a post
   void _showDeleteConfirmationDialog(BuildContext context, postGet.Doc post) {
