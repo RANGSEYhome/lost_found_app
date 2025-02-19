@@ -21,7 +21,7 @@ class _SignupScreenState extends State<SignupScreen> {
   //String _imageFile = "";
   File? _imageFile; // To store the selected image
   final ImagePicker _picker = ImagePicker();
-   bool _isLoading = false;
+  bool _isLoading = false;
 
   Future<void> _pickImage() async {
     final pickedFile = await _picker.pickImage(
@@ -37,6 +37,7 @@ class _SignupScreenState extends State<SignupScreen> {
       //uploadImage(_imageFile!);
     }
   }
+
   String p = "";
   final TextEditingController _firstnameController = TextEditingController();
   final TextEditingController _lastnameController = TextEditingController();
@@ -79,20 +80,26 @@ class _SignupScreenState extends State<SignupScreen> {
         child: Column(
           children: <Widget>[
             imageProfile(),
-            _buildTextField("Firstname", "Enter your firstname", TextInputType.text,
+            _buildTextField(
+                "Firstname", "Enter your firstname", TextInputType.text,
                 controller: _firstnameController),
-            _buildTextField("Lastname", "Enter your lastname", TextInputType.text,
+            _buildTextField(
+                "Lastname", "Enter your lastname", TextInputType.text,
                 controller: _lastnameController),
             // _buildTextField("Username", "Enter your username", controller: _usernameController),
-            _buildTextField('Email', 'Enter your email',  TextInputType.emailAddress,
+            _buildTextField(
+                'Email', 'Enter your email', TextInputType.emailAddress,
                 isEmail: true, controller: _emailController),
-            _buildTextField('Password', 'Enter your password', TextInputType.text,
+            _buildTextField(
+                'Password', 'Enter your password', TextInputType.text,
                 isPassword: true, controller: _passwordController),
-            _buildTextField('Confirm Password', 'Re-enter your password', TextInputType.text,
+            _buildTextField('Confirm Password', 'Re-enter your password',
+                TextInputType.text,
                 isPassword: true,
                 isConfirmPassword: true,
                 controller: _confirmPasswordController),
-            _buildTextField('Phone', 'Enter your phone number', TextInputType.phone,
+            _buildTextField(
+                'Phone', 'Enter your phone number', TextInputType.phone,
                 isPhone: true, controller: _phoneController),
             _buildElevatedButton(),
           ],
@@ -101,7 +108,8 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 
-  Widget _buildTextField(String labelText, String hintText, TextInputType inputType,
+  Widget _buildTextField(
+      String labelText, String hintText, TextInputType inputType,
       {bool isEmail = false,
       bool isPassword = false,
       bool isConfirmPassword = false,
@@ -167,7 +175,7 @@ class _SignupScreenState extends State<SignupScreen> {
               if (isPassword && value.length < 6) {
                 return "Password must be at least 6 characters";
               }
-               if (isConfirmPassword) {
+              if (isConfirmPassword) {
                 if (value != _passwordController.text) {
                   return "Passwords do not match";
                 }
@@ -215,78 +223,80 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 
-Widget _buildElevatedButton() {
-  return Container(
-    margin: EdgeInsets.only(top: 10, left: 10, right: 10),
-    width: double.maxFinite,
-    height: 60,
-    child: ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Color(0xFF45BF7A),
-        foregroundColor: Colors.white,
-      ),
-      onPressed: _isLoading
-          ? null // Disable the button when loading
-          : () async {
-              if (_formKey.currentState!.validate()) {
-                setState(() {
-                  _isLoading = true; // Start loading
-                });
-
-                try {
-                  if (_imageFile != null) {
-                    await FakestoreService.uploadImage(_imageFile!).then((path) {
-                      p = path.toString();
-                    }).catchError((e) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text(e.toString()),
-                      ));
-                    });
-                  } else {
-                    p = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-                  }
-
-                  UserModel user = UserModel(
-                    id: "",
-                    firstname: _firstnameController.text,
-                    lastname: _lastnameController.text,
-                    email: _emailController.text,
-                    phone: _phoneController.text,
-                    password: _passwordController.text,
-                    confirmPassword: _confirmPasswordController.text,
-                    profilePic: p,
-                    role: "user",
-                    address: "",
-                  );
-
-                  String result = await FakestoreService.insert(user);
-                  if (result == "success") {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => FakeStoreApp()),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(result),
-                    ));
-                  }
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text(e.toString()),
-                  ));
-                } finally {
+  Widget _buildElevatedButton() {
+    return Container(
+      margin: EdgeInsets.only(top: 10, left: 10, right: 10),
+      width: double.maxFinite,
+      height: 60,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Color(0xFF45BF7A),
+          foregroundColor: Colors.white,
+        ),
+        onPressed: _isLoading
+            ? null // Disable the button when loading
+            : () async {
+                if (_formKey.currentState!.validate()) {
                   setState(() {
-                    _isLoading = false; // Stop loading
+                    _isLoading = true; // Start loading
                   });
+
+                  try {
+                    if (_imageFile != null) {
+                      await FakestoreService.uploadImage(_imageFile!)
+                          .then((path) {
+                        p = path.toString();
+                      }).catchError((e) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(e.toString()),
+                        ));
+                      });
+                    } else {
+                      p = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+                    }
+
+                    UserModel user = UserModel(
+                      id: "",
+                      firstname: _firstnameController.text,
+                      lastname: _lastnameController.text,
+                      email: _emailController.text,
+                      phone: _phoneController.text,
+                      password: _passwordController.text,
+                      confirmPassword: _confirmPasswordController.text,
+                      profilePic: p,
+                      role: "user",
+                      address: "",
+                    );
+
+                    String result = await FakestoreService.insert(user);
+                    if (result == "success") {
+                      Navigator.pop(context);
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(builder: (context) => FakeStoreApp()),
+                      // );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text(result),
+                      ));
+                    }
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(e.toString()),
+                    ));
+                  } finally {
+                    setState(() {
+                      _isLoading = false; // Stop loading
+                    });
+                  }
                 }
-              }
-            },
-      child: _isLoading
-          ? CircularProgressIndicator(
-              color: Colors.white, // Show loading indicator
-            )
-          : Text('Signup'),
-    ),
-  );
-}
+              },
+        child: _isLoading
+            ? CircularProgressIndicator(
+                color: Colors.white, // Show loading indicator
+              )
+            : Text('Signup'),
+      ),
+    );
+  }
 }
