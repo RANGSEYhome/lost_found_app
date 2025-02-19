@@ -23,8 +23,12 @@ class UpdatePostScreen extends StatefulWidget {
 class _UpdatePostScreenState extends State<UpdatePostScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  final _categories = ["people", "pets", "stuffs", "others"];
-  final _types = ["lost", "found"];
+  // final _categories = ["people", "pets", "stuffs", "others"];
+  // final _types = ["lost", "found"];
+  // Modify _categories and _types to use localized values
+late List<String> _categories;
+late List<String> _types;
+
 
   late String _selectedCategory;
   late String _selectedType;
@@ -39,18 +43,25 @@ class _UpdatePostScreenState extends State<UpdatePostScreen> {
   bool _isLoading = false;
 
   @override
-  void initState() {
-    super.initState();
+void initState() {
+  super.initState();
 
-    _selectedCategory = _categories.contains(widget.item.categoryId) ? widget.item.categoryId : _categories.first;
-    _selectedType = _types.contains(widget.item.type) ? widget.item.type : _types.first;
+  Language _lang = Provider.of<LanguageLogic>(context, listen: false).lang;
 
-    _titleController = TextEditingController(text: widget.item.title);
-    _locationController = TextEditingController(text: widget.item.location);
-    _phoneController = TextEditingController(text: widget.item.phone);
-    _descriptionController = TextEditingController(text: widget.item.description);
-    _dateController = TextEditingController(text: widget.item.date);
-  }
+  // Initialize categories and types using localized values
+  _categories = [_lang.people, _lang.pets, _lang.stuffs, _lang.others];
+  _types = [_lang.lost, _lang.found];
+
+  // Use the translated values
+  _selectedCategory = _categories.contains(widget.item.categoryId) ? widget.item.categoryId : _categories.first;
+  _selectedType = _types.contains(widget.item.type) ? widget.item.type : _types.first;
+
+  _titleController = TextEditingController(text: widget.item.title);
+  _locationController = TextEditingController(text: widget.item.location);
+  _phoneController = TextEditingController(text: widget.item.phone);
+  _descriptionController = TextEditingController(text: widget.item.description);
+  _dateController = TextEditingController(text: widget.item.date);
+}
 
   Future<void> _selectDate(BuildContext context) async {
     DateTime? pickedDate = await showDatePicker(
@@ -164,21 +175,38 @@ class _UpdatePostScreenState extends State<UpdatePostScreen> {
     );
   }
 
-  Widget _buildDropdown(String label, String value, List<String> items, ValueChanged<String> onChanged) {
-    return Container(
-      margin: EdgeInsets.all(10),
-      child: DropdownButtonFormField(
-        value: value,
-        decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0)),
-        ),
-        items: items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
-        onChanged: (newValue) => onChanged(newValue as String),
-        validator: (value) => value == null ? 'Please select a $label' : null,
+  // Widget _buildDropdown(String label, String value, List<String> items, ValueChanged<String> onChanged) {
+  //   return Container(
+  //     margin: EdgeInsets.all(10),
+  //     child: DropdownButtonFormField(
+  //       value: value,
+  //       decoration: InputDecoration(
+  //         labelText: label,
+  //         border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0)),
+  //       ),
+  //       items: items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+  //       onChanged: (newValue) => onChanged(newValue as String),
+  //       validator: (value) => value == null ? 'Please select a $label' : null,
+  //     ),
+  //   );
+  // }
+
+  // Modify dropdowns to use localized category/type
+Widget _buildDropdown(String label, String value, List<String> items, ValueChanged<String> onChanged) {
+  return Container(
+    margin: EdgeInsets.all(10),
+    child: DropdownButtonFormField(
+      value: value,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0)),
       ),
-    );
-  }
+      items: items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+      onChanged: (newValue) => onChanged(newValue as String),
+      validator: (value) => value == null ? 'Please select a $label' : null,
+    ),
+  );
+}
 
   Widget _buildTextField(Language _lang, String label, TextEditingController controller, {TextInputType inputType = TextInputType.text}) {
     return Container(

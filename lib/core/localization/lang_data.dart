@@ -95,15 +95,15 @@ class Language {
   // Post Types
   String get type => "Type";
   String get allTypes => "All Types";
-  String get lost => "Lost";
-  String get found => "Found";
+  String get lost => "lost";
+  String get found => "found";
   // Post Categories
   String get category => "Category";
   String get allCategories => "All Categories";
-  String get people => "People";
-  String get pets => "Pets";
-  String get stuffs => "Stuffs";
-  String get others => "Others";
+  String get people => "people";
+  String get pets => "pets";
+  String get stuffs => "stuffs";
+  String get others => "others";
   // other
   String get search => "Search";
   String get recentPosts => "Recent Posts";
