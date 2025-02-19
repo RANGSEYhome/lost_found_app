@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:lost_found_app/core/localization/lang_data.dart';
+import 'package:lost_found_app/core/localization/lang_logic.dart';
 import 'package:lost_found_app/modules/basic_module/main_screen.dart';
 import 'package:lost_found_app/modules/login_module/edit_profile_screen.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_login_models.dart';
@@ -42,10 +44,11 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
   Widget build(BuildContext context) {
     final responseModel = context.watch<FakestoreLoginLogic>().responseModel;
     final List<postGet.Doc> posts = context.watch<PostLogic>().postGetModel;
-
+    Language _lang = context.watch<LanguageLogic>().lang;
+    
     return Scaffold(
       appBar: AppBar(
-        title: Text("Account"),
+        title: Text(_lang.account),
         backgroundColor: Colors.transparent,
         actions: [
           IconButton(
@@ -56,15 +59,15 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
       ),
       body: Column(
         children: [
-          _buildProfileCard(responseModel),
-          _buildPostHeader(),
+          _buildProfileCard(responseModel, _lang),
+          _buildPostHeader(_lang),
           Expanded(
             child: Stack(
               children: [
                 ListView.builder(
                   controller: _scrollController,
                   itemCount: posts.length,
-                  itemBuilder: (context, index) => _buildPostItem(posts[index], index),
+                  itemBuilder: (context, index) => _buildPostItem(posts[index], index, _lang),
                 ),
                 if (_isLoading) // Show loading indicator during async operations
                   Center(child: CircularProgressIndicator()),
@@ -85,7 +88,7 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
   }
 
   // Build the profile card
-  Widget _buildProfileCard(MyResponseModel responseModel) {
+  Widget _buildProfileCard(MyResponseModel responseModel, Language _lang) {
     final user = responseModel.user;
     final String profileImage = (user?.profilePic?.isNotEmpty ?? false)
         ? user!.profilePic!
@@ -109,7 +112,7 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "${user?.firstname ?? 'No Name'} ${user?.lastname ?? ''}".trim(),
+                    "${user?.firstname ?? _lang.noName} ${user?.lastname ?? ''}".trim(),
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -164,7 +167,7 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
   }
 
   // Build the header for the posts section
-  Widget _buildPostHeader() {
+  Widget _buildPostHeader(Language _lang) {
     return Card(
       margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       shape: RoundedRectangleBorder(
@@ -177,7 +180,7 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         title: Text(
-          'Manage Your Posts',
+          _lang.managePosts,
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -197,7 +200,7 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
   }
 
   // Build a single post item
-Widget _buildPostItem(postGet.Doc post, int index) {
+Widget _buildPostItem(postGet.Doc post, int index, Language _lang) {
   final String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.parse(post.date));
   final Color statusColor = post.status == "Resolved" ? Colors.blue : Colors.grey[600]!;
 
@@ -218,7 +221,7 @@ Widget _buildPostItem(postGet.Doc post, int index) {
           );
           return false;
         } else {
-          return await _showUpdateStatusConfirmationDialog(context, post);
+          return await _showUpdateStatusConfirmationDialog(context, post, _lang);
         }
       }
     },
@@ -263,21 +266,21 @@ Widget _buildPostItem(postGet.Doc post, int index) {
                   ),
                   SizedBox(height: 4),
                   Text(
-                    "At: ${post.location}",
+                    "${_lang.location}: ${post.location}",
                     style: TextStyle(color: Colors.grey[700], fontSize: 12),
                   ),
                   Text(
-                    "Description: ${post.description}",
+                    "${_lang.description}: ${post.description}",
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(color: Colors.grey[700], fontSize: 12),
                   ),
                   Text(
-                    "Date: $formattedDate",
+                    "${_lang.date}: $formattedDate",
                     style: TextStyle(color: Colors.grey[600], fontSize: 12),
                   ),
                   Text(
-                    "Status: ${post.status}",
+                    "${"📌"} ${post.status == "active" ?  "${_lang.active}" : "${_lang.resolved}"}",
                     style: TextStyle(
                       color: statusColor,
                       fontSize: 12,
@@ -302,7 +305,7 @@ Widget _buildPostItem(postGet.Doc post, int index) {
                   ),
                   IconButton(
                     icon: Icon(Icons.delete, color: Colors.red),
-                    onPressed: () => _showDeleteConfirmationDialog(context, post),
+                    onPressed: () => _showDeleteConfirmationDialog(context, post, _lang),
                   ),
                 ],
               ),
@@ -314,16 +317,16 @@ Widget _buildPostItem(postGet.Doc post, int index) {
 }
 
   // Show a confirmation dialog for deleting a post
-  void _showDeleteConfirmationDialog(BuildContext context, postGet.Doc post) {
+  void _showDeleteConfirmationDialog(BuildContext context, postGet.Doc post, Language _lang) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Delete Post'),
-        content: Text('Are you sure you want to delete this post?'),
+        title: Text(_lang.deletePost),
+        content: Text(_lang.deletePostConfirmation),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('Cancel'),
+            child: Text(_lang.cancel),
           ),
           TextButton(
             onPressed: () async {
@@ -339,35 +342,35 @@ Widget _buildPostItem(postGet.Doc post, int index) {
                     context.read<FakestoreLoginLogic>().responseModel.user!.id);
                 context.read<PostLogic>().read();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Post deleted successfully')),
+                  SnackBar(content: Text(_lang.deletePostSuccess)),
                 );
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Failed to delete post')),
+                  SnackBar(content: Text(_lang.deletePostFail)),
                 );
               }
             },
-            child: Text('Delete'),
+            child: Text(_lang.delete),
           ),
         ],
       ),
     );
   }
 
-  Future<bool> _showUpdateStatusConfirmationDialog(BuildContext context, postGet.Doc post) async {
+  Future<bool> _showUpdateStatusConfirmationDialog(BuildContext context, postGet.Doc post, Language _lang) async {
     return await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Update Status'),
-        content: Text('Are you sure you want to mark this post as "Resolved"?'),
+        title: Text(_lang.makeResolved),
+        content: Text(_lang.makeResolvedConfirmation),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text('Cancel'),
+            child: Text(_lang.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text('Update'),
+            child: Text(_lang.resolve),
           ),
         ],
       ),

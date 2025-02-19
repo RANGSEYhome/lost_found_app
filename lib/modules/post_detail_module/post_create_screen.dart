@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:lost_found_app/core/localization/lang_data.dart';
+import 'package:lost_found_app/core/localization/lang_logic.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_login_logic.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_login_models.dart';
 import 'package:lost_found_app/modules/lost_found_module/lost_found_screen.dart';
@@ -16,6 +18,7 @@ import 'package:lost_found_app/modules/login_module/fakestore_service.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
 class CreatePostScreen extends StatefulWidget {
   const CreatePostScreen({super.key});
 
@@ -25,10 +28,10 @@ class CreatePostScreen extends StatefulWidget {
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _category = ["people", "pets","stuffs", "others"];
+  // final _category = ["people", "pets","stuffs", "others"];
   String _selectVal = "people";
 
-  final _type = ["lost", "found"];
+  // final _type = ["lost", "found"];
   String _selectType = "lost";
 
   // Text editing controllers
@@ -37,9 +40,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   TextEditingController _phoneController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
   TextEditingController _dateController = TextEditingController();
-  
- File? _imageFile;
- bool _isLoading = false;
+
+  File? _imageFile;
+  bool _isLoading = false;
   Future<void> _selectDate(BuildContext context) async {
     DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -56,20 +59,23 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   }
 
   Future<void> _pickImage() async {
-    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
         _imageFile = File(pickedFile.path);
       });
     }
   }
-  Future<void> sendTelegramNotification(Doc post) async {
-  const String botToken = "7502527933:AAEsmBCy-ja8EpRr0smIQBo-rNRhuh4izrc"; // Replace with your bot token
-  // const String chatId = "298697300"; // Replace with your chat ID
-  List<String> chatIds = ["298697300", "351373897", "534190102","226209214"];
 
-  // Format the message
-  String message = """
+  Future<void> sendTelegramNotification(Doc post) async {
+    const String botToken =
+        "7502527933:AAEsmBCy-ja8EpRr0smIQBo-rNRhuh4izrc"; // Replace with your bot token
+    // const String chatId = "298697300"; // Replace with your chat ID
+    List<String> chatIds = ["298697300", "351373897", "534190102", "226209214"];
+
+    // Format the message
+    String message = """
 📢 *New Post Created* 📢
 📝 *Title:* ${post.title}
 📍 *Location:* ${post.location}
@@ -80,72 +86,92 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 🗂 *Category:* ${post.categoryId}
 """;
 
-  String url = "https://api.telegram.org/bot7502527933:AAEsmBCy-ja8EpRr0smIQBo-rNRhuh4izrc/sendMessage";
+    String url =
+        "https://api.telegram.org/bot7502527933:AAEsmBCy-ja8EpRr0smIQBo-rNRhuh4izrc/sendMessage";
 
-  try {
-     for (String chatId in chatIds) {
     try {
-      await http.post(
-        Uri.parse(url),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({
-          "chat_id": chatId,
-          "text": message,
-          "parse_mode": "Markdown",
-        }),
-      );
+      for (String chatId in chatIds) {
+        try {
+          await http.post(
+            Uri.parse(url),
+            headers: {"Content-Type": "application/json"},
+            body: jsonEncode({
+              "chat_id": chatId,
+              "text": message,
+              "parse_mode": "Markdown",
+            }),
+          );
+        } catch (e) {
+          print("Failed to send notification to $chatId: $e");
+        }
+      }
     } catch (e) {
-      print("Failed to send notification to $chatId: $e");
+      print("Failed to send Telegram notification: $e");
     }
   }
-  } catch (e) {
-    print("Failed to send Telegram notification: $e");
-  }
-}
 
   @override
   Widget build(BuildContext context) {
+    Language _lang = context.watch<LanguageLogic>().lang;
+    
     return Scaffold(
       appBar: AppBar(
-        title: Text('Create Post Screen'),
+        title: Text(_lang.createPost),
       ),
       body: Center(
         child: Form(
           key: _formKey,
           //child: _buildCreatePostForm(),
-          child: _isLoading ? CircularProgressIndicator() : _buildCreatePostForm(),
+          child: _isLoading
+              ? CircularProgressIndicator()
+              : _buildCreatePostForm(_lang),
         ),
       ),
     );
   }
 
-  Widget _buildCreatePostForm() {
+  Widget _buildCreatePostForm(Language _lang) {
+    final Map<String, String> _types = {
+      'lost': _lang.lost,
+      'found': _lang.found,
+    };
+
+    final Map<String, String> _categories = {
+      'people': _lang.people,
+      'pets': _lang.pets,
+      'stuffs': _lang.stuffs,
+      'others': _lang.others,
+    };
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
-          _buildDropDownFormFieldType("Type", "Select your type"),
-          _buildDropDownFormField("Category", "Select your category"),
-          _buildTextField("Title", "Enter your title", TextInputType.text, _titleController),
-          _buildDateTextField(),
-          _buildTextField('Location', 'Enter your location', TextInputType.text, _locationController),
-          _buildTextField('Phone', 'Enter your phone number', TextInputType.phone, _phoneController),
-          _buildTextAreaField('Description', 'Enter your Description', _descriptionController),
-          _buildImagePicker(),
-          _buildElevatedButton(),
+          _buildDropDownFormFieldType(_lang.type, _lang.selectType, _lang, _types),
+          _buildDropDownFormField(_lang.category, _lang.selectCategory, _lang, _categories),
+          _buildTextField(_lang.title, _lang.title, TextInputType.text,
+              _titleController, _lang),
+          _buildDateTextField(_lang),
+          _buildTextField(_lang.location, _lang.location, TextInputType.text,
+              _locationController, _lang),
+          _buildTextField(_lang.phone, _lang.phone, TextInputType.phone,
+              _phoneController, _lang),
+          _buildTextAreaField(_lang.description, _lang.description,
+              _descriptionController, _lang),
+          _buildImagePicker(_lang),
+          _buildElevatedButton(_lang),
         ],
       ),
     );
   }
 
-  Widget _buildDateTextField() {
+  Widget _buildDateTextField(Language _lang) {
     return Container(
       margin: EdgeInsets.only(top: 10, left: 10, right: 10),
       child: TextFormField(
         controller: _dateController,
         readOnly: true,
         decoration: InputDecoration(
-          hintText: "Select Date",
-          labelText: "Date",
+          hintText: _lang.selectDate,
+          labelText: _lang.date,
           suffixIcon: Icon(Icons.calendar_today),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15.0),
@@ -157,7 +183,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         ),
         validator: (value) {
           if (value == null || value.isEmpty) {
-            return "Please select a date";
+            return _lang.selectDate;
           }
           return null;
         },
@@ -166,7 +192,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     );
   }
 
-  Widget _buildImagePicker() {
+  Widget _buildImagePicker(Language _lang) {
     return Column(
       children: [
         if (_imageFile != null)
@@ -176,13 +202,18 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           ),
         ElevatedButton(
           onPressed: _pickImage,
-          child: Text("Upload Photo"),
+          child: Text(_lang.uploadImages),
         ),
       ],
     );
   }
 
-  Widget _buildTextField(String labelText, String hintText, TextInputType inputType, TextEditingController controller) {
+  Widget _buildTextField(
+      String labelText,
+      String hintText,
+      TextInputType inputType,
+      TextEditingController controller,
+      Language _lang) {
     return Container(
       margin: EdgeInsets.only(top: 10, left: 10, right: 10),
       child: TextFormField(
@@ -201,7 +232,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         ),
         validator: (value) {
           if (value == null || value.isEmpty) {
-            return "This field can't be empty";
+            return _lang.noEmpty;
           }
           return null;
         },
@@ -209,7 +240,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     );
   }
 
-  Widget _buildTextAreaField(String labelText, String hintText, TextEditingController controller) {
+  Widget _buildTextAreaField(String labelText, String hintText,
+      TextEditingController controller, Language _lang) {
     return Container(
       margin: EdgeInsets.only(top: 10, left: 10, right: 10),
       child: TextFormField(
@@ -228,7 +260,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         ),
         validator: (value) {
           if (value == null || value.isEmpty) {
-            return "This field can't be empty";
+            return _lang.noEmpty;
           }
           return null;
         },
@@ -236,7 +268,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     );
   }
 
-  Widget _buildDropDownFormField(String labelText, String hintText) {
+  Widget _buildDropDownFormField(String labelText, String hintText,
+      Language _lang, Map<String, String> categories) {
     return Container(
       margin: EdgeInsets.only(top: 10, left: 10, right: 10),
       width: double.maxFinite,
@@ -253,23 +286,24 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             ),
           ),
         ),
-        items: _category
-            .map((e) => DropdownMenuItem(
-                  child: Text(e),
-                  value: e,
-                ))
-            .toList(),
+        items: categories.entries.map((entry) {
+              return DropdownMenuItem<String>(
+                value: entry.key,
+                child: Text(entry.value),
+              );
+            }).toList(),
         onChanged: (value) {
           setState(() {
             _selectVal = value as String;
           });
         },
-        validator: (value) => value == null ? 'Please select a category' : null,
+        validator: (value) => value == null ? _lang.selectCategory : null,
       ),
     );
   }
 
-  Widget _buildDropDownFormFieldType(String labelText, String hintText) {
+  Widget _buildDropDownFormFieldType(String labelText, String hintText,
+      Language _lang, Map<String, String> types) {
     return Container(
       margin: EdgeInsets.only(top: 10, left: 10, right: 10),
       width: double.maxFinite,
@@ -286,109 +320,118 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             ),
           ),
         ),
-        items: _type
-            .map((e) => DropdownMenuItem(
-                  child: Text(e),
-                  value: e,
-                ))
-            .toList(),
+        items: types.entries.map((entry) {
+          return DropdownMenuItem<String>(
+            value: entry.key,
+            child: Text(entry.value),
+          );
+        }).toList(),
         onChanged: (value) {
           setState(() {
             _selectType = value as String;
           });
         },
-        validator: (value) => value == null ? 'Please select a type' : null,
+        validator: (value) => value == null ? _lang.selectType : null,
       ),
     );
   }
 
-Widget _buildElevatedButton() {
-  return Container(
-    margin: EdgeInsets.all(10),
-    width: double.maxFinite,
-    height: 60,
-    child: ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Color(0xFF45BF7A),
-        foregroundColor: Colors.white,
-      ),
-      onPressed: _isLoading ? null : () async {
-        if (!_formKey.currentState!.validate()) {
-          return; // Stop submission if the form is invalid
-        }
-        
-        if (_imageFile == null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Please select an image')),
-          );
-          return;
-        }
+  Widget _buildElevatedButton(Language _lang) {
+    return Container(
+      margin: EdgeInsets.all(10),
+      width: double.maxFinite,
+      height: 60,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Color(0xFF45BF7A),
+          foregroundColor: Colors.white,
+        ),
+        onPressed: _isLoading
+            ? null
+            : () async {
+                if (!_formKey.currentState!.validate()) {
+                  return; // Stop submission if the form is invalid
+                }
 
-        setState(() => _isLoading = true);
+                if (_imageFile == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(_lang.selectPhoto)),
+                  );
+                  return;
+                }
 
-        try {
-          await context.read<FakestoreLoginLogic>().read();
-          FakestoreLoginLogic loginLogic = Provider.of<FakestoreLoginLogic>(context, listen: false);
-          MyResponseModel responseModel = loginLogic.responseModel;
+                setState(() => _isLoading = true);
 
-          if (responseModel.user?.id == null || responseModel.user!.id!.isEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('User ID is missing. Please log in again.')),
-            );
-            setState(() => _isLoading = false);
-            return;
-          }
+                try {
+                  await context.read<FakestoreLoginLogic>().read();
+                  FakestoreLoginLogic loginLogic =
+                      Provider.of<FakestoreLoginLogic>(context, listen: false);
+                  MyResponseModel responseModel = loginLogic.responseModel;
 
-          String imagePath = "";
-          try {
-            imagePath = (await FakestoreService.uploadImage(_imageFile!))!;
-          } catch (e) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Image upload failed: $e'),
-            ));
-            setState(() => _isLoading = false);
-            return;
-          }
+                  if (responseModel.user?.id == null ||
+                      responseModel.user!.id!.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          content:
+                              Text('User ID is missing. Please log in again.')),
+                    );
+                    setState(() => _isLoading = false);
+                    return;
+                  }
+
+                  String imagePath = "";
+                  try {
+                    imagePath =
+                        (await FakestoreService.uploadImage(_imageFile!))!;
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text('${_lang.failUpload}: $e'),
+                    ));
+                    setState(() => _isLoading = false);
+                    return;
+                  }
 // responseModel.user!.id!
-          Doc post = Doc(
-            userId: responseModel.user!,
-            title: _titleController.text.trim(),
-            description: _descriptionController.text.trim(),
-            categoryId: _selectVal,
-            type: _selectType,
-            location: _locationController.text.trim(),
-            phone: _phoneController.text.trim(),
-            date: _dateController.text.trim(),
-            status: "active",
-            images: imagePath,
-          );
+                  Doc post = Doc(
+                    userId: responseModel.user!,
+                    title: _titleController.text.trim(),
+                    description: _descriptionController.text.trim(),
+                    categoryId: _selectVal,
+                    type: _selectType,
+                    location: _locationController.text.trim(),
+                    phone: _phoneController.text.trim(),
+                    date: _dateController.text.trim(),
+                    status: "active",
+                    images: imagePath,
+                  );
 
-          String result = await PostSeevice.insert(post);
-          if (result == "success") {
-            await sendTelegramNotification(post);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Post created successfully')),
-            );
-            context.read<PostLogic>().read();
-            context.read<PostLogic>().readByUser(responseModel.user!.id); // Refresh posts
-            Navigator.pop(context, true);  // Navigate back
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Failed to create post')),
-            );
-          }
-        } catch (e) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('An error occurred: $e'),
-          ));
-        } finally {
-          setState(() => _isLoading = false);
-        }
-      },
-      child: _isLoading ? CircularProgressIndicator(color: Colors.white) : Text('Create Post'),
-    ),
-  );
-}
-
-
+                  String result = await PostSeevice.insert(post);
+                  if (result == "success") {
+                    await sendTelegramNotification(post);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(_lang.postCreateSuccess)),
+                    );
+                    context.read<PostLogic>().read();
+                    context
+                        .read<PostLogic>()
+                        .readByUser(responseModel.user!.id); // Refresh posts
+                    Navigator.pop(context, true); // Navigate back
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(_lang.failPost)),
+                    );
+                  }
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('${_lang.errorOccured}: $e'),
+                  ));
+                } finally {
+                  setState(() => _isLoading = false);
+                }
+              },
+        child: _isLoading
+            ? CircularProgressIndicator(color: Colors.white)
+            : Text(_lang.createPost),
+      ),
+    );
+  }
 }

@@ -41,14 +41,14 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         SizedBox(height: AppSpacing.sm),
         HeadlineLabel(
-          "Recent Posts",
+          _lang.recentPosts,
           AppTextSizes.headline2,
         ),
         SizedBox(height: AppSpacing.sm),
         _buildSlideShow(records, Axis.horizontal),
         SizedBox(height: AppSpacing.lg),
         HeadlineLabel(
-          "Posts by Category",
+          _lang.postByCategory,
           AppTextSizes.headline2,
         ),
         _buildCategoryGrid(context)
@@ -82,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       SizedBox(height: 12),
                       Text(
-                        "No posts available!",
+                        _lang.noPost,
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -209,9 +209,9 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildInfoText("Lost:", items.title),
-          _buildInfoText("Date:", formattedDate),
-          _buildInfoText("Location:", items.location),
+          _buildInfoText(items.type == "lost" ? "${_lang.lost}:" : "${_lang.found}:", items.title),
+          _buildInfoText("${_lang.date}:", formattedDate),
+          _buildInfoText("${_lang.location}:", items.location),
           const SizedBox(height: 10),
         ],
       ),
@@ -244,7 +244,8 @@ class _HomeScreenState extends State<HomeScreen> {
       //   borderRadius: BorderRadius.circular(6),
       // ),
       child: Text(
-        "Posted by $name",
+        // "Posted by $name",
+        "${_lang.postedBy}: $name",
         style: const TextStyle(color: Colors.white, fontSize: 14),
       ),
     );
@@ -338,7 +339,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Map<String, dynamic>> _categoryList() {
     return [
       {
-        "title": "People",
+        "title": _lang.people,
         "icon": Icons.people_alt,
         "page": PostByCategory("People"),
         "textColor": Color(0xFF4C585B),
@@ -347,7 +348,7 @@ class _HomeScreenState extends State<HomeScreen> {
         "cardColorEnd": Colors.yellow[300],
       },
       {
-        "title": "Pets",
+        "title": _lang.pets,
         "icon": Icons.pets_outlined,
         "page": PostByCategory("Pets"),
         "textColor": Colors.white,
@@ -356,7 +357,7 @@ class _HomeScreenState extends State<HomeScreen> {
         "cardColorEnd": Colors.red[300],
       },
       {
-        "title": "Stuffs",
+        "title": _lang.stuffs,
         "icon": Icons.style_outlined,
         "page": PostByCategory("Stuffs"),
         "textColor": Colors.white,
@@ -365,7 +366,7 @@ class _HomeScreenState extends State<HomeScreen> {
         "cardColorEnd": Colors.blue[300],
       },
       {
-        "title": "Others",
+        "title": _lang.others,
         "icon": Icons.all_inclusive_outlined,
         "page": PostByCategory("Other"),
         "textColor": Color(0xFF4C585B),

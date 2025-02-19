@@ -385,36 +385,36 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   Language _lang = Khmer();
   int _langIndex = 0;
+
   final TextEditingController _searchController = TextEditingController();
   String _selectedType = 'All Types';
   String _selectedCategory = 'All Categories';
-  
-  // Using a map for types and categories for better flexibility
-  final Map<String, String> _types = {
-    'All Types': 'All Types',
-    'lost': 'Lost',
-    'found': 'Found'
-  };
-
-  final Map<String, String> _categories = {
-    'All Categories': 'All Categories',
-    'people': 'People',
-    'pets': 'Pets',
-    'stuffs': 'Stuffs',
-    'others': 'Others'
-  };
 
   @override
   Widget build(BuildContext context) {
     _lang = context.watch<LanguageLogic>().lang;
     _langIndex = context.watch<LanguageLogic>().langIndex;
+    // Using a map for types and categories for better flexibility
+    final Map<String, String> _types = {
+      'All Types': _lang.allTypes,
+      'lost': _lang.lost,
+      'found': _lang.found,
+    };
+
+    final Map<String, String> _categories = {
+      'All Categories': _lang.allCategories,
+      'people': _lang.people,
+      'pets': _lang.pets,
+      'stuffs': _lang.stuffs,
+      'others': _lang.others,
+    };
 
     return Scaffold(
       appBar: AppBar(title: Text(_lang.search)),
       body: Column(
         children: [
           _buildSearchBox(context),
-          _buildFilterOptions(),
+          _buildFilterOptions(_types, _categories),
           Expanded(child: _buildSearchResults()),
         ],
       ),
@@ -432,7 +432,9 @@ class _SearchScreenState extends State<SearchScreen> {
             icon: Icon(Icons.search),
             onPressed: () async {
               if (_searchController.text.isNotEmpty) {
-                await context.read<PostLogic>().search(_searchController.text.trim());
+                await context
+                    .read<PostLogic>()
+                    .search(_searchController.text.trim());
               }
             },
           ),
@@ -447,7 +449,7 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  Widget _buildFilterOptions() {
+  Widget _buildFilterOptions(Map<String, String> types, Map<String, String> categories) {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Row(
@@ -455,7 +457,7 @@ class _SearchScreenState extends State<SearchScreen> {
         children: [
           DropdownButton<String>(
             value: _selectedType,
-            items: _types.entries.map((entry) {
+            items: types.entries.map((entry) {
               return DropdownMenuItem<String>(
                 value: entry.key,
                 child: Text(entry.value),
@@ -469,7 +471,7 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
           DropdownButton<String>(
             value: _selectedCategory,
-            items: _categories.entries.map((entry) {
+            items: categories.entries.map((entry) {
               return DropdownMenuItem<String>(
                 value: entry.key,
                 child: Text(entry.value),
@@ -491,10 +493,16 @@ class _SearchScreenState extends State<SearchScreen> {
       builder: (context, postLogic, child) {
         // Filter results based on search query, type, and category
         var filteredResults = postLogic.postSearchModel.where((item) {
-          final matchesType = _selectedType == 'All Types' || item.type == _selectedType;
-          final matchesCategory = _selectedCategory == 'All Categories' || item.categoryId == _selectedCategory;
-          final matchesSearch = item.title.toLowerCase().contains(_searchController.text.toLowerCase()) ||
-                                item.description.toLowerCase().contains(_searchController.text.toLowerCase());
+          final matchesType =
+              _selectedType == 'All Types' || item.type == _selectedType;
+          final matchesCategory = _selectedCategory == 'All Categories' ||
+              item.categoryId == _selectedCategory;
+          final matchesSearch = item.title
+                  .toLowerCase()
+                  .contains(_searchController.text.toLowerCase()) ||
+              item.description
+                  .toLowerCase()
+                  .contains(_searchController.text.toLowerCase());
           return matchesType && matchesCategory && matchesSearch;
         }).toList();
 
@@ -539,7 +547,8 @@ class _SearchScreenState extends State<SearchScreen> {
                             item.title,
                             overflow: TextOverflow.ellipsis,
                             maxLines: 2,
-                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.bold),
                           ),
                         ),
                         Container(
@@ -549,7 +558,9 @@ class _SearchScreenState extends State<SearchScreen> {
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 12,
-                              color: item.type == "lost" ? Colors.red : Colors.green,
+                              color: item.type == "lost"
+                                  ? Colors.red
+                                  : Colors.green,
                             ),
                           ),
                         ),
@@ -569,7 +580,8 @@ class _SearchScreenState extends State<SearchScreen> {
                     ),
                     onTap: () {
                       Navigator.of(context).push(
-                        CupertinoPageRoute(builder: (context) => PostDetailScreen(item)),
+                        CupertinoPageRoute(
+                            builder: (context) => PostDetailScreen(item)),
                       );
                     },
                   ),

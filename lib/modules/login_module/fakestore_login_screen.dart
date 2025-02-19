@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lost_found_app/core/localization/lang_data.dart';
+import 'package:lost_found_app/core/localization/lang_logic.dart';
 import 'package:lost_found_app/modules/basic_module/main_screen.dart';
 import 'package:lost_found_app/modules/home_module/home_screen.dart';
 import 'package:lost_found_app/modules/login_module/signup_screen.dart';
@@ -24,6 +26,7 @@ class _FakeStoreLoginScreenState extends State<FakeStoreLoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Language _lang = context.watch<LanguageLogic>().lang;
     return Scaffold(
       appBar: AppBar(
         title: Text(""),
@@ -41,17 +44,17 @@ class _FakeStoreLoginScreenState extends State<FakeStoreLoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   _buildImage(imgLogo),
-                  _buildUsernameTextField(),
+                  _buildUsernameTextField(_lang),
                   SizedBox(height: 10),
-                  _buildPasswordTextField(),
+                  _buildPasswordTextField(_lang),
                   SizedBox(height: 20),
-                  _buildLoginButton(),
+                  _buildLoginButton(_lang),
                   SizedBox(height: 15),
-                  Text("Or continue with",style: TextStyle(color: Colors.black54)),
+                  Text(_lang.loginWith,style: TextStyle(color: Colors.black54)),
                   SizedBox(height: 15),
                   _buildSocialLoginButtons(),
                   SizedBox(height: 20),
-                  _buildSignupText(),
+                  _buildSignupText(_lang),
                 ],
               ),
             ),
@@ -61,7 +64,7 @@ class _FakeStoreLoginScreenState extends State<FakeStoreLoginScreen> {
     );
   }
 
-  Widget _buildLoginButton() {
+  Widget _buildLoginButton(Language _lang) {
     return Container(
       width: double.infinity,
       height: 50,
@@ -71,10 +74,10 @@ class _FakeStoreLoginScreenState extends State<FakeStoreLoginScreen> {
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
-        onPressed: _isLoading ? null : _handleLogin,
+        onPressed: _isLoading ? null : () => _handleLogin(_lang),
         child: _isLoading
             ? CircularProgressIndicator(color: Colors.white)
-            : Text("Login", style: TextStyle(fontSize: 18)),
+            : Text(_lang.login, style: TextStyle(fontSize: 18)),
       ),
     );
   }
@@ -113,7 +116,7 @@ Widget _buildSocialButton(IconData icon, Color color, VoidCallback onPressed) {
   );
 }
 
-  Future<void> _handleLogin() async {
+  Future<void> _handleLogin(Language _lang) async {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
       try {
@@ -127,15 +130,15 @@ Widget _buildSocialButton(IconData icon, Color color, VoidCallback onPressed) {
           // );
           setState(() {});
         } else {
-          _showSnackBar("Login Failed");
+          _showSnackBar(_lang.failLogin);
         }
       } catch (e) {
-        _showSnackBar("Error: ${e.toString()}");
+        _showSnackBar("${_lang.errorOccured}: ${e.toString()}");
       } finally {
         setState(() => _isLoading = false);
       }
     } else {
-      _showSnackBar("Invalid username or password");
+      _showSnackBar(_lang.invalidLogin);
     }
   }
 
@@ -143,15 +146,15 @@ Widget _buildSocialButton(IconData icon, Color color, VoidCallback onPressed) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
-  Widget _buildUsernameTextField() {
-    return _buildTextField(_usernameCtrl, "Username", Icons.person);
+  Widget _buildUsernameTextField(Language _lang) {
+    return _buildTextField(_usernameCtrl, _lang.email, Icons.person, _lang);
   }
 
-  Widget _buildPasswordTextField() {
-    return _buildTextField(_passCtrl, "Password", Icons.lock, isPassword: true);
+  Widget _buildPasswordTextField(Language _lang) {
+    return _buildTextField(_passCtrl, _lang.password, Icons.lock, _lang, isPassword: true);
   }
 
-  Widget _buildTextField(TextEditingController controller, String hint, IconData icon, {bool isPassword = false}) {
+  Widget _buildTextField(TextEditingController controller, String hint, IconData icon, Language _lang, {bool isPassword = false}) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 15),
       decoration: BoxDecoration(
@@ -163,13 +166,13 @@ Widget _buildSocialButton(IconData icon, Color color, VoidCallback onPressed) {
         obscureText: isPassword ? _hidePassword : false,
         validator: (value) {
           if (value == null || value.isEmpty) {
-            return "$hint is required";
+            return _lang.noEmpty;
           }
           return null;
         },
         decoration: InputDecoration(
           icon: Icon(icon, color: Color(0xFF45BF7A)),
-          hintText: "Enter $hint",
+          hintText: "${_lang.enter}$hint",
           border: InputBorder.none,
           suffixIcon: isPassword
               ? IconButton(
@@ -197,11 +200,11 @@ Widget _buildSocialButton(IconData icon, Color color, VoidCallback onPressed) {
     );
   }
 
-  Widget _buildSignupText() {
+  Widget _buildSignupText(Language _lang) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text("Don't have an account?", style: TextStyle(color: Colors.black54)),
+        Text(_lang.noHaveAccount, style: TextStyle(color: Colors.black54)),
         TextButton(
           onPressed: () {
             Navigator.push(
@@ -209,7 +212,7 @@ Widget _buildSocialButton(IconData icon, Color color, VoidCallback onPressed) {
               MaterialPageRoute(builder: (context) => SignupScreen()),
             );
           },
-          child: Text("Sign Up", style: TextStyle(color: Color(0xFF45BF7A))),
+          child: Text(_lang.signUp, style: TextStyle(color: Color(0xFF45BF7A))),
         ),
       ],
     );

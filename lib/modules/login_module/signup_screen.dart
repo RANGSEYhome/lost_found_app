@@ -1,7 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:provider/provider.dart';
 
 import 'package:flutter/material.dart';
+import 'package:lost_found_app/core/localization/lang_data.dart';
+import 'package:lost_found_app/core/localization/lang_logic.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_app.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_login_models.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_provider.dart';
@@ -62,54 +65,55 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Language _lang = context.watch<LanguageLogic>().lang;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        title: Text('Signup Screen'),
+        title: Text(_lang.signUp),
       ),
       body: Center(
-        child: _buildSignupForm(),
+        child: _buildSignupForm(_lang),
       ),
     );
   }
 
-  Widget _buildSignupForm() {
+  Widget _buildSignupForm(Language _lang) {
     return SingleChildScrollView(
       child: Form(
         key: _formKey,
         child: Column(
           children: <Widget>[
             imageProfile(),
-            _buildTextField(
-                "Firstname", "Enter your firstname", TextInputType.text,
+            _buildTextField(_lang, _lang.firstName, _lang.enterFirstName,
+                TextInputType.text,
                 controller: _firstnameController),
             _buildTextField(
-                "Lastname", "Enter your lastname", TextInputType.text,
+                _lang, _lang.lastName, _lang.enterLastName, TextInputType.text,
                 controller: _lastnameController),
             // _buildTextField("Username", "Enter your username", controller: _usernameController),
-            _buildTextField(
-                'Email', 'Enter your email', TextInputType.emailAddress,
+            _buildTextField(_lang, _lang.email, _lang.enterEmail,
+                TextInputType.emailAddress,
                 isEmail: true, controller: _emailController),
             _buildTextField(
-                'Password', 'Enter your password', TextInputType.text,
+                _lang, _lang.password, _lang.enterPassword, TextInputType.text,
                 isPassword: true, controller: _passwordController),
-            _buildTextField('Confirm Password', 'Re-enter your password',
+            _buildTextField(_lang, _lang.confirmPassword, _lang.reEnterPassword,
                 TextInputType.text,
                 isPassword: true,
                 isConfirmPassword: true,
                 controller: _confirmPasswordController),
             _buildTextField(
-                'Phone', 'Enter your phone number', TextInputType.phone,
+                _lang, _lang.phone, _lang.enterPhone, TextInputType.phone,
                 isPhone: true, controller: _phoneController),
-            _buildElevatedButton(),
+            _buildElevatedButton(_lang),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildTextField(
-      String labelText, String hintText, TextInputType inputType,
+  Widget _buildTextField(Language _lang, String labelText, String hintText,
+      TextInputType inputType,
       {bool isEmail = false,
       bool isPassword = false,
       bool isConfirmPassword = false,
@@ -169,15 +173,15 @@ class _SignupScreenState extends State<SignupScreen> {
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return "$labelText can't be empty";
+                return _lang.noEmpty;
               }
 
               if (isPassword && value.length < 6) {
-                return "Password must be at least 6 characters";
+                return _lang.passwordChar;
               }
               if (isConfirmPassword) {
                 if (value != _passwordController.text) {
-                  return "Passwords do not match";
+                  return _lang.passwordMatch;
                 }
               }
               return null;
@@ -223,7 +227,7 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 
-  Widget _buildElevatedButton() {
+  Widget _buildElevatedButton(Language _lang) {
     return Container(
       margin: EdgeInsets.only(top: 10, left: 10, right: 10),
       width: double.maxFinite,
@@ -295,7 +299,7 @@ class _SignupScreenState extends State<SignupScreen> {
             ? CircularProgressIndicator(
                 color: Colors.white, // Show loading indicator
               )
-            : Text('Signup'),
+            : Text(_lang.signUp),
       ),
     );
   }

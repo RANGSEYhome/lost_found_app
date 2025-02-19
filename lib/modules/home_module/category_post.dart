@@ -310,7 +310,7 @@ import 'package:provider/provider.dart';
 class PostByCategory extends StatefulWidget {
   final String category;
   const PostByCategory(this.category, {Key? key}) : super(key: key);
-
+  
   @override
   State<PostByCategory> createState() => _PostByCategoryState();
 }
@@ -321,6 +321,19 @@ class _PostByCategoryState extends State<PostByCategory>
   bool _showUpButton = false;
   int page = 1;
   late TabController _tabController;
+  String _translateCategory(String category) {
+    Language _lang = context.watch<LanguageLogic>().lang;
+    switch (category.toLowerCase()) {
+      case "people":
+        return _lang.people;
+      case "pets":
+        return _lang.pets;
+      case "stuffs":
+        return _lang.stuffs;
+      default:
+        return _lang.others; // Fallback for unknown categories
+    }
+  }
 
   @override
   void initState() {
@@ -363,20 +376,20 @@ class _PostByCategoryState extends State<PostByCategory>
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(widget.category),
+          title: Text(_translateCategory(widget.category)),
           bottom: TabBar(
             controller: _tabController,
-            tabs: const [
-              Tab(text: "Lost"),
-              Tab(text: "Found"),
+            tabs: [
+              Tab(text: _lang.lost),
+              Tab(text: _lang.found),
             ],
           ),
         ),
         body: TabBarView(
           controller: _tabController,
           children: [
-            _buildPostList(context, "lost"), // Show only "Lost" posts
-            _buildPostList(context, "found"), // Show only "Found" posts
+            _buildPostList(context, _lang, "lost"), // Show only "Lost" posts
+            _buildPostList(context, _lang, "found"), // Show only "Found" posts
           ],
         ),
         floatingActionButton: _showUpButton ? _buildUpButton() : null,
@@ -384,7 +397,7 @@ class _PostByCategoryState extends State<PostByCategory>
     );
   }
 
-  Widget _buildPostList(BuildContext context, String type) {
+  Widget _buildPostList(BuildContext context, Language _lang, String type) {
     Object? error = context.watch<PostLogic>().error;
     bool loading = context.watch<PostLogic>().loading;
     bool loadingMore = context.watch<PostLogic>().loadingMore;
@@ -400,10 +413,10 @@ class _PostByCategoryState extends State<PostByCategory>
     }
 
     if (error != null) {
-      return _buildErrorMessage(error);
+      return _buildErrorMessage(error, _lang);
     }
     if(filteredRecords.isEmpty){
-      return _buildEmptyData();
+      return _buildEmptyData(_lang);
     }
 
     return ListView.builder(
@@ -418,12 +431,12 @@ class _PostByCategoryState extends State<PostByCategory>
             ),
           );
         }
-        return _buildPostItem(filteredRecords[index]);
+        return _buildPostItem(filteredRecords[index], _lang);
       },
     );
   }
 
-  Widget _buildEmptyData() {
+  Widget _buildEmptyData(Language _lang) {
     return Center(
       child: SizedBox(
         height: 220,
@@ -443,7 +456,7 @@ class _PostByCategoryState extends State<PostByCategory>
                   ),
                   SizedBox(height: 12),
                   Text(
-                    "No posts available!",
+                    _lang.noPost,
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -473,7 +486,7 @@ class _PostByCategoryState extends State<PostByCategory>
     );
   }
 
-  Widget _buildErrorMessage(Object error) {
+  Widget _buildErrorMessage(Object error, Language _lang) {
     debugPrint(error.toString());
     return Center(
       child: Column(
@@ -486,14 +499,14 @@ class _PostByCategoryState extends State<PostByCategory>
               context.read<PostLogic>().setLoading();
               context.read<PostLogic>().read();
             },
-            child: const Text("RETRY"),
+            child: Text(_lang.retry),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildPostItem(postGet.Doc item) {
+  Widget _buildPostItem(postGet.Doc item, Language _lang) {
     DateTime dateTime = DateTime.parse(item.date);
     String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
 
@@ -534,13 +547,13 @@ class _PostByCategoryState extends State<PostByCategory>
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 6),
-                        Text("At: ${item.location}"),
-                        Text("Description: ${item.description}",
+                        Text("${_lang.location}: ${item.location}"),
+                        Text("${_lang.description}: ${item.description}",
                             maxLines: 2, overflow: TextOverflow.ellipsis),
-                        Text("Date: $formattedDate"),
+                        Text("${_lang.date}: $formattedDate"),
                         const SizedBox(height: 8),
                         Text(
-                            "By: ${item.userId.firstname} ${item.userId.lastname}"),
+                            "${_lang.postedBy}: ${item.userId.firstname} ${item.userId.lastname}"),
                       ],
                     ),
                   ),
@@ -558,7 +571,7 @@ class _PostByCategoryState extends State<PostByCategory>
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  item.type.toUpperCase(),
+                  item.type == "lost" ?  "${_lang.lost.toUpperCase()}" : "${_lang.found.toUpperCase()}",
                   style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 14,

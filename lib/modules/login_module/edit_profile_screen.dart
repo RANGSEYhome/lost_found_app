@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:lost_found_app/core/localization/lang_data.dart';
+import 'package:lost_found_app/core/localization/lang_logic.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_app.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_login_logic.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_login_models.dart';
@@ -68,32 +70,33 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Language _lang = context.watch<LanguageLogic>().lang;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Update Profile'),
+        title: Text(_lang.editProfile),
       ),
       body: Center(
-        child: _buildSignupForm(),
+        child: _buildSignupForm(_lang),
       ),
     );
   }
 
-  Widget _buildSignupForm() {
+  Widget _buildSignupForm(Language _lang) {
     return SingleChildScrollView(
       child: Form(
         key: _formKey,
         child: Column(
           children: <Widget>[
             imageProfile(),
-            _buildTextField("Firstname", "Enter your firstname", TextInputType.text,
+            _buildTextField(_lang.firstName, _lang.enterFirstName, TextInputType.text,
                 controller: _firstnameController),
-            _buildTextField("Lastname", "Enter your lastname", TextInputType.text,
+            _buildTextField(_lang.lastName, _lang.enterLastName, TextInputType.text,
                 controller: _lastnameController),
-            _buildTextField('Email', 'Enter your email', TextInputType.emailAddress,
+            _buildTextField(_lang.email, _lang.enterEmail, TextInputType.emailAddress,
                 isEmail: true, controller: _emailController),
-            _buildTextField('Phone', 'Enter your phone number', TextInputType.phone,
+            _buildTextField(_lang.phone, _lang.enterPhone, TextInputType.phone,
                 isPhone: true, controller: _phoneController),
-            _buildElevatedButton(),
+            _buildElevatedButton(_lang),
           ],
         ),
       ),
@@ -178,7 +181,7 @@ Widget _buildTextField(
     );
   }
 
-Widget _buildElevatedButton() {
+Widget _buildElevatedButton(Language _lang) {
   return Container(
     margin: EdgeInsets.only(top: 10, left: 10, right: 10),
     width: double.maxFinite,
@@ -254,7 +257,7 @@ Widget _buildElevatedButton() {
           ? CircularProgressIndicator(
               color: Colors.white, // Show loading indicator
             )
-          : Text('Update Profile'),
+          : Text(_lang.updateProfile),
     ),
   );
 }

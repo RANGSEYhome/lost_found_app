@@ -70,7 +70,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
 
               // Title
               Text(
-                widget.item.title ?? "No Title",
+                widget.item.title ?? _lang.noTitle,
                 style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
@@ -84,7 +84,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                   const Icon(Icons.location_on, color: Colors.green, size: 18),
                   const SizedBox(width: 6),
                   Text(
-                    widget.item.location ?? "No Location",
+                    widget.item.location ?? _lang.noLocation,
                     style: const TextStyle(fontSize: 16, color: Colors.black87),
                   ),
                 ],
@@ -108,7 +108,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                   const Icon(Icons.phone, color: Colors.blue, size: 18),
                   const SizedBox(width: 6),
                   Text(
-                     widget.item.phone ?? "No Phone number",
+                     widget.item.phone ?? _lang.noPhone,
                     style: const TextStyle(fontSize: 16, color: Colors.black87),
                   ),
                 ],
@@ -116,9 +116,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               const SizedBox(height: 16),
 
               // Description
-              const Text(
-                "Description:",
-                style: TextStyle(
+              Text(
+                "${_lang.description}:",
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
@@ -126,7 +126,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               const SizedBox(height: 6),
 
               Text(
-                widget.item.description ?? "No description available.",
+                widget.item.description ?? _lang.noDescription,
                 style: const TextStyle(fontSize: 16, height: 1.5, color: Colors.black87),
               ),
               const SizedBox(height: 16),
@@ -139,12 +139,12 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
       } else {
         // Handle the error, maybe show a dialog or a snackbar
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not launch phone dialer')),
+          SnackBar(content: Text(_lang.cannotCall)),
         );
       }
     },
     icon: const Icon(Icons.message, color: Colors.white),
-    label: const Text("Contact Owner"),
+    label: Text(_lang.contactOwner, style: TextStyle(color: Colors.white)),
     style: ElevatedButton.styleFrom(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       backgroundColor: Colors.green,

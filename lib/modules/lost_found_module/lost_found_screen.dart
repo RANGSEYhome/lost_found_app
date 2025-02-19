@@ -129,6 +129,7 @@ class _LostFoundScreenState extends State<LostFoundScreen> {
 
   // Build an error message widget
   Widget _buildErrorMessage(Object error) {
+    Language _lang = context.watch<LanguageLogic>().lang;
     debugPrint(error.toString());
     return Center(
       child: Column(
@@ -141,7 +142,7 @@ class _LostFoundScreenState extends State<LostFoundScreen> {
               context.read<PostLogic>().setLoading();
               context.read<PostLogic>().read();
             },
-            child: Text("RETRY"),
+            child: Text(_lang.retry),
           ),
         ],
       ),
@@ -150,6 +151,7 @@ class _LostFoundScreenState extends State<LostFoundScreen> {
 
   // Build a single post item
   Widget _buildPostItem(postGet.Doc item) {
+    Language _lang = context.watch<LanguageLogic>().lang;
     DateTime dateTime = DateTime.parse(item.date);
     String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
     final String profileImage = item.userId.profilePic.isNotEmpty
@@ -260,7 +262,7 @@ class _LostFoundScreenState extends State<LostFoundScreen> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  item.type == "lost" ? "LOST" : "FOUND",
+                  item.type == "lost" ?  "${_lang.lost.toUpperCase()}" : "${_lang.found.toUpperCase()}",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
@@ -277,6 +279,7 @@ class _LostFoundScreenState extends State<LostFoundScreen> {
 
   // Build an empty data widget
   Widget _buildEmptyData() {
+    Language _lang = context.watch<LanguageLogic>().lang;
     return Center(
       child: SizedBox(
         height: 220,
@@ -296,7 +299,7 @@ class _LostFoundScreenState extends State<LostFoundScreen> {
                   ),
                   SizedBox(height: 12),
                   Text(
-                    "No posts available!",
+                    _lang.noDate,
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,

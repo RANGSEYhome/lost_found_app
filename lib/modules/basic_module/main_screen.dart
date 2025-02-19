@@ -50,6 +50,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     _lang = context.watch<LanguageLogic>().lang;
     _langIndex = context.watch<LanguageLogic>().langIndex;
+
     final List<Map<String, dynamic>> _tabs = [
       {
         'appBar': AppBar(
@@ -61,7 +62,7 @@ class _MainScreenState extends State<MainScreen> {
         'appBar': AppBar(
           title: Text(_lang.ls),
           actions: [
-            searchButton(context, SearchScreen()),
+            _searchButton(context, SearchScreen()),
             Padding(
               padding: const EdgeInsets.only(right: 2.0),
               child: IconButton(
@@ -138,84 +139,104 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  // Widget _buildBottomNavBar() {
-  //   return Container(
-  //     decoration: BoxDecoration(
-  //       border: Border(
-  //         top: BorderSide(
-  //           color: Colors.black12, // Change to your preferred border color
-  //           width: 0.5, // Adjust the width as needed
-  //         ),
-  //       ),
-  //     ),
-  //     child: BottomNavigationBar(
-  //       currentIndex: _currentIndex,
-  //       onTap: (index) {
-  //         setState(() {
-  //           _currentIndex = index;
-  //         });
-  //       },
-  //       type: BottomNavigationBarType.fixed,
-  //       selectedItemColor: AppColors.primaryColor,
-  //       unselectedItemColor: AppColors.black,
-  //       items: [
-  //         BottomNavigationBarItem(
-  //           icon: Icon(Icons.home_outlined),
-  //           label: _lang.home,
-  //         ),
-  //         BottomNavigationBarItem(
-  //           icon: Icon(Icons.category_outlined),
-  //           label: _lang.ls,
-  //         ),
-  //         BottomNavigationBarItem(
-  //           icon: Icon(Icons.account_circle_outlined),
-  //           label: _lang.account,
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
+  Widget _searchButton(BuildContext context, Widget page) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 2.0),
+      child: TextButton.icon(
+        icon: Icon(
+          Icons.search_outlined,
+          color: Theme.of(context).appBarTheme.foregroundColor,
+        ),
+        label: Text(_lang.search),
+        onPressed: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => page));
+        },
+        style: TextButton.styleFrom(
+          foregroundColor: Theme.of(context).appBarTheme.foregroundColor,
+        ),
+      ),
+    );
+  }
 
   Widget _buildBottomNavBar() {
     return Container(
       decoration: BoxDecoration(
         border: Border(
           top: BorderSide(
-            color: Colors.black12, // Adjust border color as needed
-            width: 0.5, // Adjust width as needed
+            color: Colors.black12, // Change to your preferred border color
+            width: 0.5, // Adjust the width as needed
           ),
         ),
-        color: Colors.white, // Set background color
       ),
-      padding: EdgeInsets.symmetric(vertical: 12), // Adjust padding if needed
-      child: Row(
-        mainAxisAlignment:
-            MainAxisAlignment.spaceAround, // Evenly distribute icons
-        children: [
-          _buildNavItem(Icons.home_outlined, 0),
-          _buildNavItem(Icons.category_outlined, 1),
-          _buildNavItem(Icons.account_circle_outlined, 2),
+      child: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: AppColors.primaryColor,
+        unselectedItemColor: AppColors.black,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            label: _lang.home,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.category_outlined),
+            label: _lang.ls,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle_outlined),
+            label: _lang.account,
+          ),
         ],
       ),
     );
   }
 
-// Helper method to build each navigation item with bigger icons
-  Widget _buildNavItem(IconData icon, int index) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _currentIndex = index;
-        });
-      },
-      child: Icon(
-        icon,
-        size: 28, // Increase size of the icon
-        color:
-            _currentIndex == index ? AppColors.primaryColor : AppColors.black,
-      ),
-    );
-  }
+//   Widget _buildBottomNavBar() {
+//     return Container(
+//       decoration: BoxDecoration(
+//         border: Border(
+//           top: BorderSide(
+//             color: Colors.black12, // Adjust border color as needed
+//             width: 0.5, // Adjust width as needed
+//           ),
+//         ),
+//         color: Colors.white, // Set background color
+//       ),
+//       padding: EdgeInsets.symmetric(vertical: 12), // Adjust padding if needed
+//       child: Row(
+//         mainAxisAlignment:
+//             MainAxisAlignment.spaceAround, // Evenly distribute icons
+//         children: [
+//           _buildNavItem(Icons.home_outlined, 0),
+//           _buildNavItem(Icons.category_outlined, 1),
+//           _buildNavItem(Icons.account_circle_outlined, 2),
+//         ],
+//       ),
+//     );
+//   }
+
+// // Helper method to build each navigation item with bigger icons
+//   Widget _buildNavItem(IconData icon, int index) {
+//     return GestureDetector(
+//       onTap: () {
+//         setState(() {
+//           _currentIndex = index;
+//         });
+//       },
+//       child: Icon(
+//         icon,
+//         size: 28, // Increase size of the icon
+//         color:
+//             _currentIndex == index ? AppColors.primaryColor : AppColors.black,
+//       ),
+//     );
+//   }
 
   Widget _buildDrawer() {
     return Drawer(
