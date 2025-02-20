@@ -50,7 +50,8 @@ class MyResponseModel {
 
   MyResponseModel({this.token, this.refreshToken, this.user, this.errorText});
 
-  factory MyResponseModel.fromJson(Map<String, dynamic> json) => MyResponseModel(
+  factory MyResponseModel.fromJson(Map<String, dynamic> json) =>
+      MyResponseModel(
         token: json["token"],
         refreshToken: json["refreshToken"],
         user: json["user"] != null ? UserModel.fromJson(json["user"]) : null,

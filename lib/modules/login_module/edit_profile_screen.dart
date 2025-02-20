@@ -42,9 +42,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _lastnameController.text = widget.user.lastname;
     _emailController.text = widget.user.email;
     _phoneController.text = widget.user.phone;
-     p = widget.user.profilePic?.isEmpty ?? true
-      ? "https://cdn-icons-png.flaticon.com/512/149/149071.png" // Default image URL
-      : widget.user.profilePic!;
+    p = widget.user.profilePic?.isEmpty ?? true
+        ? "https://cdn-icons-png.flaticon.com/512/149/149071.png" // Default image URL
+        : widget.user.profilePic!;
   }
 
   @override
@@ -88,11 +88,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         child: Column(
           children: <Widget>[
             imageProfile(),
-            _buildTextField(_lang.firstName, _lang.enterFirstName, TextInputType.text,
+            _buildTextField(
+                _lang.firstName, _lang.enterFirstName, TextInputType.text,
                 controller: _firstnameController),
-            _buildTextField(_lang.lastName, _lang.enterLastName, TextInputType.text,
+            _buildTextField(
+                _lang.lastName, _lang.enterLastName, TextInputType.text,
                 controller: _lastnameController),
-            _buildTextField(_lang.email, _lang.enterEmail, TextInputType.emailAddress,
+            _buildTextField(
+                _lang.email, _lang.enterEmail, TextInputType.emailAddress,
                 isEmail: true, controller: _emailController),
             _buildTextField(_lang.phone, _lang.enterPhone, TextInputType.phone,
                 isPhone: true, controller: _phoneController),
@@ -102,56 +105,58 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ),
     );
   }
-Widget _buildTextField(
-  String labelText,
-  String hintText,
-  TextInputType inputType, {
-  bool isEmail = false,
-  bool isPhone = false,
-  required TextEditingController controller,
-}) {
-  return StatefulBuilder(
-    builder: (context, setState) {
-      return Container(
-        margin: EdgeInsets.only(top: 10, left: 10, right: 10),
-        child: TextFormField(
-          keyboardType: inputType,
-          controller: controller,
-          decoration: InputDecoration(
-            hintText: hintText,
-            labelText: labelText,
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15.0),
+
+  Widget _buildTextField(
+    String labelText,
+    String hintText,
+    TextInputType inputType, {
+    bool isEmail = false,
+    bool isPhone = false,
+    required TextEditingController controller,
+  }) {
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return Container(
+          margin: EdgeInsets.only(top: 10, left: 10, right: 10),
+          child: TextFormField(
+            keyboardType: inputType,
+            controller: controller,
+            decoration: InputDecoration(
+              hintText: hintText,
+              labelText: labelText,
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15.0),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15.0),
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15.0),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15.0),
+                borderSide: BorderSide(color: Colors.red),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15.0),
+                borderSide: BorderSide(color: Colors.red),
+              ),
+              contentPadding:
+                  EdgeInsets.symmetric(vertical: 20.0, horizontal: 12.0),
+              errorStyle: TextStyle(fontSize: 12.0, height: 0.8),
             ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15.0),
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15.0),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15.0),
-              borderSide: BorderSide(color: Colors.red),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15.0),
-              borderSide: BorderSide(color: Colors.red),
-            ),
-            contentPadding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 12.0),
-            errorStyle: TextStyle(fontSize: 12.0, height: 0.8),
+            validator: (value) {
+              return null;
+            },
+            onChanged: (value) {
+              setState(() {});
+              _formKey.currentState!.validate();
+            },
           ),
-          validator: (value) {
-            return null;
-          },
-          onChanged: (value) {
-            setState(() {});
-            _formKey.currentState!.validate();
-          },
-        ),
-      );
-    },
-  );
-}
+        );
+      },
+    );
+  }
 
   Widget imageProfile() {
     return Center(
@@ -160,9 +165,10 @@ Widget _buildTextField(
           CircleAvatar(
             radius: 75.0,
             backgroundImage: _imageFile != null
-                ? FileImage(_imageFile!) // Use FileImage if the user selects an image
+                ? FileImage(
+                    _imageFile!) // Use FileImage if the user selects an image
                 : NetworkImage(widget.user.profilePic), // Default image
-            backgroundColor: Colors.grey[200], // Optional: Set a background color
+            // backgroundColor: Colors.grey[200], // Optional: Set a background color
           ),
           Positioned(
             bottom: 15.0,
@@ -171,7 +177,7 @@ Widget _buildTextField(
               onTap: _pickImage, // Open the image picker
               child: Icon(
                 Icons.camera_alt,
-                color: Colors.teal,
+                color: Colors.green,
                 size: 28.0,
               ),
             ),
@@ -181,84 +187,86 @@ Widget _buildTextField(
     );
   }
 
-Widget _buildElevatedButton(Language _lang) {
-  return Container(
-    margin: EdgeInsets.only(top: 10, left: 10, right: 10),
-    width: double.maxFinite,
-    height: 60,
-    child: ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Color(0xFF45BF7A),
-        foregroundColor: Colors.white,
-      ),
-      onPressed: _isLoading
-          ? null // Disable the button when loading
-          : () async {
-              if (_formKey.currentState!.validate()) {
-                setState(() {
-                  _isLoading = true; // Start loading
-                });
+  Widget _buildElevatedButton(Language _lang) {
+    return Container(
+      margin: EdgeInsets.only(top: 10, left: 10, right: 10),
+      width: double.maxFinite,
+      height: 60,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Color(0xFF45BF7A),
+          foregroundColor: Colors.white,
+        ),
+        onPressed: _isLoading
+            ? null // Disable the button when loading
+            : () async {
+                if (_formKey.currentState!.validate()) {
+                  setState(() {
+                    _isLoading = true; // Start loading
+                  });
 
-                try {
-                  if (_imageFile != null) {
-                    await FakestoreService.uploadImage(_imageFile!).then((path) {
-                      p = path.toString();
-                    }).catchError((e) {
+                  try {
+                    if (_imageFile != null) {
+                      await FakestoreService.uploadImage(_imageFile!)
+                          .then((path) {
+                        p = path.toString();
+                      }).catchError((e) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(e.toString()),
+                        ));
+                      });
+                    }
+                    print("Image p: $p");
+                    UserModel user = UserModel(
+                      id: widget.user.id,
+                      firstname: _firstnameController.text,
+                      lastname: _lastnameController.text,
+                      email: _emailController.text,
+                      phone: _phoneController.text,
+                      password: widget.user.password,
+                      confirmPassword: widget.user.password,
+                      profilePic: p,
+                      role: widget.user.role,
+                      address: widget.user.address,
+                    );
+
+                    String result =
+                        await FakestoreService.updateUser(user, widget.user.id);
+                    final loginLogic = Provider.of<FakestoreLoginLogic>(context,
+                        listen: false);
+                    await loginLogic.updateUser(user);
+                    loginLogic.read();
+                    context.read<PostLogic>().read();
+
+                    if (result == "success") {
+                      Navigator.pop(context);
+                      // setState(() {});
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(builder: (context) => FakeStoreApp()),
+                      // );
+                    } else {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text(e.toString()),
+                        content: Text(result),
                       ));
+                    }
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(e.toString()),
+                    ));
+                  } finally {
+                    setState(() {
+                      _isLoading = false; // Stop loading
                     });
                   }
-                  print("Image p: $p");
-                  UserModel user = UserModel(
-                    id: widget.user.id,
-                    firstname: _firstnameController.text,
-                    lastname: _lastnameController.text,
-                    email: _emailController.text,
-                    phone: _phoneController.text,
-                    password: widget.user.password,
-                    confirmPassword: widget.user.password,
-                    profilePic: p,
-                    role: widget.user.role,
-                    address: widget.user.address,
-                  );
-
-                  String result = await FakestoreService.updateUser(user, widget.user.id);
-                  final loginLogic = Provider.of<FakestoreLoginLogic>(context, listen: false);
-                  await loginLogic.updateUser(user);
-                  loginLogic.read();
-                  context.read<PostLogic>().read();
-
-
-                  if (result == "success") {
-                    Navigator.pop(context);
-                    // setState(() {});
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(builder: (context) => FakeStoreApp()),
-                    // );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(result),
-                    ));
-                  }
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text(e.toString()),
-                  ));
-                } finally {
-                  setState(() {
-                    _isLoading = false; // Stop loading
-                  });
                 }
-              }
-            },
-      child: _isLoading
-          ? CircularProgressIndicator(
-              color: Colors.white, // Show loading indicator
-            )
-          : Text(_lang.updateProfile),
-    ),
-  );
-}
+              },
+        child: _isLoading
+            ? CircularProgressIndicator(
+                color: Colors.white, // Show loading indicator
+              )
+            : Text(_lang.updateProfile),
+      ),
+    );
+  }
 }

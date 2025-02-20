@@ -113,7 +113,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   @override
   Widget build(BuildContext context) {
     Language _lang = context.watch<LanguageLogic>().lang;
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Text(_lang.createPost),
@@ -145,8 +145,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
-          _buildDropDownFormFieldType(_lang.type, _lang.selectType, _lang, _types),
-          _buildDropDownFormField(_lang.category, _lang.selectCategory, _lang, _categories),
+          _buildDropDownFormFieldType(
+              _lang.type, _lang.selectType, _lang, _types),
+          _buildDropDownFormField(
+              _lang.category, _lang.selectCategory, _lang, _categories),
           _buildTextField(_lang.title, _lang.title, TextInputType.text,
               _titleController, _lang),
           _buildDateTextField(_lang),
@@ -287,11 +289,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           ),
         ),
         items: categories.entries.map((entry) {
-              return DropdownMenuItem<String>(
-                value: entry.key,
-                child: Text(entry.value),
-              );
-            }).toList(),
+          return DropdownMenuItem<String>(
+            value: entry.key,
+            child: Text(entry.value),
+          );
+        }).toList(),
         onChanged: (value) {
           setState(() {
             _selectVal = value as String;

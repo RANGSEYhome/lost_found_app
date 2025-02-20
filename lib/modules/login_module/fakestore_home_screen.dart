@@ -9,7 +9,8 @@ import 'package:lost_found_app/modules/login_module/fakestore_login_models.dart'
 import 'package:provider/provider.dart';
 import 'package:lost_found_app/modules/post_detail_module/post_create_screen.dart';
 import 'package:lost_found_app/modules/post_detail_module/post_updatescreen.dart';
-import 'package:lost_found_app/modules/post_detail_module/post_get_model.dart' as postGet;
+import 'package:lost_found_app/modules/post_detail_module/post_get_model.dart'
+    as postGet;
 import 'package:lost_found_app/modules/login_module/fakestore_login_logic.dart';
 import 'package:lost_found_app/modules/post_detail_module/post_logic.dart';
 import 'package:lost_found_app/modules/post_detail_module/post_seevice.dart';
@@ -45,7 +46,7 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
     final responseModel = context.watch<FakestoreLoginLogic>().responseModel;
     final List<postGet.Doc> posts = context.watch<PostLogic>().postGetModel;
     Language _lang = context.watch<LanguageLogic>().lang;
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Text(_lang.account),
@@ -67,7 +68,8 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
                 ListView.builder(
                   controller: _scrollController,
                   itemCount: posts.length,
-                  itemBuilder: (context, index) => _buildPostItem(posts[index], index, _lang),
+                  itemBuilder: (context, index) =>
+                      _buildPostItem(posts[index], index, _lang),
                 ),
                 if (_isLoading) // Show loading indicator during async operations
                   Center(child: CircularProgressIndicator()),
@@ -112,7 +114,8 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "${user?.firstname ?? _lang.noName} ${user?.lastname ?? ''}".trim(),
+                    "${user?.firstname ?? _lang.noName} ${user?.lastname ?? ''}"
+                        .trim(),
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -188,7 +191,8 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
           ),
         ),
         trailing: IconButton(
-          icon: Icon(Icons.add_circle_outline, size: 24, color: Colors.green.shade700),
+          icon: Icon(Icons.add_circle_outline,
+              size: 24, color: Colors.green.shade700),
           onPressed: () {
             Navigator.of(context).push(
               MaterialPageRoute(builder: (context) => CreatePostScreen()),
@@ -200,124 +204,136 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
   }
 
   // Build a single post item
-Widget _buildPostItem(postGet.Doc post, int index, Language _lang) {
-  final String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.parse(post.date));
-  final Color statusColor = post.status == "Resolved" ? Colors.blue : Colors.grey[600]!;
+  Widget _buildPostItem(postGet.Doc post, int index, Language _lang) {
+    final String formattedDate =
+        DateFormat('yyyy-MM-dd').format(DateTime.parse(post.date));
+    final Color statusColor =
+        post.status == "Resolved" ? Colors.blue : Colors.grey[600]!;
 
-  return Dismissible(
-    key: Key(post.id),
-    direction: DismissDirection.startToEnd,
-    background: Container(
-      color: Colors.green,
-      alignment: Alignment.centerLeft,
-      padding: EdgeInsets.only(left: 20),
-      child: Icon(Icons.check, color: Colors.white, size: 50),
-    ),
-    confirmDismiss: (direction) async {
-      if (direction == DismissDirection.startToEnd) {
-        if (post.status == "Resolved") {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Post already Resolved')),
-          );
-          return false;
-        } else {
-          return await _showUpdateStatusConfirmationDialog(context, post, _lang);
-        }
-      }
-    },
-    onDismissed: (direction) {
-      setState(() {
-        context.read<PostLogic>().postGetModel.removeAt(index);
-      });
-
-      if (direction == DismissDirection.startToEnd) {
-        _updatePostStatus(post, "Resolved");
-      }
-    },
-    child: Card(
-      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
+    return Dismissible(
+      key: Key(post.id),
+      direction: DismissDirection.startToEnd,
+      background: Container(
+        color: Colors.green,
+        alignment: Alignment.centerLeft,
+        padding: EdgeInsets.only(left: 20),
+        child: Icon(Icons.check, color: Colors.white, size: 50),
       ),
-      child: Padding(
-        padding: EdgeInsets.all(8),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                post.images,
-                width: 90,
-                height: 90,
-                fit: BoxFit.cover,
+      confirmDismiss: (direction) async {
+        if (direction == DismissDirection.startToEnd) {
+          if (post.status == "Resolved") {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Post already Resolved')),
+            );
+            return false;
+          } else {
+            return await _showUpdateStatusConfirmationDialog(
+                context, post, _lang);
+          }
+        }
+      },
+      onDismissed: (direction) {
+        setState(() {
+          context.read<PostLogic>().postGetModel.removeAt(index);
+        });
+
+        if (direction == DismissDirection.startToEnd) {
+          _updatePostStatus(post, "Resolved");
+        }
+      },
+      child: Card(
+        margin: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(8),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(
+                  post.images,
+                  width: 90,
+                  height: 90,
+                  fit: BoxFit.cover,
+                ),
               ),
-            ),
-            SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    post.title,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 2,
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    "${_lang.location}: ${post.location}",
-                    style: TextStyle(color: Colors.grey[700], fontSize: 12),
-                  ),
-                  Text(
-                    "${_lang.description}: ${post.description}",
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: Colors.grey[700], fontSize: 12),
-                  ),
-                  Text(
-                    "${_lang.date}: $formattedDate",
-                    style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                  ),
-                  Text(
-                    "${"📌"} ${post.status == "active" ?  "${_lang.active}" : "${_lang.resolved}"}",
-                    style: TextStyle(
-                      color: statusColor,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
+              SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      post.title,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                      style:
+                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                     ),
-                  ),
-                ],
+                    SizedBox(height: 4),
+                    Text(
+                      "${_lang.location}: ${post.location}",
+                      style: TextStyle(
+                          // color: Colors.grey[700],
+                          fontSize: 12),
+                    ),
+                    Text(
+                      "${_lang.description}: ${post.description}",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          // color: Colors.grey[700],
+                          fontSize: 12),
+                    ),
+                    Text(
+                      "${_lang.date}: $formattedDate",
+                      style: TextStyle(
+                          // color: Colors.grey[600],
+                          fontSize: 12),
+                    ),
+                    Text(
+                      "${"📌"} ${post.status == "active" ? "${_lang.active}" : "${_lang.resolved}"}",
+                      style: TextStyle(
+                        color: statusColor,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            if (post.status != "Resolved") // Conditionally render the buttons
-              Column(
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.edit, color: Colors.green),
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        CupertinoPageRoute(
-                          builder: (context) => UpdatePostScreen(post),
-                        ),
-                      );
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.delete, color: Colors.red),
-                    onPressed: () => _showDeleteConfirmationDialog(context, post, _lang),
-                  ),
-                ],
-              ),
-          ],
+              if (post.status != "Resolved") // Conditionally render the buttons
+                Column(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.edit, color: Colors.green),
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          CupertinoPageRoute(
+                            builder: (context) => UpdatePostScreen(post),
+                          ),
+                        );
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.delete, color: Colors.red),
+                      onPressed: () =>
+                          _showDeleteConfirmationDialog(context, post, _lang),
+                    ),
+                  ],
+                ),
+            ],
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   // Show a confirmation dialog for deleting a post
-  void _showDeleteConfirmationDialog(BuildContext context, postGet.Doc post, Language _lang) {
+  void _showDeleteConfirmationDialog(
+      BuildContext context, postGet.Doc post, Language _lang) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -333,7 +349,8 @@ Widget _buildPostItem(postGet.Doc post, int index, Language _lang) {
               Navigator.of(context).pop();
               setState(() => _isLoading = true);
 
-              final String result = await PostSeevice.updateStatus(post.id, "deactive");
+              final String result =
+                  await PostSeevice.updateStatus(post.id, "deactive");
 
               setState(() => _isLoading = false);
 
@@ -357,24 +374,26 @@ Widget _buildPostItem(postGet.Doc post, int index, Language _lang) {
     );
   }
 
-  Future<bool> _showUpdateStatusConfirmationDialog(BuildContext context, postGet.Doc post, Language _lang) async {
+  Future<bool> _showUpdateStatusConfirmationDialog(
+      BuildContext context, postGet.Doc post, Language _lang) async {
     return await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(_lang.makeResolved),
-        content: Text(_lang.makeResolvedConfirmation),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(_lang.cancel),
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(_lang.makeResolved),
+            content: Text(_lang.makeResolvedConfirmation),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text(_lang.cancel),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: Text(_lang.resolve),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text(_lang.resolve),
-          ),
-        ],
-      ),
-    ) ?? false;
+        ) ??
+        false;
   }
 
   void _updatePostStatus(postGet.Doc post, String status) async {
@@ -398,7 +417,8 @@ Widget _buildPostItem(postGet.Doc post, int index, Language _lang) {
     }
   }
 
-  Future<bool> _showArchiveConfirmationDialog(BuildContext context, postGet.Doc post) async {
+  Future<bool> _showArchiveConfirmationDialog(
+      BuildContext context, postGet.Doc post) async {
     return await showDialog(
       context: context,
       builder: (context) => AlertDialog(

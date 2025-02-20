@@ -52,9 +52,9 @@ class _BasicSplashScreenState extends State<BasicSplashScreen> {
             home: Scaffold(
               body: Center(
                 child:
-                // CircularProgressIndicator()
-                // will change to our own logo
-                Image.asset(
+                    // CircularProgressIndicator()
+                    // will change to our own logo
+                    Image.asset(
                   'lib_assets/images/logo.png',
                   width: 200,
                   height: 200,
@@ -78,7 +78,6 @@ class BasicApp extends StatelessWidget {
 
     return MaterialApp(
       home: MainScreen(),
-
       themeMode: mode,
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.green[50],
@@ -95,21 +94,27 @@ class BasicApp extends StatelessWidget {
         ),
         cardTheme: const CardTheme(color: AppColors.originalLightThemeBg),
       ),
-
       darkTheme: ThemeData(
-        scaffoldBackgroundColor: const Color.fromARGB(255, 24, 24, 24),
+        scaffoldBackgroundColor:
+            const Color.fromARGB(255, 20, 24, 35), // Darker background
         brightness: Brightness.dark,
         primarySwatch: AppColors.primarySwatch,
         fontFamily: AppTextFonts.primaryFont,
         appBarTheme: AppBarTheme(
-          backgroundColor: const Color.fromARGB(255, 31, 31, 31),
-          foregroundColor: const Color.fromARGB(255, 215, 215, 215),
-          titleTextStyle: AppTextStylesDark.headline2,
+          backgroundColor:
+              const Color.fromARGB(255, 24, 30, 36), // Darker app bar
+          foregroundColor:
+              const Color.fromARGB(255, 255, 255, 255), // White text
+          titleTextStyle: AppTextStylesDark.headline2
+              .copyWith(color: Colors.white), // Ensure title is white
         ),
         drawerTheme: DrawerThemeData(
-          backgroundColor: const Color.fromARGB(255, 31, 31, 31),
+          backgroundColor:
+              const Color.fromARGB(255, 24, 30, 36), // Same as app bar
         ),
-        cardTheme: CardTheme(color: const Color.fromARGB(255, 56, 59, 63)),
+        cardTheme: CardTheme(
+            color: const Color.fromARGB(
+                255, 35, 41, 47)), // Slightly lighter card color
       ),
     );
   }

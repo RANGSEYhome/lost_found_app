@@ -8,6 +8,7 @@ import 'package:lost_found_app/modules/post_detail_module/post_get_model.dart';
 //String api = "http://10.0.2.2:4001/v1";
 
 String api = "https://d-api.devkrc.com/v1";
+
 class PostSeevice {
   static Future<String> insert(Doc post) async {
     print("Post: $post");
@@ -57,29 +58,30 @@ class PostSeevice {
     }
   }
 
-static Future<String> updateStatus(String id, String status) async {
-  String url = "$api/post/$id"; // Update the endpoint if necessary
-  try {
-    // Use http.put or http.patch for updating the status
-    http.Response response = await http.delete(
-      Uri.parse(url),
-      body: json.encode({"status": status}), // Send the new status in the request body
-      headers: {"Content-Type": "application/json"}, // Set the content type
-    );
+  static Future<String> updateStatus(String id, String status) async {
+    String url = "$api/post/$id"; // Update the endpoint if necessary
+    try {
+      // Use http.put or http.patch for updating the status
+      http.Response response = await http.delete(
+        Uri.parse(url),
+        body: json.encode(
+            {"status": status}), // Send the new status in the request body
+        headers: {"Content-Type": "application/json"}, // Set the content type
+      );
 
-    final output = json.decode(response.body);
-    debugPrint("output: $output");
+      final output = json.decode(response.body);
+      debugPrint("output: $output");
 
-    if (output["status"] == "success") {
-      return "success";
-    } else {
-      return output.toString();
+      if (output["status"] == "success") {
+        return "success";
+      } else {
+        return output.toString();
+      }
+    } catch (e) {
+      debugPrint("Error updating status: $e");
+      throw Exception(e);
     }
-  } catch (e) {
-    debugPrint("Error updating status: $e");
-    throw Exception(e);
   }
-}
 
   static Future<void> read({
     int page = 1,
@@ -122,7 +124,8 @@ static Future<String> updateStatus(String id, String status) async {
       onError("Request Failed: $e");
     }
   }
-    static Future<void> search({
+
+  static Future<void> search({
     int page = 1,
     String query = "",
     required Function(List<Doc>) onRes,

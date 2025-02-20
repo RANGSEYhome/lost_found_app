@@ -26,7 +26,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   Widget build(BuildContext context) {
     _lang = context.watch<LanguageLogic>().lang;
     _langIndex = context.watch<LanguageLogic>().langIndex;
- DateTime dateTime = DateTime.parse(widget.item.date);
+    DateTime dateTime = DateTime.parse(widget.item.date);
     String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
     return Scaffold(
       appBar: AppBar(
@@ -61,7 +61,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     errorBuilder: (context, error, stackTrace) => Container(
                       height: 250,
                       color: Colors.grey[300],
-                      child: const Icon(Icons.broken_image, size: 100, color: Colors.grey),
+                      child: const Icon(Icons.broken_image,
+                          size: 100, color: Colors.grey),
                     ),
                   ),
                 ),
@@ -85,7 +86,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                   const SizedBox(width: 6),
                   Text(
                     widget.item.location ?? _lang.noLocation,
-                    style: const TextStyle(fontSize: 16, color: Colors.black87),
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ],
               ),
@@ -94,11 +95,12 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               // Date
               Row(
                 children: [
-                  const Icon(Icons.calendar_today, color: Colors.blue, size: 18),
+                  const Icon(Icons.calendar_today,
+                      color: Colors.blue, size: 18),
                   const SizedBox(width: 6),
                   Text(
                     formattedDate,
-                    style: const TextStyle(fontSize: 16, color: Colors.black87),
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ],
               ),
@@ -108,8 +110,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                   const Icon(Icons.phone, color: Colors.blue, size: 18),
                   const SizedBox(width: 6),
                   Text(
-                     widget.item.phone ?? _lang.noPhone,
-                    style: const TextStyle(fontSize: 16, color: Colors.black87),
+                    widget.item.phone ?? _lang.noPhone,
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ],
               ),
@@ -127,33 +129,36 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
 
               Text(
                 widget.item.description ?? _lang.noDescription,
-                style: const TextStyle(fontSize: 16, height: 1.5, color: Colors.black87),
+                style: const TextStyle(fontSize: 16, height: 1.5),
               ),
               const SizedBox(height: 16),
               Center(
-  child: ElevatedButton.icon(
-    onPressed: () async {
-      final Uri phoneUri = Uri(scheme: 'tel', path: widget.item.phone);
-      if (await canLaunch(phoneUri.toString())) {
-        await launch(phoneUri.toString());
-      } else {
-        // Handle the error, maybe show a dialog or a snackbar
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(_lang.cannotCall)),
-        );
-      }
-    },
-    icon: const Icon(Icons.message, color: Colors.white),
-    label: Text(_lang.contactOwner, style: TextStyle(color: Colors.white)),
-    style: ElevatedButton.styleFrom(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      backgroundColor: Colors.green,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-    ),
-  ),
-),
+                child: ElevatedButton.icon(
+                  onPressed: () async {
+                    final Uri phoneUri =
+                        Uri(scheme: 'tel', path: widget.item.phone);
+                    if (await canLaunch(phoneUri.toString())) {
+                      await launch(phoneUri.toString());
+                    } else {
+                      // Handle the error, maybe show a dialog or a snackbar
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(_lang.cannotCall)),
+                      );
+                    }
+                  },
+                  icon: const Icon(Icons.message, color: Colors.white),
+                  label: Text(_lang.contactOwner,
+                      style: TextStyle(color: Colors.white)),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
+                    backgroundColor: Colors.green,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),

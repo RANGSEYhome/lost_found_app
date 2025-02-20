@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'fakestore_loading_screen.dart';
 
-
 class FakeStoreApp extends StatefulWidget {
   const FakeStoreApp({super.key});
 
@@ -19,5 +18,5 @@ class _FakeStoreAppState extends State<FakeStoreApp> {
   @override
   Widget build(BuildContext context) {
     return FakeStoreLoadingScreen();
-  }  
+  }
 }

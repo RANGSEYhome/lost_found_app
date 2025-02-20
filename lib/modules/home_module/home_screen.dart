@@ -209,7 +209,9 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildInfoText(items.type == "lost" ? "${_lang.lost}:" : "${_lang.found}:", items.title),
+          _buildInfoText(
+              items.type == "lost" ? "${_lang.lost}:" : "${_lang.found}:",
+              items.title),
           _buildInfoText("${_lang.date}:", formattedDate),
           _buildInfoText("${_lang.location}:", items.location),
           const SizedBox(height: 10),

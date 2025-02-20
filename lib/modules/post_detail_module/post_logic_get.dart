@@ -6,7 +6,6 @@ import 'package:lost_found_app/modules/post_detail_module/post_model.dart';
 // import 'package:lost_found_app/modules/post_detail_module/post_seevice.dart';
 import 'package:lost_found_app/modules/post_detail_module/post_service_get.dart';
 
-
 class PostLogic extends ChangeNotifier {
   List<Doc> _postModel = [];
   List<Doc> get postModel => _postModel;
@@ -23,40 +22,37 @@ class PostLogic extends ChangeNotifier {
     _loading = true;
     notifyListeners();
   }
+
   Future read() async {
-  await PostSeviceRead.read(
-    onRes: (items) async {
-      print("Items Received: $items"); // ✅ Print received items
+    await PostSeviceRead.read(
+      onRes: (items) async {
+        print("Items Received: $items"); // ✅ Print received items
 
-      _postModel = items; // No need to await, it's already a List<Doc>
-      _loading = false;
-      notifyListeners();
-    },
-    onError: (err) {
-      _error = err;
-      _loading = false;
-      notifyListeners();
-    },
-  );
-}
+        _postModel = items; // No need to await, it's already a List<Doc>
+        _loading = false;
+        notifyListeners();
+      },
+      onError: (err) {
+        _error = err;
+        _loading = false;
+        notifyListeners();
+      },
+    );
+  }
+
   Future readByUser(String userId) async {
-  await PostSeviceRead.read(
-    userId: userId,
-    onRes: (items) async {
-     
-
-      _postGetModel = items; // No need to await, it's already a List<Doc>
-      _loading = false;
-      notifyListeners();
-    },
-    onError: (err) {
-      _error = err;
-      _loading = false;
-      notifyListeners();
-    },
-  );
+    await PostSeviceRead.read(
+      userId: userId,
+      onRes: (items) async {
+        _postGetModel = items; // No need to await, it's already a List<Doc>
+        _loading = false;
+        notifyListeners();
+      },
+      onError: (err) {
+        _error = err;
+        _loading = false;
+        notifyListeners();
+      },
+    );
+  }
 }
-
-
-}
-

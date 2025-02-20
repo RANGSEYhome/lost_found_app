@@ -21,7 +21,7 @@ class FakestoreLoginLogic extends ChangeNotifier {
     debugPrint("Reading Token: $tk");
 
     UserModel? user;
-  if (userData != null) {
+    if (userData != null) {
       try {
         user = UserModel.fromJson(jsonDecode(userData));
       } catch (e) {
@@ -32,23 +32,24 @@ class FakestoreLoginLogic extends ChangeNotifier {
     _responseModel = MyResponseModel(token: tk, user: user);
     notifyListeners();
   }
+
   Future<void> updateUser(UserModel updatedUser) async {
-  try {
-    // Convert updated user model to JSON and store in cache
-    await _cache.write(key: _userKey, value: jsonEncode(updatedUser));
+    try {
+      // Convert updated user model to JSON and store in cache
+      await _cache.write(key: _userKey, value: jsonEncode(updatedUser));
 
-    // Read back from cache to ensure it's updated
-    String? userData = await _cache.read(key: _userKey);
-    debugPrint("Updated user data in cache: $userData");
+      // Read back from cache to ensure it's updated
+      String? userData = await _cache.read(key: _userKey);
+      debugPrint("Updated user data in cache: $userData");
 
-    // Update the response model and notify listeners
-    _responseModel = MyResponseModel(token: _responseModel.token, user: updatedUser);
-    notifyListeners();
-  } catch (e) {
-    debugPrint("Error updating user cache: $e");
+      // Update the response model and notify listeners
+      _responseModel =
+          MyResponseModel(token: _responseModel.token, user: updatedUser);
+      notifyListeners();
+    } catch (e) {
+      debugPrint("Error updating user cache: $e");
+    }
   }
-}
-
 
   Future<void> clear() async {
     await _cache.delete(key: _key);
@@ -87,14 +88,16 @@ class FakestoreLoginLogic extends ChangeNotifier {
         await _cache.write(key: _key, value: _responseModel.token);
 
         if (_responseModel.user != null) {
-          await _cache.write(key: _userKey, value: jsonEncode(_responseModel.user!.toJson()));
+          await _cache.write(
+              key: _userKey, value: jsonEncode(_responseModel.user!.toJson()));
         }
       }
 
       _error = null;
     } catch (err) {
       _error = err;
-      _responseModel = MyResponseModel(token: null, user: null, errorText: err.toString());
+      _responseModel =
+          MyResponseModel(token: null, user: null, errorText: err.toString());
     }
 
     setLoading(false);

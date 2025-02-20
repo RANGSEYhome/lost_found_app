@@ -310,7 +310,7 @@ import 'package:provider/provider.dart';
 class PostByCategory extends StatefulWidget {
   final String category;
   const PostByCategory(this.category, {Key? key}) : super(key: key);
-  
+
   @override
   State<PostByCategory> createState() => _PostByCategoryState();
 }
@@ -415,7 +415,7 @@ class _PostByCategoryState extends State<PostByCategory>
     if (error != null) {
       return _buildErrorMessage(error, _lang);
     }
-    if(filteredRecords.isEmpty){
+    if (filteredRecords.isEmpty) {
       return _buildEmptyData(_lang);
     }
 
@@ -571,7 +571,9 @@ class _PostByCategoryState extends State<PostByCategory>
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  item.type == "lost" ?  "${_lang.lost.toUpperCase()}" : "${_lang.found.toUpperCase()}",
+                  item.type == "lost"
+                      ? "${_lang.lost.toUpperCase()}"
+                      : "${_lang.found.toUpperCase()}",
                   style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 14,

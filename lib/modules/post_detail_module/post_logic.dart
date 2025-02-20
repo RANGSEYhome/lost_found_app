@@ -7,7 +7,6 @@ import 'package:lost_found_app/modules/post_detail_module/post_get_model.dart';
 // import 'package:lost_found_app/modules/post_detail_module/post_seevice.dart';
 import 'package:lost_found_app/modules/post_detail_module/post_service_read.dart';
 
-
 class PostLogic extends ChangeNotifier {
   List<Doc> _postModel = [];
   List<Doc> get postModel => _postModel;

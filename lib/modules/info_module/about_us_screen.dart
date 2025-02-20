@@ -68,8 +68,7 @@ class AboutUsScreen extends StatelessWidget {
                     children: [
                       IconButton(
                         icon: FaIcon(FontAwesomeIcons.github),
-                        onPressed: () =>
-                            _launchURL('https://github.com/#'),
+                        onPressed: () => _launchURL('https://github.com/#'),
                       ),
                       IconButton(
                         icon: FaIcon(FontAwesomeIcons.linkedin),
@@ -78,8 +77,7 @@ class AboutUsScreen extends StatelessWidget {
                       ),
                       IconButton(
                         icon: FaIcon(FontAwesomeIcons.twitter),
-                        onPressed: () =>
-                            _launchURL('https://twitter.com/#'),
+                        onPressed: () => _launchURL('https://twitter.com/#'),
                       ),
                     ],
                   ),

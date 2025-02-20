@@ -42,13 +42,17 @@ class _UpdatePostScreenState extends State<UpdatePostScreen> {
   void initState() {
     super.initState();
 
-    _selectedCategory = _categories.contains(widget.item.categoryId) ? widget.item.categoryId : _categories.first;
-    _selectedType = _types.contains(widget.item.type) ? widget.item.type : _types.first;
+    _selectedCategory = _categories.contains(widget.item.categoryId)
+        ? widget.item.categoryId
+        : _categories.first;
+    _selectedType =
+        _types.contains(widget.item.type) ? widget.item.type : _types.first;
 
     _titleController = TextEditingController(text: widget.item.title);
     _locationController = TextEditingController(text: widget.item.location);
     _phoneController = TextEditingController(text: widget.item.phone);
-    _descriptionController = TextEditingController(text: widget.item.description);
+    _descriptionController =
+        TextEditingController(text: widget.item.description);
     _dateController = TextEditingController(text: widget.item.date);
   }
 
@@ -68,7 +72,8 @@ class _UpdatePostScreenState extends State<UpdatePostScreen> {
   }
 
   Future<void> _pickImage() async {
-    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
         _imageFile = File(pickedFile.path);
@@ -83,12 +88,14 @@ class _UpdatePostScreenState extends State<UpdatePostScreen> {
 
     try {
       await context.read<FakestoreLoginLogic>().read();
-      FakestoreLoginLogic loginLogic = Provider.of<FakestoreLoginLogic>(context, listen: false);
+      FakestoreLoginLogic loginLogic =
+          Provider.of<FakestoreLoginLogic>(context, listen: false);
       MyResponseModel responseModel = loginLogic.responseModel;
 
       String imagePath = widget.item.images;
       if (_imageFile != null) {
-        imagePath = await FakestoreService.uploadImage(_imageFile!) ?? widget.item.images;
+        imagePath = await FakestoreService.uploadImage(_imageFile!) ??
+            widget.item.images;
       }
 
       Doc updatedPost = Doc(
@@ -106,15 +113,18 @@ class _UpdatePostScreenState extends State<UpdatePostScreen> {
 
       String result = await PostSeevice.update(updatedPost, widget.item.id);
       if (result == "success") {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(_lang.postUpdateSuccess)));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(_lang.postUpdateSuccess)));
         context.read<PostLogic>().read();
         context.read<PostLogic>().readByUser(responseModel.user!.id);
         Navigator.pop(context, true);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(_lang.failUpdate)));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(_lang.failUpdate)));
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${_lang.errorOccured}: $e')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('${_lang.errorOccured}: $e')));
     } finally {
       setState(() => _isLoading = false);
     }
@@ -150,12 +160,15 @@ class _UpdatePostScreenState extends State<UpdatePostScreen> {
       padding: EdgeInsets.all(10),
       child: Column(
         children: <Widget>[
-          _buildDropdown(_lang.type, _selectedType, _types, (value) => setState(() => _selectedType = value)),
-          _buildDropdown(_lang.category, _selectedCategory, _categories, (value) => setState(() => _selectedCategory = value)),
+          _buildDropdown(_lang.type, _selectedType, _types,
+              (value) => setState(() => _selectedType = value)),
+          _buildDropdown(_lang.category, _selectedCategory, _categories,
+              (value) => setState(() => _selectedCategory = value)),
           _buildTextField(_lang, _lang.title, _titleController),
           _buildDateField(_lang),
           _buildTextField(_lang, _lang.location, _locationController),
-          _buildTextField(_lang, _lang.phone, _phoneController, inputType: TextInputType.phone),
+          _buildTextField(_lang, _lang.phone, _phoneController,
+              inputType: TextInputType.phone),
           _buildTextArea(_lang, _lang.description, _descriptionController),
           _buildImagePicker(_lang),
           _buildSubmitButton(_lang),
@@ -164,7 +177,8 @@ class _UpdatePostScreenState extends State<UpdatePostScreen> {
     );
   }
 
-  Widget _buildDropdown(String label, String value, List<String> items, ValueChanged<String> onChanged) {
+  Widget _buildDropdown(String label, String value, List<String> items,
+      ValueChanged<String> onChanged) {
     return Container(
       margin: EdgeInsets.all(10),
       child: DropdownButtonFormField(
@@ -173,14 +187,18 @@ class _UpdatePostScreenState extends State<UpdatePostScreen> {
           labelText: label,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0)),
         ),
-        items: items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+        items: items
+            .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+            .toList(),
         onChanged: (newValue) => onChanged(newValue as String),
         validator: (value) => value == null ? 'Please select a $label' : null,
       ),
     );
   }
 
-  Widget _buildTextField(Language _lang, String label, TextEditingController controller, {TextInputType inputType = TextInputType.text}) {
+  Widget _buildTextField(
+      Language _lang, String label, TextEditingController controller,
+      {TextInputType inputType = TextInputType.text}) {
     return Container(
       margin: EdgeInsets.all(10),
       child: TextFormField(
@@ -190,26 +208,28 @@ class _UpdatePostScreenState extends State<UpdatePostScreen> {
           labelText: label,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0)),
         ),
-        validator: (value) => value == null || value.isEmpty ? _lang.noEmpty : null,
+        validator: (value) =>
+            value == null || value.isEmpty ? _lang.noEmpty : null,
       ),
     );
   }
 
- Widget _buildTextArea(Language _lang, String label, TextEditingController controller) {
-  return Container(
-    margin: EdgeInsets.all(10),
-    child: TextFormField(
-      controller: controller,
-      maxLines: 4,
-      decoration: InputDecoration(
-        labelText: label,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0)),
+  Widget _buildTextArea(
+      Language _lang, String label, TextEditingController controller) {
+    return Container(
+      margin: EdgeInsets.all(10),
+      child: TextFormField(
+        controller: controller,
+        maxLines: 4,
+        decoration: InputDecoration(
+          labelText: label,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0)),
+        ),
+        validator: (value) =>
+            value == null || value.isEmpty ? _lang.noEmpty : null,
       ),
-      validator: (value) => value == null || value.isEmpty ? _lang.noEmpty : null,
-    ),
-  );
-}
-
+    );
+  }
 
   Widget _buildDateField(Language _lang) {
     return Container(
@@ -222,7 +242,8 @@ class _UpdatePostScreenState extends State<UpdatePostScreen> {
           suffixIcon: Icon(Icons.calendar_today),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(15.0)),
         ),
-        validator: (value) => value == null || value.isEmpty ? _lang.selectDate : null,
+        validator: (value) =>
+            value == null || value.isEmpty ? _lang.selectDate : null,
         onTap: () => _selectDate(context),
       ),
     );
@@ -233,7 +254,9 @@ class _UpdatePostScreenState extends State<UpdatePostScreen> {
       children: [
         if (_imageFile != null) Image.file(_imageFile!, height: 150),
         if (_imageFile == null && widget.item.images.isNotEmpty)
-          Image.network(widget.item.images, height: 150, errorBuilder: (_, __, ___) => Text(_lang.failUpload)),
+          Image.network(widget.item.images,
+              height: 150,
+              errorBuilder: (_, __, ___) => Text(_lang.failUpload)),
         ElevatedButton(onPressed: _pickImage, child: Text(_lang.changePhoto)),
       ],
     );
@@ -244,9 +267,12 @@ class _UpdatePostScreenState extends State<UpdatePostScreen> {
       width: double.infinity,
       height: 50,
       child: ElevatedButton(
-        style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF45BF7A), foregroundColor: Colors.white),
+        style: ElevatedButton.styleFrom(
+            backgroundColor: Color(0xFF45BF7A), foregroundColor: Colors.white),
         onPressed: _isLoading ? null : () => _updatePost(_lang),
-        child: _isLoading ? CircularProgressIndicator(color: Colors.white) : Text(_lang.updatePost),
+        child: _isLoading
+            ? CircularProgressIndicator(color: Colors.white)
+            : Text(_lang.updatePost),
       ),
     );
   }

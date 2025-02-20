@@ -13,43 +13,42 @@ PostModel postModelFromJson(dynamic jsonData) {
   return PostModel.fromJson(jsonData); // Convert to PostModel
 }
 
-
 String postModelToJson(PostModel data) => json.encode(data.toJson());
 
 class PostModel {
-    List<Doc> docs;
-    int totalDocs;
-    int limit;
-    int totalPages;
-    int page;
-    int pagingCounter;
+  List<Doc> docs;
+  int totalDocs;
+  int limit;
+  int totalPages;
+  int page;
+  int pagingCounter;
 
-    PostModel({
-        required this.docs,
-        required this.totalDocs,
-        required this.limit,
-        required this.totalPages,
-        required this.page,
-        required this.pagingCounter,
-    });
+  PostModel({
+    required this.docs,
+    required this.totalDocs,
+    required this.limit,
+    required this.totalPages,
+    required this.page,
+    required this.pagingCounter,
+  });
 
-    factory PostModel.fromJson(Map<String, dynamic> json) => PostModel(
+  factory PostModel.fromJson(Map<String, dynamic> json) => PostModel(
         docs: List<Doc>.from(json["docs"].map((x) => Doc.fromJson(x))),
         totalDocs: json["totalDocs"],
         limit: json["limit"],
         totalPages: json["totalPages"],
         page: json["page"],
         pagingCounter: json["pagingCounter"],
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "docs": List<dynamic>.from(docs.map((x) => x.toJson())),
         "totalDocs": totalDocs,
         "limit": limit,
         "totalPages": totalPages,
         "page": page,
         "pagingCounter": pagingCounter,
-    };
+      };
 }
 
 class Doc {
@@ -111,4 +110,3 @@ class Doc {
     );
   }
 }
-

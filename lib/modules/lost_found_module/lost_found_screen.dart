@@ -23,7 +23,8 @@ class LostFoundScreen extends StatefulWidget {
 
 class _LostFoundScreenState extends State<LostFoundScreen> {
   final ScrollController _scroller = ScrollController();
-  bool _showUpButton = false; // Controls visibility of the "scroll to top" button
+  bool _showUpButton =
+      false; // Controls visibility of the "scroll to top" button
   int page = 1;
 
   @override
@@ -198,7 +199,7 @@ class _LostFoundScreenState extends State<LostFoundScreen> {
                       ),
                       Text(
                         formattedDate,
-                        style: TextStyle(color: Colors.grey[600]),
+                        // style: TextStyle(color: Colors.grey[600]),
                       ),
                     ],
                   ),
@@ -227,7 +228,7 @@ class _LostFoundScreenState extends State<LostFoundScreen> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                          // color: Colors.black,
                         ),
                       ),
                       SizedBox(height: 6), // Spacing
@@ -236,15 +237,20 @@ class _LostFoundScreenState extends State<LostFoundScreen> {
                         item.description,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                        style: TextStyle(
+                          fontSize: 14,
+                          // color: Colors.grey[700]
+                        ),
                       ),
                       SizedBox(height: 6),
                       // Location
                       if (item.location.isNotEmpty)
                         Text(
                           "📍 ${item.location}",
-                          style:
-                              TextStyle(fontSize: 14, color: Colors.grey[600]),
+                          style: TextStyle(
+                            fontSize: 14,
+                            // color: Colors.grey[600]
+                          ),
                         ),
                     ],
                   ),
@@ -262,7 +268,9 @@ class _LostFoundScreenState extends State<LostFoundScreen> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  item.type == "lost" ?  "${_lang.lost.toUpperCase()}" : "${_lang.found.toUpperCase()}",
+                  item.type == "lost"
+                      ? "${_lang.lost.toUpperCase()}"
+                      : "${_lang.found.toUpperCase()}",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,

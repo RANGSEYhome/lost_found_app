@@ -13,6 +13,7 @@ enum PostMethod {
 //String api = "http://10.0.2.2:4001/v1";
 
 String api = "https://d-api.devkrc.com/v1";
+
 class FakestoreService {
   static Future<MyResponseModel> login(
       {required LoginRequestModel request}) async {
@@ -59,6 +60,7 @@ class FakestoreService {
       throw Exception(e);
     }
   }
+
   static Future<String> updateUser(UserModel user, String id) async {
     // String key = "d033e22ae348aeb5660fc2140aec35850c4da997";
     String url = "$api/user/$id";
@@ -82,8 +84,9 @@ class FakestoreService {
     }
   }
 
-static Future<String?> uploadImage(File  imagePath) async {
-    final url = Uri.parse("$api/files/upload-single-s3"); // Replace with your API endpoint
+  static Future<String?> uploadImage(File imagePath) async {
+    final url = Uri.parse(
+        "$api/files/upload-single-s3"); // Replace with your API endpoint
 
     try {
       var request = http.MultipartRequest('POST', url);

@@ -449,7 +449,8 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  Widget _buildFilterOptions(Map<String, String> types, Map<String, String> categories) {
+  Widget _buildFilterOptions(
+      Map<String, String> types, Map<String, String> categories) {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Row(

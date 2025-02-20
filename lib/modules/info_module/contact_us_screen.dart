@@ -93,16 +93,22 @@ class ContactUsScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       IconButton(
-                        icon: FaIcon(FontAwesomeIcons.facebook, color: Colors.blue),
-                        onPressed: () => _launchURL('https://facebook.com/lostfoundapp'),
+                        icon: FaIcon(FontAwesomeIcons.facebook,
+                            color: Colors.blue),
+                        onPressed: () =>
+                            _launchURL('https://facebook.com/lostfoundapp'),
                       ),
                       IconButton(
-                        icon: FaIcon(FontAwesomeIcons.instagram, color: Colors.purple),
-                        onPressed: () => _launchURL('https://instagram.com/lostfoundapp'),
+                        icon: FaIcon(FontAwesomeIcons.instagram,
+                            color: Colors.purple),
+                        onPressed: () =>
+                            _launchURL('https://instagram.com/lostfoundapp'),
                       ),
                       IconButton(
-                        icon: FaIcon(FontAwesomeIcons.twitter, color: Colors.blue),
-                        onPressed: () => _launchURL('https://twitter.com/lostfoundapp'),
+                        icon: FaIcon(FontAwesomeIcons.twitter,
+                            color: Colors.blue),
+                        onPressed: () =>
+                            _launchURL('https://twitter.com/lostfoundapp'),
                       ),
                     ],
                   ),

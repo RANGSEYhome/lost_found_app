@@ -15,7 +15,6 @@ class FakeStoreLoadingScreen extends StatefulWidget {
 }
 
 class _FakeStoreLoadingScreenState extends State<FakeStoreLoadingScreen> {
-
   Future _readData() async {
     await Future.delayed(Duration(seconds: 1), () {});
     await context.read<FakestoreLoginLogic>().read();
@@ -26,17 +25,14 @@ class _FakeStoreLoadingScreenState extends State<FakeStoreLoadingScreen> {
     return FutureBuilder(
       future: _readData(),
       builder: (context, snapshot) {
-        
-          MyResponseModel responseModel =
-              context.watch<FakestoreLoginLogic>().responseModel;
-          if (responseModel.token == null) {
-            return FakeStoreLoginScreen();
-          }
-          else{
-            debugPrint("responseModel.token: ${responseModel.token}");
-            return FakestoreHomeScreen();
-          }
-       
+        MyResponseModel responseModel =
+            context.watch<FakestoreLoginLogic>().responseModel;
+        if (responseModel.token == null) {
+          return FakeStoreLoginScreen();
+        } else {
+          debugPrint("responseModel.token: ${responseModel.token}");
+          return FakestoreHomeScreen();
+        }
       },
     );
   }
