@@ -223,7 +223,7 @@ class _FakestoreHomeScreenState extends State<FakestoreHomeScreen> {
         if (direction == DismissDirection.startToEnd) {
           if (post.status == "Resolved") {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Post already Resolved')),
+              SnackBar(content: Text(_lang.alreadyResolved)),
             );
             return false;
           } else {

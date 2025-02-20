@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lost_found_app/core/localization/lang_data.dart';
+import 'package:lost_found_app/core/localization/lang_logic.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:provider/provider.dart';
 
 class AboutUsScreen extends StatelessWidget {
   void _launchURL(String url) async {
@@ -13,9 +16,10 @@ class AboutUsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Language _lang = context.watch<LanguageLogic>().lang;
     return Scaffold(
       appBar: AppBar(
-        title: Text('About Us'),
+        title: Text(_lang.aboutUs),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

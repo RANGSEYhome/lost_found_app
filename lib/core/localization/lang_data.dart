@@ -16,6 +16,8 @@ class Language {
   String get aboutUs => "About Us";
   String get contactUs => "Contact Us";
   String get privacyPolicy => "Terms & Privacy";
+  String get privacy => "Terms";
+  String get policy => "Privacy";
   // Account
   String get logout => "Logout";
   String get login => "Login";
@@ -92,6 +94,7 @@ class Language {
       "Are you sure you want to mark this post as Resolved?\nThis action cannot be undone.";
   String get makeResolved => "Mark as Resolved";
   String get resolve => "Resolve";
+  String get alreadyResolved => "Post already Resolved";
   // Post Types
   String get type => "Type";
   String get allTypes => "All Types";
@@ -130,7 +133,9 @@ class Khmer implements Language {
   String get account => "គណនី";
   String get aboutUs => "អំពីយើង";
   String get contactUs => "ទាក់ទងយើង";
-  String get privacyPolicy => "គោលការណ៍និងភាពឯកជន";
+  String get privacyPolicy => "គោលការណ៍និងឯកជនភាព";
+  String get privacy => "គោលការណ៍";
+  String get policy => "ឯកជនភាព";
   // Account
   String get logout => "ចាកចេញ";
   String get login => "ចូលប្រើ";
@@ -207,6 +212,7 @@ class Khmer implements Language {
       "តើអ្នកចង់រក្សាទុកប្រកាសនេះជាជាប្រកាសដែលបានដោះស្រាយមែនទេ?\nសកម្មភាពនេះមិនអាចកែប្រែឡើងវិញបានទេ។";
   String get makeResolved => "រក្សាទុកជាប្រកាសដែលបានដោះស្រាយ";
   String get resolve => "យល់ព្រម";
+  String get alreadyResolved => "ប្រកាសបានរក្សាទុកជាប្រកាសដែលបានដោះស្រាយ";
   // Post Types
   String get type => "ក្រុម";
   String get allTypes => "ក្រុមទាំងអស់";

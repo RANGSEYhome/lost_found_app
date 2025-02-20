@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:lost_found_app/core/localization/lang_data.dart';
+import 'package:lost_found_app/core/localization/lang_logic.dart';
+import 'package:provider/provider.dart';
 
 class TermsPrivacyScreen extends StatelessWidget {
   const TermsPrivacyScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    Language _lang = context.watch<LanguageLogic>().lang;
     return DefaultTabController(
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Terms & Privacy Policy'),
-          bottom: const TabBar(
+          title: Text(_lang.privacyPolicy),
+          bottom: TabBar(
             tabs: [
-              Tab(text: 'Terms of Service'),
-              Tab(text: 'Privacy Policy'),
+              Tab(text: _lang.privacy),
+              Tab(text: _lang.policy),
             ],
           ),
         ),
