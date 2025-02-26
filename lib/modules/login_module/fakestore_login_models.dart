@@ -83,6 +83,7 @@ class UserModel {
   final String profilePic;
   final String role;
   final String address;
+  final String smToken;
 
   UserModel({
     required this.id,
@@ -95,6 +96,7 @@ class UserModel {
     required this.profilePic,
     required this.role,
     required this.address,
+    required this.smToken,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -109,6 +111,7 @@ class UserModel {
       profilePic: json["profile_pic"],
       role: json["role"],
       address: json["address"],
+      smToken: json["smToken"],
     );
   }
 
@@ -123,6 +126,7 @@ class UserModel {
         "profile_pic": profilePic,
         "role": role,
         "address": address,
+        "smToken": smToken,
       };
 }
 

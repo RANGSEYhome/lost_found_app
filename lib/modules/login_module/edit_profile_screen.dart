@@ -228,6 +228,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       profilePic: p,
                       role: widget.user.role,
                       address: widget.user.address,
+                      smToken: widget.user.smToken,
                     );
 
                     String result =

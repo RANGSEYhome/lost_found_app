@@ -11,6 +11,8 @@ import 'package:lost_found_app/modules/login_module/fakestore_provider.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -21,6 +23,8 @@ class SignupScreen extends StatefulWidget {
 
 class _SignupScreenState extends State<SignupScreen> {
   final _formKey = GlobalKey<FormState>();
+   FirebaseMessaging messaging = FirebaseMessaging.instance;
+   
   //String _imageFile = "";
   File? _imageFile; // To store the selected image
   final ImagePicker _picker = ImagePicker();
@@ -258,7 +262,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     } else {
                       p = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
                     }
-
+                    String? token = await messaging.getToken();
                     UserModel user = UserModel(
                       id: "",
                       firstname: _firstnameController.text,
@@ -270,6 +274,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       profilePic: p,
                       role: "user",
                       address: "",
+                      smToken: token.toString(),
                     );
 
                     String result = await FakestoreService.insert(user);
