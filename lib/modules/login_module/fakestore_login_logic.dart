@@ -5,11 +5,12 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'fakestore_service.dart';
 import 'fakestore_login_models.dart';
-
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 class FakestoreLoginLogic extends ChangeNotifier {
   MyResponseModel _responseModel = MyResponseModel();
   MyResponseModel get responseModel => _responseModel;
-
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
   final _cache = FlutterSecureStorage();
   final _key = "FakestoreLoginLogic";
   final _userKey = "usercache";
@@ -60,6 +61,30 @@ class FakestoreLoginLogic extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<bool> logout() async {
+    try {
+      if (_responseModel.user != null) {
+        final success = await FakestoreService.logout(_responseModel.user!.id);
+        if (!success) {
+          debugPrint("Failed to log out on backend");
+          return false;
+        }
+      }
+
+      await _cache.delete(key: _key);
+      await _cache.delete(key: _userKey);
+      debugPrint("Token cleared");
+
+      _responseModel = MyResponseModel(token: null, user: null);
+      notifyListeners();
+      return true;
+    } catch (e) {
+      debugPrint("Logout error: $e");
+      return false;
+    }
+  }
+
+
   bool _loading = false;
   bool get loading => _loading;
 
@@ -73,10 +98,13 @@ class FakestoreLoginLogic extends ChangeNotifier {
 
   Future<MyResponseModel> login(String email, String password) async {
     setLoading(true);
-
+    await FirebaseMessaging.instance.deleteToken(); 
+    String? smToken = await messaging.getToken();
+    print('FCM Token 1: $smToken');
     LoginRequestModel requestModel = LoginRequestModel(
       email: email.trim(),
       password: password.trim(),
+      smToken: smToken.toString(),
     );
     debugPrint("Email: $email, Password: (hidden)");
 

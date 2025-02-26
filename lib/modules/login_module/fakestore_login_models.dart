@@ -10,21 +10,25 @@ String loginRequestModelToJson(LoginRequestModel data) =>
 class LoginRequestModel {
   String email;
   String password;
+  String smToken;
 
   LoginRequestModel({
     required this.email,
     required this.password,
+    required this.smToken,
   });
 
   factory LoginRequestModel.fromJson(Map<String, dynamic> json) =>
       LoginRequestModel(
         email: json["email"],
         password: json["password"],
+        smToken: json["smToken"],
       );
 
   Map<String, dynamic> toJson() => {
         "email": email,
         "password": password,
+        "smToken": smToken,
       };
 }
 

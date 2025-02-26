@@ -116,6 +116,29 @@ class FakestoreService {
       return null;
     }
   }
+    static Future<bool> logout(String userId) async {
+    String url = "$api/auth/logout";
+    try {
+      http.Response response = await http.post(
+        Uri.parse(url),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode({"userId": userId}),
+      );
+
+      if (response.statusCode == 200) {
+        debugPrint("Logout successful");
+        return true;
+      } else {
+        debugPrint("Logout failed: \${response.body}");
+        return false;
+      }
+    } catch (e) {
+      debugPrint("🚨 Exception occurred during logout: \$e");
+      return false;
+    }
+  }
 }
 // class FakestoreService {
 //   static Future login({
