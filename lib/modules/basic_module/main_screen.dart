@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lost_found_app/core/constants/app_text_style.dart';
 import 'package:lost_found_app/modules/basic_module/basic_app.dart';
+import 'package:lost_found_app/modules/basic_module/notificattion.dart';
 import 'package:lost_found_app/modules/info_module/contact_us_screen.dart';
 import 'package:lost_found_app/modules/info_module/terms_privacy_screen.dart';
 import 'package:lost_found_app/modules/login_module/fakestore_app.dart';
@@ -55,7 +56,30 @@ class _MainScreenState extends State<MainScreen> {
       {
         'appBar': AppBar(
           title: Text(_lang.appName),
-          // actions: [searchButton(context, SearchScreen())],
+           actions: [
+            iconButton(context, Icons.notifications, () {
+              FakestoreLoginLogic loginLogic =
+                      Provider.of<FakestoreLoginLogic>(context, listen: false);
+                  MyResponseModel responseModel = loginLogic.responseModel;
+                  //   final responseModel = context.watch<FakestoreLoginLogic>().responseModel;
+                  if (responseModel.token == null) {
+                    print("responseModel.tokens: ${responseModel.token}");
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //       builder: (context) => FakeStoreLoginScreen()),
+                    // );
+                    setState(() {
+                      _currentIndex = 2;
+                    });
+                  } else {
+                     Navigator.push(
+                    context,
+                    CupertinoPageRoute(builder: (context) => NotificationScreen()),
+              );
+                  }
+            }),
+           ],
         ),
       },
       {
@@ -136,6 +160,13 @@ class _MainScreenState extends State<MainScreen> {
         index: _currentIndex,
         children: [HomeScreen(), LostFoundScreen(), FakeStoreApp()],
       ),
+    );
+  }
+
+  Widget iconButton(BuildContext context, IconData icon, VoidCallback onPressed) {
+    return IconButton(
+      icon: Icon(icon),
+      onPressed: onPressed,
     );
   }
 
